@@ -1,0 +1,15 @@
+maak user aan:
+CREATE OR REPLACE USER neo4jPython SET PASSWORD "python" SET PASSWORD CHANGE NOT REQUIRED
+geef user admin privileges:
+GRANT ROLE admin to neo4jPython
+
+delete all:
+MATCH (n)
+DETACH DELETE n
+
+show all
+Match (n)-[r]->(m)
+Return n,r,m
+
+params object voor feed:
+CREATE (p:Params {feedEvent: 123, page: 2})
