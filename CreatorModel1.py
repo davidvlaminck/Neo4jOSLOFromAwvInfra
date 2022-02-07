@@ -43,6 +43,8 @@ class CreatorModel1(AbstractCreator):
             else:
                 asset_dict[k] = v
         asset_dict["geometry"] = self.get_wkt_from_puntlocatie(json_dict)
+        if 'loc:Locatie.omschrijving' in json_dict.keys():
+            asset_dict["loc:Locatie.omschrijving"] = json_dict['loc:Locatie.omschrijving']
         if 'loc:Locatie.geometrie' in json_dict.keys():
             geometrie = json_dict['loc:Locatie.geometrie']
             if geometrie != '':
