@@ -31,7 +31,7 @@ class CreatorModel1(AbstractCreator):
                 asset_dict['typeURI'] = v
             elif k == '@id':
                 asset_dict['assetIdUri'] = v
-            elif k.startswith('loc') or k == 'AIMObject.typeURI':
+            elif k.startswith('loc') or k.startswith('ins') or k.startswith('ond') or k == 'AIMObject.typeURI':
                 continue
             elif k == 'AIMObject.assetId':
                 asset_dict['assetId'] = json.dumps(v)
