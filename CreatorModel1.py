@@ -25,46 +25,39 @@ class CreatorModel1(AbstractCreator):
                                               params=relatie_dict)
 
     def create_asset_from_jsonLd_dict(self, json_dict):
-        asset_dict = {}
+        new_dict = {}
+        for k, v in json_dict.items():
+            if not k.startswith('ins') and not k.startswith('ond'):
+                new_dict[k] = v
 
+        json_dict = self.flatten_dict(new_dict)
+
+        asset_dict = {}
         for k, v in json_dict.items():
             if k == '@type':
-                asset_dict['typeURI'] = v
+                continue
             elif k == '@id':
                 asset_dict['assetIdUri'] = v
-            elif k.startswith('loc') or k.startswith('ins') or k.startswith('ond') or k == 'AIMObject.typeURI':
-                continue
-            elif k == 'AIMObject.assetId':
-                asset_dict['assetId'] = json.dumps(v)
-                asset_dict['uuid'] = v['DtcIdentificator.identificator'][0:36]
-            elif k in ['AIMDBStatus.isActief', 'AIMNaamObject.naam', 'NaampadObject.naampad', 'AIMObject.notitie',
-                       'AIMToestand.toestand', 'AIMObject.datumOprichtingObject', 'AIMObject.theoretischeLevensduur',
-                       'AIMObject.bestekPostNummer', 'AIMObject.standaardBestekPostNummer']:
-                asset_dict[k.split('.')[1]] = v
-            elif isinstance(v, dict):
-                asset_dict[k] = json.dumps(v)
             else:
                 asset_dict[k] = v
+
+        asset_dict["uuid"] = asset_dict['assetId.identificator'][0:36]
         asset_dict["geometry"] = self.get_wkt_from_puntlocatie(json_dict)
-        if 'loc:Locatie.omschrijving' in json_dict.keys():
-            asset_dict["loc:Locatie.omschrijving"] = json_dict['loc:Locatie.omschrijving']
-        if 'loc:Locatie.geometrie' in json_dict.keys():
-            geometrie = json_dict['loc:Locatie.geometrie']
-            if geometrie != '':
+        if 'geometrie' in json_dict.keys():
+            geometrie = json_dict['geometrie']
+            if geometrie != '' and asset_dict["geometry"] == '':
                 asset_dict["geometry"] = geometrie
         korte_uri = asset_dict['typeURI'].split('/ns/')[1]
         ns = korte_uri.split('#')[0]
         assettype = korte_uri.split('#')[1]
+
         self.connector.perform_create_asset(params=asset_dict, ns=ns, assettype=assettype)
 
     @classmethod
     def get_wkt_from_puntlocatie(cls, json_dict):
-        if 'loc:Locatie.puntlocatie' in json_dict.keys():
-            puntlocatie = json_dict['loc:Locatie.puntlocatie']
-            if "loc:3Dpunt.puntgeometrie" in puntlocatie:
-                puntgeometrie = puntlocatie["loc:3Dpunt.puntgeometrie"]
-                if "loc:DtcCoord.lambert72" in puntgeometrie:
-                    coords = puntgeometrie["loc:DtcCoord.lambert72"]
-                    return f'POINT Z ({coords["loc:DtcCoordLambert72.xcoordinaat"]} {coords["loc:DtcCoordLambert72.ycoordinaat"]} {coords["loc:DtcCoordLambert72.zcoordinaat"]})'
+        if 'puntlocatie.puntgeometrie.lambert72.xcoordinaat' in json_dict.keys():
+            return f'POINT Z ({json_dict["puntlocatie.puntgeometrie.lambert72.xcoordinaat"]} ' \
+                   f'{json_dict["puntlocatie.puntgeometrie.lambert72.ycoordinaat"]} ' \
+                   f'{json_dict["puntlocatie.puntgeometrie.lambert72.zcoordinaat"]})'
         return ''
 

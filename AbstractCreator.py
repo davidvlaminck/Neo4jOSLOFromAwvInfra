@@ -41,21 +41,37 @@ class AbstractCreator:
         if new_dict is None:
             new_dict = {}
         for k, v in input_dict.items():
+            if '.' in k:
+                k = k.split('.')[1]
             if isinstance(v, dict):
-                self.flatten_dict(input_dict=v, prefix=k, new_dict=new_dict)
+                if prefix != '':
+                    self.flatten_dict(input_dict=v, prefix=(prefix + affix + '#sep#' + k), new_dict=new_dict)
+                else:
+                    self.flatten_dict(input_dict=v, prefix=k, new_dict=new_dict)
             elif isinstance(v, list):
                 for i in range(0, len(v)):
                     if isinstance(v[i], dict):
-                        self.flatten_dict(input_dict=v[i], prefix=k, affix='[' + str(i) + ']', new_dict=new_dict)
-                    else:
                         if prefix != '':
-                            new_dict[prefix + seperator + k + '[' + str(i) + ']'] = v[i]
+                            self.flatten_dict(input_dict=v[i], prefix=(prefix + affix + '#sep#' + k), affix='[' + str(i) + ']', new_dict=new_dict)
+                        else:
+                            self.flatten_dict(input_dict=v[i], prefix=(k), affix='[' + str(i) + ']', new_dict=new_dict)
+                    else:
+                        if isinstance(v[i], str) and 'id/concept/' in v[i]:
+                            v[i] = v[i].split('/')[-1]
+                        if prefix != '':
+                            new_dict[prefix + '#sep#' + k + '[' + str(i) + ']'] = v[i]
                         else:
                             new_dict[k + '[' + str(i) + ']'] = v[i]
             else:
+                if isinstance(v, str) and 'id/concept/' in v:
+                    v = v.split('/')[-1]
                 if prefix != '':
-                    new_dict[prefix + affix + seperator + k] = v
+                    new_dict[prefix + affix + '#sep#' + k] = v
                 else:
                     new_dict[k] = v
 
-        return new_dict
+        clean_dict = {}
+        for k, v in new_dict.items():
+            clean_dict[k.replace('#sep#', seperator)] = v
+
+        return clean_dict
