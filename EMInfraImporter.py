@@ -8,32 +8,41 @@ class EMInfraImporter:
     def __init__(self, cert_path='', key_path=''):
         self.cert_path = cert_path
         self.key_path = key_path
+        self.cursor = ''
+
+    def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100):
+        url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/{url_part}/search"
+        body_fixed_part = '{"size": ' + f'{size}' + ', "filters": ' + filter_string
+
+        json_list = []
+        while True:
+            body = body_fixed_part
+            if self.cursor != '':
+                body += ', "fromCursor": ' + f'"{self.cursor}"'
+            body += '}'
+            json_data = json.loads(body)
+
+            response = requests.post(url, cert=(self.cert_path, self.key_path), headers={"accept": "application/vnd.awv.eminfra.v2+json"}, json=json_data)
+            decoded_string = response.content.decode("utf-8")
+            dict_obj = json.loads(decoded_string)
+            keys = response.headers.keys()
+            json_list.extend(dict_obj['@graph'])
+            if 'em-paging-next-cursor' in keys:
+                self.cursor = response.headers['em-paging-next-cursor']
+            else:
+                self.cursor = ''
+            if self.cursor == '':
+                return json_list
 
     def import_assets_from_webservice_by_uuids(self, asset_uuids: [str]):
-        url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/assets/search"
         asset_list_string = '", "'.join(asset_uuids)
-        body = '{"filters": { "uuid": ' + f'["{asset_list_string}"]' + ' }}'
-        json_data = json.loads(body)
-        response = requests.post(url, cert=(self.cert_path, self.key_path), json=json_data)
-
-        data = response.content.decode("utf-8")
-        jsonobj = json.loads(data)
-        json_list = jsonobj["@graph"]
-
-        return json_list
+        filter_string = '{ "uuid": ' + f'["{asset_list_string}"]' + ' }'
+        return self.get_objects_from_oslo_search_endpoint(url_part='assets', filter_string=filter_string)
 
     def import_assetrelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]):
-        url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/assetrelaties/search"
         asset_list_string = '", "'.join(asset_uuids)
-        body = '{"filters": { "asset": ' + f'["{asset_list_string}"]' + ' }}'
-        json_data = json.loads(body)
-        response = requests.post(url, cert=(self.cert_path, self.key_path), json=json_data)
-
-        data = response.content.decode("utf-8")
-        jsonobj = json.loads(data)
-        json_list = jsonobj["@graph"]
-
-        return json_list
+        filter_string = '{ "asset": ' + f'["{asset_list_string}"]' + ' }'
+        return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', filter_string=filter_string)
 
     def import_assetrelaties_from_webservice_by_assetuuid(self, asset_uuid: str):
         url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/assetrelaties/search"

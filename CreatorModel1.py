@@ -26,6 +26,7 @@ class CreatorModel1(AbstractCreator):
 
     def create_asset_from_jsonLd_dict(self, json_dict):
         asset_dict = {}
+
         for k, v in json_dict.items():
             if k == '@type':
                 asset_dict['typeURI'] = v
@@ -36,7 +37,9 @@ class CreatorModel1(AbstractCreator):
             elif k == 'AIMObject.assetId':
                 asset_dict['assetId'] = json.dumps(v)
                 asset_dict['uuid'] = v['DtcIdentificator.identificator'][0:36]
-            elif k in ['AIMDBStatus.isActief', 'AIMNaamObject.naam', 'AIMObject.notitie', 'AIMToestand.toestand']:
+            elif k in ['AIMDBStatus.isActief', 'AIMNaamObject.naam', 'NaampadObject.naampad', 'AIMObject.notitie',
+                       'AIMToestand.toestand', 'AIMObject.datumOprichtingObject', 'AIMObject.theoretischeLevensduur',
+                       'AIMObject.bestekPostNummer', 'AIMObject.standaardBestekPostNummer']:
                 asset_dict[k.split('.')[1]] = v
             elif isinstance(v, dict):
                 asset_dict[k] = json.dumps(v)
@@ -49,7 +52,10 @@ class CreatorModel1(AbstractCreator):
             geometrie = json_dict['loc:Locatie.geometrie']
             if geometrie != '':
                 asset_dict["geometry"] = geometrie
-        self.connector.perform_create_asset(asset_dict)
+        korte_uri = asset_dict['typeURI'].split('/ns/')[1]
+        ns = korte_uri.split('#')[0]
+        assettype = korte_uri.split('#')[1]
+        self.connector.perform_create_asset(params=asset_dict, ns=ns, assettype=assettype)
 
     @classmethod
     def get_wkt_from_puntlocatie(cls, json_dict):

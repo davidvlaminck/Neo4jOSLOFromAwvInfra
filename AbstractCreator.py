@@ -18,6 +18,8 @@ class AbstractCreator:
     def create_relaties_from_eminfra(self, list_uuids: [str]):
         jsonList = self.eminfraImporter.import_assetrelaties_from_webservice_by_assetuuids(list_uuids)
         for jsonDict in jsonList:
+            if jsonDict["@id"] == 'https://data.awvvlaanderen.be/id/assetrelatie/2b15f9d7-d308-4411-9ea6-9e0d0d415f03-b25kZXJkZWVsI0hvb3J0Qmlq':
+                pass
             self.create_relatie_from_jsonLd_dict(jsonDict)
 
     def create_assets_from_jsonLD_file(self, filePath):

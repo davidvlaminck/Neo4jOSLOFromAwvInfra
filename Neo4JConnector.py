@@ -8,9 +8,9 @@ class Neo4JConnector:
     def close(self):
         self.driver.close()
 
-    def perform_create_asset(self, params: dict):
+    def perform_create_asset(self, params: dict, ns: str, assettype: str):
         with self.driver.session() as session:
-            session.write_transaction(self._create_asset_by_dict, params)
+            session.write_transaction(self._create_asset_by_dict, params, ns, assettype)
 
     def perform_create_relatie(self, bron_uuid='', doel_uuid='', relatie_type='', params=None):
         with self.driver.session() as session:
@@ -18,8 +18,8 @@ class Neo4JConnector:
                                       relatie_type=relatie_type, params=params)
 
     @staticmethod
-    def _create_asset_by_dict(tx, params: dict):
-        result = tx.run("CREATE (a:Asset $params) ", params=params)
+    def _create_asset_by_dict(tx, params: dict, ns: str, assettype: str):
+        result = tx.run(f"CREATE (a:Asset:{ns}:{assettype} $params) ", params=params)
         return result
 
     @staticmethod
