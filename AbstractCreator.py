@@ -42,7 +42,10 @@ class AbstractCreator:
             new_dict = {}
         for k, v in input_dict.items():
             if '.' in k:
-                k = k.split('.')[1]
+                ns = ''
+                if ':' in k:
+                    ns = k.split(':')[0] + ':'
+                k = ns + k.split('.')[1]
             if isinstance(v, dict):
                 if prefix != '':
                     self.flatten_dict(input_dict=v, prefix=(prefix + affix + '#sep#' + k), new_dict=new_dict)
