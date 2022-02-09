@@ -4,15 +4,18 @@ https://www.markhneedham.com/blog/2019/03/14/neo4j-delete-dynamic-properties/?fb
 
 Syncer
 start sync acties
+while True:
+    start collecting and processing
+    wait 30 seconds
 
-FeedEventCollector
+FeedEventsCollector
 verzamelt feed events tot er genoeg zijn om te verwerken (> 99 uuids)
 gebruikt Params object in de databank
 
-FeedEventProcessors
+FeedEventsProcessor
 verwerkt alle feed events adhv type
 > gebruikt factory om eventProcessors te maken die de events verwerken
 
-<TYPE>EventProcessor
+<TYPE>EventsProcessor
 verwerkt event van een specifiek type, door specifieke query's te lanceren, adhv een Model
 eerste nieuwe installatie en nieuw onderdeel doen, dan de rest
