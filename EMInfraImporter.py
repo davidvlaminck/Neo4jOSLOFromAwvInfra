@@ -10,7 +10,7 @@ class EMInfraImporter:
         self.key_path = key_path
         self.cursor = ''
 
-    def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100):
+    def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100) -> [dict]:
         url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/{url_part}/search"
         body_fixed_part = '{"size": ' + f'{size}' + ', "filters": ' + filter_string
 
@@ -36,12 +36,12 @@ class EMInfraImporter:
             if self.cursor == '':
                 return json_list
 
-    def import_assets_from_webservice_by_uuids(self, asset_uuids: [str]):
+    def import_assets_from_webservice_by_uuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
         filter_string = '{ "uuid": ' + f'["{asset_list_string}"]' + ' }'
         return self.get_objects_from_oslo_search_endpoint(url_part='assets', filter_string=filter_string)
 
-    def import_assetrelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]):
+    def import_assetrelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
         filter_string = '{ "asset": ' + f'["{asset_list_string}"]' + ' }'
         return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', filter_string=filter_string)
