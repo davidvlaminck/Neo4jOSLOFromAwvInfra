@@ -1,3 +1,20 @@
 indexen toevoegen op Neo4J db
 https://stackoverflow.com/questions/38149000/neo4j-batch-update-of-data?fbclid=IwAR1XkG_5aU7HzOHxjyAyknwNmubsQQG4JQL2VH7q9JCHmzJ5Nbl6Ft_KeK8
 https://www.markhneedham.com/blog/2019/03/14/neo4j-delete-dynamic-properties/?fbclid=IwAR1MhLk5abYTWkUR6KQegP8y9YQ0VmPP7bt-Xp6MmfUXG7aChI6zbrZljGM
+
+Syncer
+start sync acties
+
+FeedEventCollector
+verzamelt feed events tot er genoeg zijn om te verwerken (> 99 uuids)
+
+FeedEventProcessors
+verwerkt alle feed events adhv type
+> gebruikt factory om eventProcessors te maken die de events verwerken
+
+<TYPE>EventProcessor
+verwerkt event van een specifiek type, door specifieke query's te lanceren, adhv een Model
+
+
+
+

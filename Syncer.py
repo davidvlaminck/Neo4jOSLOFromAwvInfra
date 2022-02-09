@@ -30,7 +30,6 @@ class Syncer:
     def __init__(self, connector: Neo4JConnector, request_handler: RequestHandler):
         self.connector = connector
         self.request_handler = request_handler
-        self.cursor = ''
 
 
 if __name__ == '__main__':
