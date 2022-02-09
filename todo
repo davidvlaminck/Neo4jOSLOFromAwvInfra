@@ -7,6 +7,7 @@ start sync acties
 
 FeedEventCollector
 verzamelt feed events tot er genoeg zijn om te verwerken (> 99 uuids)
+gebruikt Params object in de databank
 
 FeedEventProcessors
 verwerkt alle feed events adhv type
