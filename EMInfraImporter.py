@@ -22,7 +22,9 @@ class EMInfraImporter:
             body += '}'
             json_data = json.loads(body)
 
-            response = requests.post(url, cert=(self.cert_path, self.key_path), headers={"accept": "application/vnd.awv.eminfra.v2+json"}, json=json_data)
+            response = requests.post(url, cert=(self.cert_path, self.key_path),
+                                     headers={"accept": "application/vnd.awv.eminfra.v2+json"},
+                                     json=json_data)
             decoded_string = response.content.decode("utf-8")
             dict_obj = json.loads(decoded_string)
             keys = response.headers.keys()
