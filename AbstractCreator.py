@@ -36,3 +36,26 @@ class AbstractCreator:
     @abstractmethod
     def create_relatie_from_jsonLd_dict(self, jsonDict):
         pass
+
+    def flatten_dict(self, input_dict:dict, seperator:str = '.', prefix='', affix='', new_dict=None):
+        if new_dict is None:
+            new_dict = {}
+        for k, v in input_dict.items():
+            if isinstance(v, dict):
+                self.flatten_dict(input_dict=v, prefix=k, new_dict=new_dict)
+            elif isinstance(v, list):
+                for i in range(0, len(v)):
+                    if isinstance(v[i], dict):
+                        self.flatten_dict(input_dict=v[i], prefix=k, affix='[' + str(i) + ']', new_dict=new_dict)
+                    else:
+                        if prefix != '':
+                            new_dict[prefix + seperator + k + '[' + str(i) + ']'] = v[i]
+                        else:
+                            new_dict[k + '[' + str(i) + ']'] = v[i]
+            else:
+                if prefix != '':
+                    new_dict[prefix + affix + seperator + k] = v
+                else:
+                    new_dict[k] = v
+
+        return new_dict
