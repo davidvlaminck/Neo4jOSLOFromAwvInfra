@@ -15,7 +15,3 @@ verwerkt alle feed events adhv type
 <TYPE>EventProcessor
 verwerkt event van een specifiek type, door specifieke query's te lanceren, adhv een Model
 eerste nieuwe installatie en nieuw onderdeel doen, dan de rest
-
-
-
-
