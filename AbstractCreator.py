@@ -37,7 +37,10 @@ class AbstractCreator:
     def create_relatie_from_jsonLd_dict(self, jsonDict):
         pass
 
-    def flatten_dict(self, input_dict:dict, seperator:str = '.', prefix='', affix='', new_dict=None):
+    def flatten_dict(self, input_dict: dict, separator: str = '.', prefix='', affix='', new_dict=None):
+        """Takes a dictionary as input and recursively flattens dict and list values by using the dotnotation.
+        This removes the prefix from the jsonLD: 'AIMDBStatus.isActief' -> 'isActief' but keeps the namespaces of OEF
+        Also trims the uri values of choices"""
         if new_dict is None:
             new_dict = {}
         for k, v in input_dict.items():
@@ -75,6 +78,6 @@ class AbstractCreator:
 
         clean_dict = {}
         for k, v in new_dict.items():
-            clean_dict[k.replace('#sep#', seperator)] = v
+            clean_dict[k.replace('#sep#', separator)] = v
 
         return clean_dict
