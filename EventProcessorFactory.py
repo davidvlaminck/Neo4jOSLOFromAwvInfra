@@ -15,4 +15,4 @@ class EventProcessorFactory:
         elif event_type == 'NIEUW_ONDERDEEL':
             return NieuwOnderdeelProcessor(tx_context, emInfraImporter)
         else:
-            raise NotImplementedError
+            pass

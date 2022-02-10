@@ -16,19 +16,20 @@ class FeedEventsProcessor:
         # make sure events NIEUW_ONDERDEEL and NIEUWE_INSTALLATIE are processed before any others
         if len(event_dict["NIEUW_ONDERDEEL"]) > 0:
             event_processor = self.create_processor("NIEUW_ONDERDEEL", tx_context)
-            event_processor.process(event_dict["NIEUW_ONDERDEEL"])
+            event_processor.process(event_dict["NIEUW_ONDERDEEL"], event_params.full_sync)
         if len(event_dict["NIEUWE_INSTALLATIE"]) > 0:
             event_processor = self.create_processor("NIEUWE_INSTALLATIE", tx_context)
-            event_processor.process(event_dict["NIEUWE_INSTALLATIE"])
+            event_processor.process(event_dict["NIEUWE_INSTALLATIE"], event_params.full_sync)
         for event_type, uuids in event_dict.items():
-            if event_type in ["NIEUW_ONDERDEEL", "NIEUWE_INSTALLATIE"]:
+            if event_type in ["NIEUW_ONDERDEEL", "NIEUWE_INSTALLATIE"] or len(uuids) == 0:
                 continue
+            raise NotImplementedError
             event_processor = self.create_processor(event_type, tx_context)
             event_processor.process(uuids)
         pass
 
-        # TODO update params
         page_num = event_params.page_num
+        self.neo4J_connector.update_params(tx_context, page_num)
         self.neo4J_connector.commit_transaction(tx_context)
 
     def create_processor(self, event_type, tx_context):

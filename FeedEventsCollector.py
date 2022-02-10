@@ -19,13 +19,14 @@ class FeedEventsCollector:
             entry_value = page['entries'][0]['content']['value']
             event_type = entry_value['event-type']
             event_uuids = entry_value['uuids']
+            full_sync = 'event-id' not in entry_value
             event_dict[event_type].extend(event_uuids)
 
             if len(event_dict[event_type]) > 99:
                 links = page['links']
                 page_num = next(l for l in links if l['rel'] == 'self')['href'].split('/')[1]
-                EventParams = namedtuple('EventParams','event_dict page_num')
-                return EventParams(event_dict=event_dict, page_num=page_num)
+                EventParams = namedtuple('EventParams', 'event_dict page_num full_sync')
+                return EventParams(event_dict=event_dict, page_num=page_num, full_sync=full_sync)
 
     @staticmethod
     def create_empty_event_dict() -> {}:

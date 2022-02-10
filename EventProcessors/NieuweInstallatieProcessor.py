@@ -2,14 +2,22 @@ from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
-from SpecificEventProcessor import SpecificEventProcessor
+from EventProcessors.RelatieProcessor import RelatieProcessor
+from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
-class NieuweInstallatieProcessor(SpecificEventProcessor, NieuwAssetProcessor):
+class NieuweInstallatieProcessor(SpecificEventProcessor, NieuwAssetProcessor, RelatieProcessor):
     def __init__(self, tx_context: Transaction, emInfraImporter: EMInfraImporter):
         super().__init__(tx_context, emInfraImporter)
 
-    def process(self, uuids: [str]):
-        # get asset dict jsonld from importer
-        # process result dict one by one in loop
-        self.create_asset_by_dict()
+    def process(self, uuids: [str], full_sync: bool = False):
+        assetDicts = self.emInfraImporter.import_assets_from_webservice_by_uuids(asset_uuids=uuids)
+
+        for assetdict in assetDicts:
+            self.create_asset_from_jsonLd_dict(assetdict)
+
+        if full_sync:
+            self.remove_all_asset_relaties(uuids)
+            assetrelatieDicts = self.emInfraImporter.import_assetrelaties_from_webservice_by_assetuuids(asset_uuids=uuids)
+            for assetrelatieDict in assetrelatieDicts:
+                self.create_assetrelatie_from_jsonLd_dict(assetrelatieDict)

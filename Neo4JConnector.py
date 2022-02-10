@@ -12,6 +12,9 @@ class Neo4JConnector:
                 params = session.run("CREATE (p:Params {page:-1}) RETURN p.page").single()
             return params[0]
 
+    def update_params(self, tx: Transaction, page_num: int):
+        tx.run(f"MATCH (p:Params) SET p.page = {page_num}")
+
     def close(self):
         self.driver.close()
 
@@ -50,3 +53,4 @@ class Neo4JConnector:
     def commit_transaction(tx_context: Transaction):
         tx_context.commit()
         tx_context.close()
+

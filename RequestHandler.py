@@ -22,11 +22,9 @@ class RequestHandler:
         return dict_obj
 
     def _perform_get_request(self, url) -> Response:
-        return requests.get(f'{self.base_path}{url}', cert=(self.cert_path, self.key_path), headers={"accept": "application/vnd.awv.eminfra.v2+json"})
+        return requests.get(f'{self.base_path}{url}', cert=(self.cert_path, self.key_path),
+                            headers={"accept": "application/vnd.awv.eminfra.v2+json"})
 
-    def get_feedproxy_page(self, page_num):
-        url = f"https://services.apps.mow.vlaanderen.be/eminfra/feedproxy/feed/assets/{page_num}/1"
-        response = self.perform_get_request(url)
-        decoded_string = response.content.decode("utf-8")
-        dict_obj = json.loads(decoded_string)
-        return dict_obj
+    def perform_post_request(self, url, json_data=None) -> Response:
+        return requests.post(f'{self.base_path}{url}', cert=(self.cert_path, self.key_path),
+                            headers={"accept": "application/vnd.awv.eminfra.v2+json"}, json=json_data)

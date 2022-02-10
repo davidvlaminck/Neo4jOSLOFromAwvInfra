@@ -15,9 +15,8 @@ class EMInfraImporter:
         url = f"feedproxy/feed/assets/{page_num}/1"
         return self.request_handler.get_jsondict(url)
 
-
     def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100) -> [dict]:
-        url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/{url_part}/search"
+        url = f"core/api/otl/{url_part}/search"
         body_fixed_part = '{"size": ' + f'{size}' + ', "filters": ' + filter_string
 
         json_list = []
@@ -28,9 +27,8 @@ class EMInfraImporter:
             body += '}'
             json_data = json.loads(body)
 
-            response = requests.post(url, cert=(self.cert_path, self.key_path),
-                                     headers={"accept": "application/vnd.awv.eminfra.v2+json"},
-                                     json=json_data)
+            response = self.request_handler.perform_post_request(url=url, json_data=json_data)
+
             decoded_string = response.content.decode("utf-8")
             dict_obj = json.loads(decoded_string)
             keys = response.headers.keys()

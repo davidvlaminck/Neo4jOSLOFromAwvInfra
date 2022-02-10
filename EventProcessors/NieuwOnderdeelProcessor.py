@@ -2,7 +2,7 @@ from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
-from SpecificEventProcessor import SpecificEventProcessor
+from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
 class NieuwOnderdeelProcessor(SpecificEventProcessor, NieuwAssetProcessor):

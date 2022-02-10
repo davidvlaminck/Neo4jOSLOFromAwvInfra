@@ -20,7 +20,7 @@ class Syncer:
             completed_page_number = self.connector.get_page_by_get_or_create_params()
             eventsparams_to_process = self.events_collector.collect_starting_from_page(completed_page_number)
             self.events_processor.process_events(eventsparams_to_process)
-            time.sleep(30) # wait 30 seconds to prevent overloading API
+            # time.sleep(30) # wait 30 seconds to prevent overloading API
 
 if __name__ == '__main__':
     connector = Neo4JConnector("bolt://localhost:7687", "neo4jPython", "python")
