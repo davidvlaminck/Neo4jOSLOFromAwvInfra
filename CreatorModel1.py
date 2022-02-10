@@ -6,7 +6,7 @@ from AbstractCreator import AbstractCreator
 class CreatorModel1(AbstractCreator):
     def create_relatie_from_jsonLd_dict(self, json_dict):
         relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'], 'isActief': json_dict["AIMDBStatus.isActief"],
-                        'uuid' : json_dict['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36]}
+                        'uuid': json_dict['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36]}
 
         bron_uuid = json_dict['RelatieObject.bronAssetId']['DtcIdentificator.identificator'][0:36]
         doel_uuid = json_dict['RelatieObject.doelAssetId']['DtcIdentificator.identificator'][0:36]

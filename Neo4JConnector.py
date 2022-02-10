@@ -27,7 +27,7 @@ class Neo4JConnector:
         query = "MATCH (a:Asset), (b:Asset) " \
                 f"WHERE a.uuid = '{bron_uuid}' " \
                 f"AND b.uuid = '{doel_uuid}' " \
-                f"CREATE (a)-[r:{relatie_type}:Assetrelatie " \
+                f"CREATE (a)-[r:{relatie_type} " \
                 "$params]->(b) " \
                 f"RETURN type(r), r.name"
         result = tx.run(query, params=params)
