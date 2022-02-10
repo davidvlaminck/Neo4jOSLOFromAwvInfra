@@ -3,12 +3,18 @@ import json
 
 import requests
 
+from RequestHandler import RequestHandler
+
 
 class EMInfraImporter:
-    def __init__(self, cert_path='', key_path=''):
-        self.cert_path = cert_path
-        self.key_path = key_path
+    def __init__(self, request_handler: RequestHandler):
+        self.request_handler = request_handler
         self.cursor = ''
+
+    def get_event_from_page(self, page_num: int):
+        url = f"feedproxy/feed/assets/{page_num}/1"
+        return self.request_handler.get_jsondict(url)
+
 
     def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100) -> [dict]:
         url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/{url_part}/search"

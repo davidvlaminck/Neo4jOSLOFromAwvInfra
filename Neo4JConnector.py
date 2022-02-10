@@ -1,16 +1,26 @@
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, Transaction
 
 
 class Neo4JConnector:
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
 
+    def get_page_by_get_or_create_params(self):
+        with self.driver.session() as session:
+            params = session.run("MATCH (p:Params) RETURN p.page").single()
+            if params is None:
+                params = session.run("CREATE (p:Params {page:-1}) RETURN p.page").single()
+            return params[0]
+
     def close(self):
         self.driver.close()
 
     def perform_create_asset(self, params: dict, ns: str, assettype: str):
         with self.driver.session() as session:
-            session.write_transaction(self._create_asset_by_dict, params, ns, assettype)
+            tx = session.begin_transaction()
+            self._create_asset_by_dict(tx, params, ns, assettype)
+            tx.commit()
+            tx.close()
 
     def perform_create_relatie(self, bron_uuid='', doel_uuid='', relatie_type='', params=None):
         with self.driver.session() as session:
@@ -32,3 +42,11 @@ class Neo4JConnector:
                 f"RETURN type(r), r.name"
         result = tx.run(query, params=params)
         return result
+
+    def start_transaction(self) -> Transaction:
+        return self.driver.session().begin_transaction()
+
+    @staticmethod
+    def commit_transaction(tx_context: Transaction):
+        tx_context.commit()
+        tx_context.close()

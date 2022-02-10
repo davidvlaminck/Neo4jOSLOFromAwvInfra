@@ -11,6 +11,8 @@ if __name__ == "__main__":
     connector = Neo4JConnector("bolt://localhost:7687", "neo4jPython", "python")
     creator = CreatorModel1(neo4JConnector=connector, eminfraImporter=importer)
 
+    connector.get_page_by_get_or_create_params()
+
     creator.create_assets_from_eminfra(test_dataset_2[0:10])
     creator.create_relaties_from_eminfra(test_dataset_2[0:10])
 

@@ -1,0 +1,46 @@
+{
+  'id': 'Proxied EM-Infra change feed for assets',
+  'base': '/feed/assets',
+  'title': 'Proxied EM-Infra change feed for assets',
+  'generator': {
+    'text': 'Default Feed provider',
+    'uri': 'https://github.com/WegenenVerkeer/atomium',
+    'version': '1.0'
+  },
+  'updated': '2021-02-17T11:22:03+01:00',
+  'links': [
+    {
+      'rel': 'self',
+      'href': '/1000/1'
+    },
+    {
+      'rel': 'last',
+      'href': '/0/1'
+    },
+    {
+      'rel': 'next',
+      'href': '/999/1'
+    },
+    {
+      'rel': 'previous',
+      'href': '/1001/1'
+    }
+  ],
+  'entries': [
+    {
+      '_type': 'atom',
+      'updated': '2021-02-17T11:22:03+01:00',
+      'id': 'fa0aa99a-cf87-44d2-86c3-f087317f985a',
+      'content': {
+        'value': {
+          'event-type': 'NAAMPAD_GEWIJZIGD',
+          'asset-type': 'installatie',
+          'event-id': '4582640',
+          'uuids': [
+            'f864d32b-55da-482e-b5b0-9f1e1cc7f5f1'
+          ]
+        }
+      }
+    }
+  ]
+}
