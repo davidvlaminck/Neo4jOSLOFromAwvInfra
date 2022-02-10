@@ -1,3 +1,4 @@
+import logging
 import time
 
 from EMInfraImporter import EMInfraImporter
@@ -18,11 +19,15 @@ class Syncer:
     def perform_syncing(self):
         while True:
             completed_page_number = self.connector.get_page_by_get_or_create_params()
+            logging.info(f'starting a sync cycle, page: {str(completed_page_number+1)}')
             eventsparams_to_process = self.events_collector.collect_starting_from_page(completed_page_number)
+            total = sum(len(l) for l in eventsparams_to_process.event_dict.values())
+            logging.info(f'fetched {total} assets to sync')
             self.events_processor.process_events(eventsparams_to_process)
             # time.sleep(30) # wait 30 seconds to prevent overloading API
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     connector = Neo4JConnector("bolt://localhost:7687", "neo4jPython", "python")
     request_handler = RequestHandler(cert_path=r'C:\resources\datamanager_eminfra_prd.awv.vlaanderen.be.crt',
                                      key_path=r'C:\resources\datamanager_eminfra_prd.awv.vlaanderen.be.key')

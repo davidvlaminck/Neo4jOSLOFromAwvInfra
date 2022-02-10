@@ -6,7 +6,9 @@ class RelatieProcessor:
         self.tx_context = None
 
     def remove_all_asset_relaties(self, asset_uuids:[str]):
-        pass
+        query = f"UNWIND $params as uuids " \
+                "MATCH (n{uuid: uuids})-[r]-() WHERE r <> 'HeeftBetrokkene' DELETE r"
+        self.tx_context.run(query, params=asset_uuids)
 
     @staticmethod
     def _create_assetrelatie_by_dict(tx, bron_uuid='', doel_uuid='', relatie_type='', params=None):
