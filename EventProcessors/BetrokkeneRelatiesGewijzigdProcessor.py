@@ -5,7 +5,7 @@ from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
-class BetrokkeneRelatiesGewijzigdProcessor(SpecificEventProcessor, NieuwAssetProcessor):
+class BetrokkeneRelatiesGewijzigdProcessor(SpecificEventProcessor):
     def __init__(self, tx_context: Transaction, emInfraImporter: EMInfraImporter):
         super().__init__(tx_context, emInfraImporter)
 

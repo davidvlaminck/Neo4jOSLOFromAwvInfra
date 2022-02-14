@@ -19,12 +19,20 @@ class Syncer:
     def perform_syncing(self):
         while True:
             completed_page_number = self.connector.get_page_by_get_or_create_params()
-            logging.info(f'starting a sync cycle, page: {str(completed_page_number+1)}')
+            logging.info(f'starting a sync cycle, page: {str(completed_page_number + 1)}')
             eventsparams_to_process = self.events_collector.collect_starting_from_page(completed_page_number)
-            total = sum(len(l) for l in eventsparams_to_process.event_dict.values())
-            logging.info(f'fetched {total} assets to sync')
+
+            self.log_eventparams(eventsparams_to_process.event_dict)
             self.events_processor.process_events(eventsparams_to_process)
             # time.sleep(30) # wait 30 seconds to prevent overloading API
+
+    def log_eventparams(self, event_dict):
+        total = sum(len(l) for l in event_dict.values())
+        logging.info(f'fetched {total} assets to sync')
+        for k, v in event_dict.items():
+            if len(v) > 0:
+                logging.info(f'number of events of type {k}: {len(v)}')
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
