@@ -4,6 +4,7 @@ from EMInfraImporter import EMInfraImporter
 from EventProcessors.ActiefGewijzigdProcessor import ActiefGewijzigdProcessor
 from EventProcessors.BetrokkeneRelatiesGewijzigdProcessor import BetrokkeneRelatiesGewijzigdProcessor
 from EventProcessors.CommentaarGewijzigdProcessor import CommentaarGewijzigdProcessor
+from EventProcessors.GeometrieOrLocatieGewijzigdProcessor import GeometrieOrLocatieGewijzigdProcessor
 from EventProcessors.NieuwOnderdeelProcessor import NieuwOnderdeelProcessor
 from EventProcessors.NieuweInstallatieProcessor import NieuweInstallatieProcessor
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
@@ -31,16 +32,10 @@ class EventProcessorFactory:
             raise NotImplementedError
         elif event_type == 'ELEKTRICITEITSAANSLUITING_GEWIJZIGD':
             raise NotImplementedError
-        elif event_type == 'GEOMETRIE_GEWIJZIGD':
-            raise NotImplementedError
-        elif event_type == 'LOCATIE_GEWIJZIGD':
-            raise NotImplementedError
-        elif event_type == 'NAAM_GEWIJZIGD':
-            raise NotImplementedError
-        elif event_type == 'NAAMPAD_GEWIJZIGD':
-            raise NotImplementedError
-        elif event_type == 'PARENT_GEWIJZIGD':
-            raise NotImplementedError
+        elif event_type == 'GEOMETRIE_GEWIJZIGD' or event_type == 'LOCATIE_GEWIJZIGD':
+            return GeometrieOrLocatieGewijzigdProcessor(tx_context, emInfraImporter)
+        elif event_type == 'NAAM_GEWIJZIGD' or event_type == 'NAAMPAD_GEWIJZIGD' or event_type == 'PARENT_GEWIJZIGD':
+            return NaamGewijzigdProcessor(tx_context, emInfraImporter)
         elif event_type == 'POSTIT_GEWIJZIGD':
             raise NotImplementedError
         elif event_type == 'RELATIES_GEWIJZIGD':
