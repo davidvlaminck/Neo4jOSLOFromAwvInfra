@@ -9,6 +9,7 @@ from EventProcessors.GeometrieOrLocatieGewijzigdProcessor import GeometrieOrLoca
 from EventProcessors.NaamGewijzigdProcessor import NaamGewijzigdProcessor
 from EventProcessors.NieuwOnderdeelProcessor import NieuwOnderdeelProcessor
 from EventProcessors.NieuweInstallatieProcessor import NieuweInstallatieProcessor
+from EventProcessors.SchadebeheerderGewijzigdProcessor import SchadebeheerderGewijzigdProcessor
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 from EventProcessors.ToestandGewijzigdProcessor import ToestandGewijzigdProcessor
 from EventProcessors.ToezichtGewijzigdProcessor import ToezichtGewijzigdProcessor
@@ -45,7 +46,7 @@ class EventProcessorFactory:
         elif event_type == 'RELATIES_GEWIJZIGD':
             return AssetRelatiesGewijzigdProcessor(tx_context, emInfraImporter)
         elif event_type == 'SCHADEBEHEERDER_GEWIJZIGD':
-            raise NotImplementedError
+            return SchadebeheerderGewijzigdProcessor(tx_context, emInfraImporter)
         elif event_type == 'TOEGANG_GEWIJZIGD':
             pass
         elif event_type == 'TOESTAND_GEWIJZIGD':
