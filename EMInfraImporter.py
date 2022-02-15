@@ -50,41 +50,10 @@ class EMInfraImporter:
         filter_string = '{ "asset": ' + f'["{asset_list_string}"]' + ' }'
         return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', filter_string=filter_string)
 
-    def import_assetrelaties_from_webservice_by_assetuuid(self, asset_uuid: str):
-        url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/assetrelaties/search"
-        body = '{"filters": { "asset": ' + f'["{asset_uuid}"]' + ' }}'
-        json_data = json.loads(body)
-        response = requests.post(url, cert=(self.cert_path, self.key_path), json=json_data)
-
-        data = response.content.decode("utf-8")
-        jsonobj = json.loads(data)
-        json_list = jsonobj["@graph"]
-
-        return json_list
-
-    def import_asset_from_webservice_by_uuid(self, asset_uuid: str):
-        url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/assets/search"
-        body = '{"filters": { "uuid": ' + f'["{asset_uuid}"]' + ' }}'
-        json_data = json.loads(body)
-        response = requests.post(url, cert=(self.cert_path, self.key_path), json=json_data)
-
-        data = response.content.decode("utf-8")
-        jsonobj = json.loads(data)
-        json_list = jsonobj["@graph"]
-
-        return json_list
-
-    def import_asset_from_webservice_by_asset_id(self, asset_id):
-        url = f"https://services.apps.mow.vlaanderen.be/eminfra/core/api/otl/assets/{asset_id}"
-        response = requests.get(url, cert=(self.cert_path, self.key_path))
-        data = response.content.decode("utf-8")
-        jsonobj = json.loads(data)
-        json_list = [jsonobj]
-
-    def import_asset_from_webservice_by_uuid_and_typeURI(self, uuid, typeURI):
-        return self.import_asset_from_webservice_by_asset_id(
-            self.get_asset_id_from_uuid_and_typeURI(uuid, typeURI)
-        )
+    def import_betrokkenerelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
+        asset_list_string = '", "'.join(asset_uuids)
+        filter_string = '{ "bronAsset": ' + f'["{asset_list_string}"]' + ' }'
+        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', filter_string=filter_string)
 
     @staticmethod
     def get_asset_id_from_uuid_and_typeURI(uuid, typeURI):

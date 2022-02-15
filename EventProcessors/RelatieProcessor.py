@@ -1,5 +1,7 @@
 import json
 
+from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
+
 
 class RelatieProcessor:
     def __init__(self):
@@ -7,7 +9,12 @@ class RelatieProcessor:
 
     def remove_all_asset_relaties(self, asset_uuids:[str]):
         query = f"UNWIND $params as uuids " \
-                "MATCH (n{uuid: uuids})-[r]-() WHERE r <> 'HeeftBetrokkene' DELETE r"
+                "MATCH ({uuid: uuids})-[r]-() WHERE r <> 'HeeftBetrokkene' DELETE r"
+        self.tx_context.run(query, params=asset_uuids)
+
+    def remove_all_betrokkene_relaties(self, asset_uuids: [str]):
+        query = f"UNWIND $params as uuids " \
+                "MATCH ({uuid: uuids})-[r:HeeftBetrokkene]-() DELETE r"
         self.tx_context.run(query, params=asset_uuids)
 
     @staticmethod
@@ -40,3 +47,28 @@ class RelatieProcessor:
 
         self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid, relatie_type=relatie_type,
                                           params=relatie_dict)
+
+    def create_betrokkenerelatie_from_jsonLd_dict(self, json_dict):
+        flattened_dict = NieuwAssetProcessor().flatten_dict(json_dict)
+
+
+        relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'],
+                        'isActief': json_dict["AIMDBStatus.isActief"],
+                        'uuid': json_dict['@id'].split('/')[-1][0:36]}
+
+        bron_uuid = json_dict['RelatieObject.bron']['@id'].split('/')[-1][0:36]
+        doel_uuid = json_dict['RelatieObject.doel']['@id'].split('/')[-1][0:36]
+        relatie_type = json_dict["@type"].split('#')[1]
+
+        for k, v in flattened_dict.items():
+            if k in ['@type', '@id', "RelatieObject.bron.@type", "RelatieObject.bron.@id", "RelatieObject.doel.@type",
+                     "RelatieObject.doel.@id", "AIMDBStatus.isActief"]:
+                continue
+            if k == 'HeeftBetrokkene.rol':
+                relatie_dict[k] = v.replace('https://wegenenverkeer.data.vlaanderen.be/id/concept/KlBetrokkenheidRol/', '')
+            else:
+                relatie_dict[k] = v
+
+        self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid, relatie_type=relatie_type,
+                                          params=relatie_dict)
+

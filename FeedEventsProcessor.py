@@ -13,6 +13,8 @@ class FeedEventsProcessor:
 
         tx_context = self.neo4J_connector.start_transaction()
 
+        # TODO add timings and log them
+
         # make sure events NIEUW_ONDERDEEL and NIEUWE_INSTALLATIE are processed before any others
         if len(event_dict["NIEUW_ONDERDEEL"]) > 0:
             event_processor = self.create_processor("NIEUW_ONDERDEEL", tx_context)
@@ -23,7 +25,6 @@ class FeedEventsProcessor:
         for event_type, uuids in event_dict.items():
             if event_type in ["NIEUW_ONDERDEEL", "NIEUWE_INSTALLATIE"] or len(uuids) == 0:
                 continue
-            raise NotImplementedError
             event_processor = self.create_processor(event_type, tx_context)
             event_processor.process(uuids)
         pass

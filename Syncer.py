@@ -26,6 +26,8 @@ class Syncer:
             self.events_processor.process_events(eventsparams_to_process)
             # time.sleep(30) # wait 30 seconds to prevent overloading API
 
+            # sync agents periodically? bij fout eerst agents syncen
+
     def log_eventparams(self, event_dict):
         total = sum(len(l) for l in event_dict.values())
         logging.info(f'fetched {total} assets to sync')
