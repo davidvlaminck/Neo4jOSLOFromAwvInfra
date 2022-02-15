@@ -11,6 +11,7 @@ from EventProcessors.NieuwOnderdeelProcessor import NieuwOnderdeelProcessor
 from EventProcessors.NieuweInstallatieProcessor import NieuweInstallatieProcessor
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 from EventProcessors.ToestandGewijzigdProcessor import ToestandGewijzigdProcessor
+from EventProcessors.ToezichtGewijzigdProcessor import ToezichtGewijzigdProcessor
 
 
 class EventProcessorFactory:
@@ -50,7 +51,7 @@ class EventProcessorFactory:
         elif event_type == 'TOESTAND_GEWIJZIGD':
             return ToestandGewijzigdProcessor(tx_context, emInfraImporter)
         elif event_type == 'TOEZICHT_GEWIJZIGD':
-            raise NotImplementedError
+            return ToezichtGewijzigdProcessor(tx_context, emInfraImporter)
         elif event_type == 'VPLAN_GEWIJZIGD':
             pass
         else:
