@@ -14,13 +14,16 @@ class CommentaarGewijzigdProcessor(SpecificEventProcessor):
     def process(self, uuids: [str]):
         assetDicts = self.emInfraImporter.import_assets_from_webservice_by_uuids(asset_uuids=uuids)
 
+        self.process_dicts(assetDicts)
+
+    def process_dicts(self, assetDicts):
         logging.info(f'started changing notitie of {len(assetDicts)} assets')
         for asset_dict in assetDicts:
             korte_uri = asset_dict['typeURI'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             self.tx_context.run(f"MATCH (a:{ns}:{assettype} "
-                                "{uuid: $uuid}) SET a.isActief = $isActief",
+                                "{uuid: $uuid}) SET a.notitie = $notitie",
                                 uuid=asset_dict['assetId.identificator'][0:36],
                                 notitie=asset_dict['AIMObject.notitie'])
         logging.info('done')

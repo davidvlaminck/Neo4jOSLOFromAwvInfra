@@ -5,6 +5,10 @@ Feed
 Gebruikt de FeedProxy van EM-Infra en groepeert uuid's van gewijzigde assets.
 Verwerkt de events ook per type wijziging, zodat in bulk de wijzigingen kunnen verwerkt worden.
 
+Verwerkt events in transacties, om fouten te voorkomen
+
+Agents worden nog niet gesynct => moet een error raisen en daarna agents eerst syncen
+
 Genegeerde events of data
 - Bestekkoppelingen
 - Communicatie aansluitingen
