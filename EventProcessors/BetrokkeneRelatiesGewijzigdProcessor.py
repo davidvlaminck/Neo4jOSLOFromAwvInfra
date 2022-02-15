@@ -18,7 +18,7 @@ class BetrokkeneRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProces
         logging.info(f'started creating {len(betrokkenerelatie_dicts)} betrokkenerelaties')
 
         self.remove_all_betrokkene_relaties(uuids)
-        for betrokkenerelatieDict in betrokkenerelatie_dicts:
-            self.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatieDict)
+        for betrokkenerelatie_dict in betrokkenerelatie_dicts:
+            self.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatie_dict)
 
         logging.info('done')

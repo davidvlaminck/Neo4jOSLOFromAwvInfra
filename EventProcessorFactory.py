@@ -2,6 +2,7 @@ from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.ActiefGewijzigdProcessor import ActiefGewijzigdProcessor
+from EventProcessors.AssetRelatiesGewijzigdProcessor import AssetRelatiesGewijzigdProcessor
 from EventProcessors.BetrokkeneRelatiesGewijzigdProcessor import BetrokkeneRelatiesGewijzigdProcessor
 from EventProcessors.CommentaarGewijzigdProcessor import CommentaarGewijzigdProcessor
 from EventProcessors.GeometrieOrLocatieGewijzigdProcessor import GeometrieOrLocatieGewijzigdProcessor
@@ -41,7 +42,7 @@ class EventProcessorFactory:
         elif event_type == 'POSTIT_GEWIJZIGD':
             pass
         elif event_type == 'RELATIES_GEWIJZIGD':
-            raise NotImplementedError
+            return AssetRelatiesGewijzigdProcessor(tx_context, emInfraImporter)
         elif event_type == 'SCHADEBEHEERDER_GEWIJZIGD':
             raise NotImplementedError
         elif event_type == 'TOEGANG_GEWIJZIGD':
