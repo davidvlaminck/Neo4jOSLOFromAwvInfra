@@ -32,7 +32,7 @@ class EventProcessorFactory:
         elif event_type == 'COMMUNICATIEAANSLUITING_GEWIJZIGD':
             pass
         elif event_type == 'DOCUMENTEN_GEWIJZIGD':
-            raise NotImplementedError
+            pass
         elif event_type == 'ELEKTRICITEITSAANSLUITING_GEWIJZIGD':
             pass
         elif event_type == 'GEOMETRIE_GEWIJZIGD' or event_type == 'LOCATIE_GEWIJZIGD':

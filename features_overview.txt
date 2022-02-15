@@ -1,0 +1,15 @@
+Dit project heeft als doel om de EM-Infra API te gebruiken om een Neo4J leesmodel op te bouwen.
+Hieronder volgt een lijst van wat wel en niet is opgenomen in de code.
+
+Feed
+Gebruikt de FeedProxy van EM-Infra en groepeert uuid's van gewijzigde assets.
+Verwerkt de events ook per type wijziging, zodat in bulk de wijzigingen kunnen verwerkt worden.
+
+Genegeerde events of data
+- Bestekkoppelingen
+- Communicatie aansluitingen
+- Elektriciteit aansluitingen (wordt uitgefaseerd)
+- Documenten
+- Post-its
+- Toegang
+- Vplannen
