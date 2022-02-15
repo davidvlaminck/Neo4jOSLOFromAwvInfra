@@ -8,9 +8,6 @@ class FeedEventsCollector:
     def __init__(self, emInfraImporter: EMInfraImporter):
         self.emInfraImporter = emInfraImporter
 
-    def collect_events_from_feedproxy(self):
-        pass
-
     def collect_starting_from_page(self, completed_page_number: int):
         event_dict = self.create_empty_event_dict()
 
