@@ -37,10 +37,10 @@ class NieuwAssetProcessor:
 
     @staticmethod
     def get_wkt_from_puntlocatie(json_dict):
-        if 'puntlocatie.puntgeometrie.lambert72.xcoordinaat' in json_dict.keys():
-            return f'POINT Z ({json_dict["puntlocatie.puntgeometrie.lambert72.xcoordinaat"]} ' \
-                   f'{json_dict["puntlocatie.puntgeometrie.lambert72.ycoordinaat"]} ' \
-                   f'{json_dict["puntlocatie.puntgeometrie.lambert72.zcoordinaat"]})'
+        if 'loc:puntlocatie.loc:puntgeometrie.loc:lambert72.loc:xcoordinaat' in json_dict.keys():
+            return f'POINT Z ({json_dict["loc:puntlocatie.loc:puntgeometrie.loc:lambert72.loc:xcoordinaat"]} ' \
+                   f'{json_dict["loc:puntlocatie.loc:puntgeometrie.loc:lambert72.loc:ycoordinaat"]} ' \
+                   f'{json_dict["loc:puntlocatie.loc:puntgeometrie.loc:lambert72.loc:zcoordinaat"]})'
         return ''
 
     def flatten_dict(self, input_dict: dict, separator: str = '.', prefix='', affix='', new_dict=None):

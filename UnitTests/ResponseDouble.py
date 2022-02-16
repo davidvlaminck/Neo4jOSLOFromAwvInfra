@@ -301,5 +301,11 @@ class ResponseDouble:
                     "DtcIdentificator.toegekendDoor": "AWV"
                 }
             }
-        ]
+        ],
+        'otl/agents/search/a9d7c44c-0daf-4d3a-bffc-074afb5f54c0': [{
+            "@type": "http://purl.org/dc/terms/Agent",
+            "@id": "https://data.awvvlaanderen.be/id/asset/a9d7c44c-0daf-4d3a-bffc-074afb5f54c0-cHVybDpBZ2VudA",
+            "purl:Agent.naam": "nieuwe_naam",
+            "purl:Agent.contactinfo": []
+        }],
     }
