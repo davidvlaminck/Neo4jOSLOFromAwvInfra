@@ -19,7 +19,7 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
     def process_dicts(self, assetDicts):
         logging.info(f'started changing actief of {len(assetDicts)} assets')
         for asset_dict in assetDicts:
-            korte_uri = asset_dict['typeURI'].split('/ns/')[1]
+            korte_uri = asset_dict['@type'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             naampad = None
@@ -27,7 +27,7 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
                 naampad = asset_dict['NaampadObject.naampad']
             self.tx_context.run(f"MATCH (a:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.naam = $naam, a.naampad = $naampad",
-                                uuid=asset_dict['assetId.identificator'][0:36],
+                                uuid=asset_dict['AIMObject.assetId']['DtcIdentificator.identificator'][0:36],
                                 naam=asset_dict['AIMNaamObject.naam'],
                                 naampad=naampad)
         logging.info('done')
