@@ -7,7 +7,7 @@ class RelatieProcessor:
     def __init__(self):
         self.tx_context = None
 
-    def remove_all_asset_relaties(self, asset_uuids:[str]):
+    def remove_all_asset_relaties(self, asset_uuids: [str]):
         query = f"UNWIND $params as uuids " \
                 "MATCH ({uuid: uuids})-[r]-() WHERE r <> 'HeeftBetrokkene' DELETE r"
         self.tx_context.run(query, params=asset_uuids)
@@ -50,7 +50,6 @@ class RelatieProcessor:
 
     def create_betrokkenerelatie_from_jsonLd_dict(self, json_dict):
         flattened_dict = NieuwAssetProcessor().flatten_dict(json_dict)
-
 
         relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'],
                         'isActief': json_dict["AIMDBStatus.isActief"],

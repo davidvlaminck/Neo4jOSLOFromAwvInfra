@@ -163,32 +163,6 @@ class ResponseDouble:
                     "DtcIdentificator.identificator": "1ce81d00-43c8-438f-893f-3468f56b218a-b25kZXJkZWVsI0hvb3J0Qmlq",
                     "DtcIdentificator.toegekendDoor": "AWV"
                 }
-            },
-            {
-                "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Bevestiging",
-                "@id": "https://data.awvvlaanderen.be/id/assetrelatie/cb9aa0d4-b6ad-474f-9aef-345408313a64-b25kZXJkZWVsI0JldmVzdGlnaW5n",
-                "RelatieObject.bron": {
-                    "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                    "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
-                },
-                "RelatieObject.doel": {
-                    "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkelement",
-                    "@id": "https://data.awvvlaanderen.be/id/asset/bbac4a9a-905a-4991-bafa-43126fb5db10-b25kZXJkZWVsI05ldHdlcmtlbGVtZW50"
-                },
-                "RelatieObject.typeURI": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Bevestiging",
-                "AIMDBStatus.isActief": True,
-                "RelatieObject.bronAssetId": {
-                    "DtcIdentificator.toegekendDoor": "AWV",
-                    "DtcIdentificator.identificator": "000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
-                },
-                "RelatieObject.doelAssetId": {
-                    "DtcIdentificator.toegekendDoor": "AWV",
-                    "DtcIdentificator.identificator": "bbac4a9a-905a-4991-bafa-43126fb5db10-b25kZXJkZWVsI05ldHdlcmtlbGVtZW50"
-                },
-                "RelatieObject.assetId": {
-                    "DtcIdentificator.identificator": "cb9aa0d4-b6ad-474f-9aef-345408313a64-b25kZXJkZWVsI0JldmVzdGlnaW5n",
-                    "DtcIdentificator.toegekendDoor": "AWV"
-                }
             }
         ],
         'otl/agents/search/a9d7c44c-0daf-4d3a-bffc-074afb5f54c0': [{
@@ -300,4 +274,32 @@ class ResponseDouble:
                 "AIMDBStatus.isActief": True
             }
         ],
+        'otl/assetrelaties/search/000a35d5-c4a5-4a36-8620-62c99e053ba0': [
+            {
+                "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Bevestiging",
+                "@id": "https://data.awvvlaanderen.be/id/assetrelatie/cb9aa0d4-b6ad-474f-9aef-345408313a64-b25kZXJkZWVsI0JldmVzdGlnaW5n",
+                "RelatieObject.bron": {
+                    "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
+                    "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                },
+                "RelatieObject.doel": {
+                    "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkelement",
+                    "@id": "https://data.awvvlaanderen.be/id/asset/bbac4a9a-905a-4991-bafa-43126fb5db10-b25kZXJkZWVsI05ldHdlcmtlbGVtZW50"
+                },
+                "RelatieObject.typeURI": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Bevestiging",
+                "AIMDBStatus.isActief": True,
+                "RelatieObject.bronAssetId": {
+                    "DtcIdentificator.toegekendDoor": "AWV",
+                    "DtcIdentificator.identificator": "000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                },
+                "RelatieObject.doelAssetId": {
+                    "DtcIdentificator.toegekendDoor": "AWV",
+                    "DtcIdentificator.identificator": "bbac4a9a-905a-4991-bafa-43126fb5db10-b25kZXJkZWVsI05ldHdlcmtlbGVtZW50"
+                },
+                "RelatieObject.assetId": {
+                    "DtcIdentificator.identificator": "cb9aa0d4-b6ad-474f-9aef-345408313a64-b25kZXJkZWVsI0JldmVzdGlnaW5n",
+                    "DtcIdentificator.toegekendDoor": "AWV"
+                }
+            }
+        ]
     }

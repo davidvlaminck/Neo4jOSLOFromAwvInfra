@@ -6,11 +6,13 @@ from neo4j.graph import Node
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.ActiefGewijzigdProcessor import ActiefGewijzigdProcessor
+from EventProcessors.AssetRelatiesGewijzigdProcessor import AssetRelatiesGewijzigdProcessor
 from EventProcessors.CommentaarGewijzigdProcessor import CommentaarGewijzigdProcessor
 from EventProcessors.NaamGewijzigdProcessor import NaamGewijzigdProcessor
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
 from EventProcessors.NieuwOnderdeelProcessor import NieuwOnderdeelProcessor
 from EventProcessors.NieuweInstallatieProcessor import NieuweInstallatieProcessor
+from EventProcessors.RelatieProcessor import RelatieProcessor
 from EventProcessors.ToestandGewijzigdProcessor import ToestandGewijzigdProcessor
 from FeedEventsProcessor import FeedEventsProcessor
 from Neo4JConnector import Neo4JConnector
@@ -188,5 +190,36 @@ class EventProcessorsTests(TestCase):
         # test after change
         result_after_event = self.tx_context.run(query).single()[0]
         self.assertEqual('aangepaste notitie', result_after_event._properties['notitie'])
+
+        self.tearDown()
+
+    def test_relaties_gewijzigd(self):
+        self.setUp()
+
+        # create test assets
+        uuids = ['000a35d5-c4a5-4a36-8620-62c99e053ba0','bbac4a9a-905a-4991-bafa-43126fb5db10', 'c531aad8-e7c3-49f6-8c0d-c228a0c17c02']
+        asset_processor = NieuwAssetProcessor()
+        asset_processor.tx_context = self.tx_context
+        for uuid in uuids:
+            asset_processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
+
+        # create test relation
+        relatie_processor = RelatieProcessor()
+        relatie_processor.tx_context = self.tx_context
+        relatie_processor.create_assetrelatie_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + uuids[0]][0])
+
+        # test before change
+        query = "MATCH (n{uuid:'" + uuids[0] + "'})-[r]-() return r"
+        result_before_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#HoortBij', result_before_event._properties['typeURI'])
+
+        # make the change
+        relatie_processor = AssetRelatiesGewijzigdProcessor(tx_context=self.tx_context, emInfraImporter=mock.Mock())
+        relatie_processor.process_dicts(assetrelatie_dicts=ResponseDouble.endpoint_changed['otl/assetrelaties/search/' + uuids[0]],
+                                        uuids=uuids)
+
+        # test after change
+        result_after_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Bevestiging', result_after_event._properties['typeURI'])
 
         self.tearDown()

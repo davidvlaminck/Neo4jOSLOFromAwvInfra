@@ -12,13 +12,13 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
         super().__init__(tx_context, emInfraImporter)
 
     def process(self, uuids: [str]):
-        assetrelatie_dicts = self.emInfraImporter.import_assetrelaties_from_webservice_by_assetuuids(
-            asset_uuids=uuids)
+        assetrelatie_dicts = self.emInfraImporter.import_assetrelaties_from_webservice_by_assetuuids(asset_uuids=uuids)
 
+        self.process_dicts(assetrelatie_dicts, uuids)
+
+    def process_dicts(self, assetrelatie_dicts, uuids: [str]):
         logging.info(f'started creating {len(assetrelatie_dicts)} assetrelaties')
-
         self.remove_all_asset_relaties(uuids)
         for assetrelatie_dict in assetrelatie_dicts:
             self.create_assetrelatie_from_jsonLd_dict(assetrelatie_dict)
-
         logging.info('done')
