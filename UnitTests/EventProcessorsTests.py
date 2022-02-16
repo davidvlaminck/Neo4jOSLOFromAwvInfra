@@ -197,7 +197,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create test assets
-        uuids = ['000a35d5-c4a5-4a36-8620-62c99e053ba0','bbac4a9a-905a-4991-bafa-43126fb5db10', 'c531aad8-e7c3-49f6-8c0d-c228a0c17c02']
+        uuids = ['000a35d5-c4a5-4a36-8620-62c99e053ba0', 'bbac4a9a-905a-4991-bafa-43126fb5db10', 'c531aad8-e7c3-49f6-8c0d-c228a0c17c02']
         asset_processor = NieuwAssetProcessor()
         asset_processor.tx_context = self.tx_context
         for uuid in uuids:
@@ -215,8 +215,7 @@ class EventProcessorsTests(TestCase):
 
         # make the change
         relatie_processor = AssetRelatiesGewijzigdProcessor(tx_context=self.tx_context, emInfraImporter=mock.Mock())
-        relatie_processor.process_dicts(assetrelatie_dicts=ResponseDouble.endpoint_changed['otl/assetrelaties/search/' + uuids[0]],
-                                        uuids=uuids)
+        relatie_processor.process_dicts(assetrelatie_dicts=ResponseDouble.endpoint_changed['otl/assetrelaties/search/' + uuids[0]], uuids=uuids)
 
         # test after change
         result_after_event = self.tx_context.run(query).single()[0]
