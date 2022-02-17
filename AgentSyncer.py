@@ -30,11 +30,15 @@ class AgentSyncer:
             l = list(map(lambda x: x['a'], existing_nodes))
             existing_id_uris = list(map(lambda x: x['assetIdUri'], l))
 
+        agents_from_db = list(map(lambda x: x['assetIdUri'], flattened_dicts))
+
         # check existing_id_uris for update/create flow
+        dicts_to_create = []
+        dicts_to_update = []
 
         # create agents
-        for i in range(0, len(flattened_dicts), chunk_size):
-            chunk = flattened_dicts[i:i + chunk_size]
+        for i in range(0, len(dicts_to_create), chunk_size):
+            chunk = dicts_to_create[i:i + chunk_size]
             self.tx_context.run("UNWIND $params AS map CREATE (a:Agent) SET a = map", params=chunk)
 
     def clean_agent_dicts(self, agent_dicts):
