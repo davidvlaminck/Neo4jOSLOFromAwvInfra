@@ -212,8 +212,8 @@ class ResponseDouble:
                 "DtcIdentificator.toegekendDoor": "AWV"
             },
             "tz:Toezicht.toezichtgroep": {
-                "tz:DtcToezichtGroep.referentie": "AWV_EW_AN",
-                "tz:DtcToezichtGroep.naam": "AWV_EW_AN"
+                "tz:DtcToezichtGroep.referentie": "EMT_TELE",
+                "tz:DtcToezichtGroep.naam": "EMT_TELE"
             },
             "loc:Locatie.puntlocatie": {
                 "loc:DtcPuntlocatie.weglocatie": {
@@ -245,9 +245,9 @@ class ResponseDouble:
             "AIMNaamObject.naam": "057A5.K",
             "tz:Toezicht.toezichter": {
                 "tz:DtcToezichter.email": "niels.vanasch@mow.vlaanderen.be",
-                "tz:DtcToezichter.voornaam": "Niels",
-                "tz:DtcToezichter.naam": "Van Asch",
-                "tz:DtcToezichter.gebruikersnaam": "vanascni"
+                "tz:DtcToezichter.voornaam": "Jan",
+                "tz:DtcToezichter.naam": "Bosmans",
+                "tz:DtcToezichter.gebruikersnaam": "bosmanja"
             },
             "loc:Locatie.omschrijving": "",
             "tz:Schadebeheerder.schadebeheerder": {

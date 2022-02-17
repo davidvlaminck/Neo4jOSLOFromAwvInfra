@@ -13,8 +13,11 @@ class ToezichtGewijzigdProcessor(SpecificEventProcessor):
 
     def process(self, uuids: [str]):
         assetDicts = self.emInfraImporter.import_assets_from_webservice_by_uuids(asset_uuids=uuids)
-        asset_processor = NieuwAssetProcessor()
 
+        self.process_dicts(assetDicts)
+
+    def process_dicts(self, assetDicts):
+        asset_processor = NieuwAssetProcessor()
         logging.info(f'started changing toezicht of {len(assetDicts)} assets')
         for asset_dict in assetDicts:
             korte_uri = asset_dict['typeURI'].split('/ns/')[1]
