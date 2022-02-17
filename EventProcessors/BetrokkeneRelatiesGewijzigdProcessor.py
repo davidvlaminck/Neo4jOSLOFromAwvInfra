@@ -15,10 +15,11 @@ class BetrokkeneRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProces
         betrokkenerelatie_dicts = self.emInfraImporter.import_betrokkenerelaties_from_webservice_by_assetuuids(
             asset_uuids=uuids)
 
-        logging.info(f'started creating {len(betrokkenerelatie_dicts)} betrokkenerelaties')
+        self.process_dicts(betrokkenerelatie_dicts, uuids)
 
+    def process_dicts(self, betrokkenerelatie_dicts, uuids):
+        logging.info(f'started creating {len(betrokkenerelatie_dicts)} betrokkenerelaties')
         self.remove_all_betrokkene_relaties(uuids)
         for betrokkenerelatie_dict in betrokkenerelatie_dicts:
             self.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatie_dict)
-
         logging.info('done')

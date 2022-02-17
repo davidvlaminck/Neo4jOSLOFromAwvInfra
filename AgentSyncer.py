@@ -26,20 +26,29 @@ class AgentSyncer:
 
         list_id_uris = list(map(lambda x: x['assetIdUri'], flattened_dicts))
         existing_nodes = self.tx_context.run("MATCH (a:Agent) WHERE a.assetIdUri IN $params RETURN a", params=list_id_uris).data()
+        existing_id_uris = []
         if len(existing_nodes) > 0:
             l = list(map(lambda x: x['a'], existing_nodes))
             existing_id_uris = list(map(lambda x: x['assetIdUri'], l))
 
-        agents_from_db = list(map(lambda x: x['assetIdUri'], flattened_dicts))
-
-        # check existing_id_uris for update/create flow
+        # filter which must be created and what must be updated
         dicts_to_create = []
         dicts_to_update = []
+        for agent in flattened_dicts:
+            if agent['assetIdUri'] in existing_id_uris:
+                dicts_to_update.append(agent)
+            else:
+                dicts_to_create.append(agent)
 
         # create agents
         for i in range(0, len(dicts_to_create), chunk_size):
             chunk = dicts_to_create[i:i + chunk_size]
             self.tx_context.run("UNWIND $params AS map CREATE (a:Agent) SET a = map", params=chunk)
+
+        # update agents
+        for i in range(0, len(dicts_to_update), chunk_size):
+            chunk = dicts_to_update[i:i + chunk_size]
+            self.tx_context.run("UNWIND $params AS map MATCH (a:Agent) WHERE a.assetIdUri = map.assetIdUri SET a = map", params=chunk)
 
     def clean_agent_dicts(self, agent_dicts):
         flattened_dicts = []

@@ -8,6 +8,7 @@ Verwerkt de events ook per type wijziging, zodat in bulk de wijzigingen kunnen v
 Verwerkt events in transacties, om fouten te voorkomen
 
 Agents worden nog niet gesynct => moet een error raisen en daarna agents eerst syncen
+> Agents worden niet verwijderd
 
 Genegeerde events of data
 - Bestekkoppelingen

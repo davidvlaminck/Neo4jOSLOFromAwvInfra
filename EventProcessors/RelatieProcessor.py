@@ -19,13 +19,14 @@ class RelatieProcessor:
 
     @staticmethod
     def _create_assetrelatie_by_dict(tx, bron_uuid='', doel_uuid='', relatie_type='', params=None):
-        query = "MATCH (a:Asset), (b:Asset) " \
+        query = "MATCH (a:Asset), (b) " \
                 f"WHERE a.uuid = '{bron_uuid}' " \
                 f"AND b.uuid = '{doel_uuid}' " \
                 f"CREATE (a)-[r:{relatie_type} " \
                 "$params]->(b) " \
-                f"RETURN type(r), r.name"
-        tx.run(query, params=params)
+                f"RETURN r"
+        results = tx.run(query, params=params).data()
+        pass
 
     def create_assetrelatie_from_jsonLd_dict(self, json_dict):
         relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'],
