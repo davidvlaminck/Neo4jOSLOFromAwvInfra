@@ -15,6 +15,7 @@ from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
 from EventProcessors.NieuwOnderdeelProcessor import NieuwOnderdeelProcessor
 from EventProcessors.NieuweInstallatieProcessor import NieuweInstallatieProcessor
 from EventProcessors.RelatieProcessor import RelatieProcessor
+from EventProcessors.SchadebeheerderGewijzigdProcessor import SchadebeheerderGewijzigdProcessor
 from EventProcessors.ToestandGewijzigdProcessor import ToestandGewijzigdProcessor
 from EventProcessors.ToezichtGewijzigdProcessor import ToezichtGewijzigdProcessor
 from FeedEventsProcessor import FeedEventsProcessor
@@ -301,5 +302,31 @@ class EventProcessorsTests(TestCase):
         result_after_event = self.tx_context.run(query).single()[0]
         self.assertEqual('bosmanja', result_after_event._properties['tz:toezichter.tz:gebruikersnaam'])
         self.assertEqual('EMT_TELE', result_after_event._properties['tz:toezichtgroep.tz:referentie'])
+
+        self.tearDown()
+
+    def test_schadebeheerder_gewijzigd(self):
+        self.setUp()
+
+        # create a test asset
+        uuid = '00000453-56ce-4f8b-af44-960df526cb30'
+        processor = NieuwAssetProcessor()
+        processor.tx_context = self.tx_context
+        processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
+
+        # test before change
+        query = "MATCH (n{uuid:'" + uuid + "'}) return n"
+        result_before_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('District Geel', result_before_event._properties['tz:schadebeheerder.tz:naam'])
+        self.assertEqual('114', result_before_event._properties['tz:schadebeheerder.tz:referentie'])
+
+        # make the change
+        processor = SchadebeheerderGewijzigdProcessor(self.tx_context, mock.Mock())
+        processor.process_dicts(ResponseDouble.endpoint_changed['otl/assets/search/' + uuid])
+
+        # test after change
+        result_after_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('District Brecht', result_after_event._properties['tz:schadebeheerder.tz:naam'])
+        self.assertEqual('123', result_after_event._properties['tz:schadebeheerder.tz:referentie'])
 
         self.tearDown()

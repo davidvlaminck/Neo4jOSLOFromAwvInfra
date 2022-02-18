@@ -251,8 +251,8 @@ class ResponseDouble:
             },
             "loc:Locatie.omschrijving": "",
             "tz:Schadebeheerder.schadebeheerder": {
-                "tz:DtcBeheerder.naam": "District Geel",
-                "tz:DtcBeheerder.referentie": "114"
+                "tz:DtcBeheerder.naam": "District Brecht",
+                "tz:DtcBeheerder.referentie": "123"
             },
             "AIMToestand.toestand": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlAIMToestand/in-gebruik",
             "loc:Locatie.geometrie": ""
