@@ -19,9 +19,11 @@ class AgentSyncer:
         self.update_agents(agent_dicts=agents)
 
     def get_all_agents(self) -> []:
-        return [{}]
+        return [{}] # TODO still missing
 
     def update_agents(self, agent_dicts: [dict], chunk_size: int = 20):
+        if len(agent_dicts) == 0:
+            return
         flattened_dicts = self.clean_agent_dicts(agent_dicts)
 
         list_id_uris = list(map(lambda x: x['assetIdUri'], flattened_dicts))

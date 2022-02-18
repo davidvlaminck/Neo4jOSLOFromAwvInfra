@@ -1,7 +1,9 @@
 import logging
 import time
 
+from AgentSyncer import AgentSyncer
 from EMInfraImporter import EMInfraImporter
+from EventProcessors.RelationNotCreatedError import RelationNotCreatedError
 from FeedEventsCollector import FeedEventsCollector
 from FeedEventsProcessor import FeedEventsProcessor
 from Neo4JConnector import Neo4JConnector
@@ -22,11 +24,20 @@ class Syncer:
             logging.info(f'starting a sync cycle, page: {str(completed_page_number + 1)}')
             eventsparams_to_process = self.events_collector.collect_starting_from_page(completed_page_number)
 
-            self.log_eventparams(eventsparams_to_process.event_dict)
-            self.events_processor.process_events(eventsparams_to_process)
-            # time.sleep(30) # wait 30 seconds to prevent overloading API
+            total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
+            if total_events == 0:
+                time.sleep(30)  # wait 30 seconds to prevent overloading API
 
-            # sync agents periodically? bij fout eerst agents syncen of na 24h
+            self.log_eventparams(eventsparams_to_process.event_dict)
+            try:
+                self.events_processor.process_events(eventsparams_to_process)
+            except RelationNotCreatedError:
+                self.events_processor.tx_context.rollback()
+                self.sync_all_agents()
+            except Exception as exc:
+                self.events_processor.tx_context.rollback()
+
+            # agents syncen of na 24h
 
     def log_eventparams(self, event_dict):
         total = sum(len(l) for l in event_dict.values())
@@ -34,6 +45,10 @@ class Syncer:
         for k, v in event_dict.items():
             if len(v) > 0:
                 logging.info(f'number of events of type {k}: {len(v)}')
+
+    def sync_all_agents(self):
+        agentsyncer = AgentSyncer(emInfraImporter=self.eminfra_importer, neo4J_connector=self.connector)
+        agentsyncer.sync_agents()
 
 
 if __name__ == '__main__':

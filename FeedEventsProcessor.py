@@ -9,15 +9,16 @@ class FeedEventsProcessor:
     def __init__(self, neo4J_connector: Neo4JConnector, emInfraImporter: EMInfraImporter):
         self.neo4J_connector = neo4J_connector
         self.emInfraImporter = emInfraImporter
+        self.tx_context = None
 
     def process_events(self, event_params: ()):
-        tx_context = self.neo4J_connector.start_transaction()
+        self.tx_context = self.neo4J_connector.start_transaction()
 
-        self.process_events_by_event_params(event_params, tx_context)
+        self.process_events_by_event_params(event_params, self.tx_context)
 
         page_num = event_params.page_num
-        self.neo4J_connector.update_params(tx_context, page_num)
-        self.neo4J_connector.commit_transaction(tx_context)
+        self.neo4J_connector.update_params(self.tx_context, page_num)
+        self.neo4J_connector.commit_transaction(self.tx_context)
 
     def process_events_by_event_params(self, event_params, tx_context):
         event_dict = event_params.event_dict
@@ -28,7 +29,7 @@ class FeedEventsProcessor:
             start = time.time()
             event_processor.process(event_dict["NIEUW_ONDERDEEL"], event_params.full_sync)
             end = time.time()
-            avg = (end - start) / len(event_params.event_dict)
+            avg = round((end - start) / len(event_params.event_dict), 2)
             logging.info(
                 f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
         if "NIEUWE_INSTALLATIE" in event_dict.keys() and len(event_dict["NIEUWE_INSTALLATIE"]) > 0:
@@ -36,7 +37,7 @@ class FeedEventsProcessor:
             start = time.time()
             event_processor.process(event_dict["NIEUWE_INSTALLATIE"], event_params.full_sync)
             end = time.time()
-            avg = (end - start) / len(event_params.event_dict)
+            avg = round((end - start) / len(event_params.event_dict), 2 )
             logging.info(
                 f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
         for event_type, uuids in event_dict.items():
@@ -46,7 +47,7 @@ class FeedEventsProcessor:
             start = time.time()
             event_processor.process(uuids)
             end = time.time()
-            avg = (end - start) / len(event_params.event_dict)
+            avg = round((end - start) / len(event_params.event_dict), 2 )
             logging.info(
                 f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
 

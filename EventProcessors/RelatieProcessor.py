@@ -1,6 +1,7 @@
 import json
 
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
+from EventProcessors.RelationNotCreatedError import RelationNotCreatedError
 
 
 class RelatieProcessor:
@@ -25,8 +26,7 @@ class RelatieProcessor:
                 f"CREATE (a)-[r:{relatie_type} " \
                 "$params]->(b) " \
                 f"RETURN r"
-        results = tx.run(query, params=params).data()
-        pass
+        return tx.run(query, params=params).data()
 
     def create_assetrelatie_from_jsonLd_dict(self, json_dict):
         relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'],
@@ -46,8 +46,11 @@ class RelatieProcessor:
             else:
                 relatie_dict[k] = v
 
-        self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid, relatie_type=relatie_type,
-                                          params=relatie_dict)
+        relatie = self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
+                                                    relatie_type=relatie_type,
+                                                    params=relatie_dict)
+        if len(relatie) == 0:
+            raise RelationNotCreatedError('One of the nodes might be missing')
 
     def create_betrokkenerelatie_from_jsonLd_dict(self, json_dict):
         flattened_dict = NieuwAssetProcessor().flatten_dict(json_dict)
@@ -69,6 +72,8 @@ class RelatieProcessor:
             else:
                 relatie_dict[k] = v
 
-        self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid, relatie_type=relatie_type,
-                                          params=relatie_dict)
-
+        relatie = self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
+                                                    relatie_type=relatie_type,
+                                                    params=relatie_dict)
+        if len(relatie) == 0:
+            raise RelationNotCreatedError('One of the nodes might be missing')
