@@ -10,6 +10,7 @@ from EventProcessors.ActiefGewijzigdProcessor import ActiefGewijzigdProcessor
 from EventProcessors.AssetRelatiesGewijzigdProcessor import AssetRelatiesGewijzigdProcessor
 from EventProcessors.BetrokkeneRelatiesGewijzigdProcessor import BetrokkeneRelatiesGewijzigdProcessor
 from EventProcessors.CommentaarGewijzigdProcessor import CommentaarGewijzigdProcessor
+from EventProcessors.GeometrieOrLocatieGewijzigdProcessor import GeometrieOrLocatieGewijzigdProcessor
 from EventProcessors.NaamGewijzigdProcessor import NaamGewijzigdProcessor
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
 from EventProcessors.NieuwOnderdeelProcessor import NieuwOnderdeelProcessor
@@ -328,5 +329,31 @@ class EventProcessorsTests(TestCase):
         result_after_event = self.tx_context.run(query).single()[0]
         self.assertEqual('District Brecht', result_after_event._properties['tz:schadebeheerder.tz:naam'])
         self.assertEqual('123', result_after_event._properties['tz:schadebeheerder.tz:referentie'])
+
+        self.tearDown()
+
+    def test_locatie_gewijzigd(self):
+        self.setUp()
+
+        # create a test asset
+        uuid = '00000453-56ce-4f8b-af44-960df526cb30'
+        processor = NieuwAssetProcessor()
+        processor.tx_context = self.tx_context
+        processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
+
+        # test before change
+        query = "MATCH (n{uuid:'" + uuid + "'}) return n"
+        result_before_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('POINT Z (192721.4 201119.2 0)', result_before_event._properties['geometry'])
+        self.assertEqual('Geel', result_before_event._properties['loc:puntlocatie.loc:weglocatie.loc:gemeente'])
+
+        # make the change
+        processor = GeometrieOrLocatieGewijzigdProcessor(self.tx_context, mock.Mock())
+        processor.process_dicts(ResponseDouble.endpoint_changed['otl/assets/search/' + uuid])
+
+        # test after change
+        result_after_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('POINT Z (150000 250000 0)', result_after_event._properties['geometry'])
+        self.assertEqual('Antwerpen', result_after_event._properties['loc:puntlocatie.loc:weglocatie.loc:gemeente'])
 
         self.tearDown()

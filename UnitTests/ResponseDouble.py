@@ -220,14 +220,14 @@ class ResponseDouble:
                     "loc:DtcWeglocatie.referentiepaalAfstand": 45,
                     "loc:DtcWeglocatie.ident2": "N156",
                     "loc:DtcWeglocatie.ident8": "N1560001",
-                    "loc:DtcWeglocatie.gemeente": "Geel",
+                    "loc:DtcWeglocatie.gemeente": "Antwerpen",
                     "loc:DtcWeglocatie.straatnaam": "Amocolaan",
                     "loc:DtcWeglocatie.referentiepaalOpschrift": 10.8
                 },
                 "loc:3Dpunt.puntgeometrie": {
                     "loc:DtcCoord.lambert72": {
-                        "loc:DtcCoordLambert72.xcoordinaat": 192721.4,
-                        "loc:DtcCoordLambert72.ycoordinaat": 201119.2,
+                        "loc:DtcCoordLambert72.xcoordinaat": 150000,
+                        "loc:DtcCoordLambert72.ycoordinaat": 250000,
                         "loc:DtcCoordLambert72.zcoordinaat": 0
                     }
                 },
