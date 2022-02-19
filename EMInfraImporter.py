@@ -17,7 +17,9 @@ class EMInfraImporter:
 
     def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100) -> [dict]:
         url = f"core/api/otl/{url_part}/search"
-        body_fixed_part = '{"size": ' + f'{size}' + ', "filters": ' + filter_string
+        body_fixed_part = '{"size": ' + f'{size}' + ''
+        if filter_string != '{}':
+            body_fixed_part += ', "filters": ' + filter_string
 
         json_list = []
         while True:
@@ -44,6 +46,14 @@ class EMInfraImporter:
         asset_list_string = '", "'.join(asset_uuids)
         filter_string = '{ "uuid": ' + f'["{asset_list_string}"]' + ' }'
         return self.get_objects_from_oslo_search_endpoint(url_part='assets', filter_string=filter_string)
+
+    def import_all_agents_from_webservice(self) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='agents')
+
+    def import_agents_from_webservice_by_uuids(self, agent_uuids: [str]) -> [dict]:
+        agent_list_string = '", "'.join(agent_uuids)
+        filter_string = '{ "uuid": ' + f'["{agent_list_string}"]' + ' }'
+        return self.get_objects_from_oslo_search_endpoint(url_part='agents', filter_string=filter_string)
 
     def import_assetrelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)

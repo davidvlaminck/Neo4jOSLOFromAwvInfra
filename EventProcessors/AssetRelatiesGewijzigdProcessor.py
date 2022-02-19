@@ -4,6 +4,7 @@ from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.RelatieProcessor import RelatieProcessor
+from EventProcessors.RelationNotCreatedError import RelationNotCreatedError, AssetRelationNotCreatedError
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
@@ -20,5 +21,9 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
         logging.info(f'started creating {len(assetrelatie_dicts)} assetrelaties')
         self.remove_all_asset_relaties(uuids)
         for assetrelatie_dict in assetrelatie_dicts:
-            self.create_assetrelatie_from_jsonLd_dict(assetrelatie_dict)
+            try:
+                self.create_assetrelatie_from_jsonLd_dict(assetrelatie_dict)
+            except RelationNotCreatedError as ex:
+                raise AssetRelationNotCreatedError(str(ex))
+
         logging.info('done')

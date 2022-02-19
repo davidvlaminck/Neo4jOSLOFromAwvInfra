@@ -4,11 +4,11 @@ Hieronder volgt een lijst van wat wel en niet is opgenomen in de code.
 Feed
 Gebruikt de FeedProxy van EM-Infra en groepeert uuid's van gewijzigde assets.
 Verwerkt de events ook per type wijziging, zodat in bulk de wijzigingen kunnen verwerkt worden.
+Gebruikt 1 event per pagina, zodat het laatst verwerkte event ook de pagina nummer is
 
 Verwerkt events in transacties, om fouten te voorkomen
 
-Agents worden nog niet gesynct => moet een error raisen en daarna agents eerst syncen
-> Agents worden niet verwijderd
+Agents worden niet verwijderd
 
 Genegeerde events of data
 - Bestekkoppelingen
@@ -18,3 +18,9 @@ Genegeerde events of data
 - Post-its
 - Toegang
 - Vplannen
+
+Probleem:
+De eerste events van de feed zijn creatie events van assets. Deze implementatie gaat er van uit dat bij consumatie de volledige assets wordt opgehaald, inclusief de relaties.
+Je kan echter geen relaties leggen naar assets die nog niet bestaan, wat gebeurt bij het creëren van de eerste reeksen assets.
+Oplossing:
+Assetrelaties worden niet gelegd als bron of doel asset niet bestaat. Deze relaties worden dan gelegd wanneer de bron of doel die voorheen niet bestond wordt toegevoegd.

@@ -29,7 +29,7 @@ class FeedEventsProcessor:
             start = time.time()
             event_processor.process(event_dict["NIEUW_ONDERDEEL"], event_params.full_sync)
             end = time.time()
-            avg = round((end - start) / len(event_params.event_dict), 2)
+            avg = round((end - start) / len(event_params.event_dict["NIEUW_ONDERDEEL"]), 2)
             logging.info(
                 f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
         if "NIEUWE_INSTALLATIE" in event_dict.keys() and len(event_dict["NIEUWE_INSTALLATIE"]) > 0:
@@ -37,7 +37,7 @@ class FeedEventsProcessor:
             start = time.time()
             event_processor.process(event_dict["NIEUWE_INSTALLATIE"], event_params.full_sync)
             end = time.time()
-            avg = round((end - start) / len(event_params.event_dict), 2 )
+            avg = round((end - start) / len(event_params.event_dict["NIEUWE_INSTALLATIE"]), 2 )
             logging.info(
                 f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
         for event_type, uuids in event_dict.items():
@@ -47,7 +47,7 @@ class FeedEventsProcessor:
             start = time.time()
             event_processor.process(uuids)
             end = time.time()
-            avg = round((end - start) / len(event_params.event_dict), 2 )
+            avg = round((end - start) / len(uuids), 2 )
             logging.info(
                 f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
 

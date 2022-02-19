@@ -19,7 +19,7 @@ class AgentSyncer:
         self.update_agents(agent_dicts=agents)
 
     def get_all_agents(self) -> []:
-        return [{}] # TODO still missing
+        return self.emInfraImporter.import_all_agents_from_webservice()
 
     def update_agents(self, agent_dicts: [dict], chunk_size: int = 20):
         if len(agent_dicts) == 0:

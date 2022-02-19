@@ -5,6 +5,7 @@ from neo4j import Transaction
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
 from EventProcessors.RelatieProcessor import RelatieProcessor
+from EventProcessors.RelationNotCreatedError import RelationNotCreatedError
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
@@ -27,7 +28,10 @@ class NieuweInstallatieProcessor(SpecificEventProcessor, NieuwAssetProcessor, Re
                 asset_uuids=uuids)
             logging.info(f'started creating {len(assetrelatie_dicts) + len(betrokkenerelatie_dicts)} relations')
             for assetrelatieDict in assetrelatie_dicts:
-                self.create_assetrelatie_from_jsonLd_dict(assetrelatieDict)
+                try:
+                    self.create_assetrelatie_from_jsonLd_dict(assetrelatieDict)
+                except RelationNotCreatedError as ex:
+                    pass  # fix for creating relationships between assets where one of the nodes does not exist yet
             for betrokkenerelatieDict in betrokkenerelatie_dicts:
                 self.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatieDict)
 
