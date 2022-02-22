@@ -26,7 +26,9 @@ class Syncer:
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:
+                logging.info(f"The database is fully sync'ed. Continuing keep up to date in 30 seconds")
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
+                continue
 
             self.log_eventparams(eventsparams_to_process.event_dict)
             try:
