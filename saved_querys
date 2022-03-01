@@ -21,5 +21,6 @@ load
 bin/neo4j-admin load --from=/dumps/neo4j/neo4j-<timestamp>.dump --database=neo4j --force
 
 
-unwind ['2a96435b-8242-4e8a-83cc-f0fa459ea64b', '00143e33-a365-4792-b5fb-1e4fc94c5ac4'] as uuids
-MATCH (n{uuid: uuids})-[r]-() WHERE r <> 'HeeftBetrokkene' delete r
+CREATE INDEX Asset_uuid IF NOT EXISTS
+FOR (n:Asset)
+ON (n.uuid)

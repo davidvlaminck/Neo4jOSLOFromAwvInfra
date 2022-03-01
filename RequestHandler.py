@@ -22,9 +22,12 @@ class RequestHandler:
         return dict_obj
 
     def _perform_get_request(self, url) -> Response:
-        return requests.get(f'{self.base_path}{url}', cert=(self.cert_path, self.key_path),
+        return requests.get(url=f'{self.base_path}{url}',
+                            cert=(self.cert_path, self.key_path),
                             headers={"accept": "application/vnd.awv.eminfra.v2+json"})
 
     def perform_post_request(self, url, json_data=None) -> Response:
-        return requests.post(f'{self.base_path}{url}', cert=(self.cert_path, self.key_path),
-                            headers={"accept": "application/vnd.awv.eminfra.v2+json"}, json=json_data)
+        return requests.post(url=f'{self.base_path}{url}',
+                             cert=(self.cert_path, self.key_path),
+                             headers={"accept": "application/vnd.awv.eminfra.v2+json"},
+                             json=json_data)

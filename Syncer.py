@@ -26,7 +26,7 @@ class Syncer:
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:
-                logging.info(f"The database is fully sync'ed. Continuing keep up to date in 30 seconds")
+                logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
                 continue
 
@@ -41,8 +41,9 @@ class Syncer:
 
             # agents syncen of na 24h
 
-    def log_eventparams(self, event_dict):
-        total = sum(len(l) for l in event_dict.values())
+    @staticmethod
+    def log_eventparams(event_dict):
+        total = sum(len(events) for events in event_dict.values())
         logging.info(f'fetched {total} assets to sync')
         for k, v in event_dict.items():
             if len(v) > 0:

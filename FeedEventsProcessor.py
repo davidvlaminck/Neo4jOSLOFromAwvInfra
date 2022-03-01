@@ -31,15 +31,15 @@ class FeedEventsProcessor:
             end = time.time()
             avg = round((end - start) / len(event_params.event_dict["NIEUW_ONDERDEEL"]), 2)
             logging.info(
-                f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
+                f'finished processing events of type NIEUW_ONDERDEEL in {str(round(end - start, 2))} seconds. Average time per item = {str(avg)} seconds')
         if "NIEUWE_INSTALLATIE" in event_dict.keys() and len(event_dict["NIEUWE_INSTALLATIE"]) > 0:
             event_processor = self.create_processor("NIEUWE_INSTALLATIE", tx_context)
             start = time.time()
             event_processor.process(event_dict["NIEUWE_INSTALLATIE"], event_params.full_sync)
             end = time.time()
-            avg = round((end - start) / len(event_params.event_dict["NIEUWE_INSTALLATIE"]), 2 )
+            avg = round((end - start) / len(event_params.event_dict["NIEUWE_INSTALLATIE"]), 2)
             logging.info(
-                f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
+                f'finished processing events of type NIEUW_ONDERDEEL in {str(round(end - start, 2))} seconds. Average time per item = {str(avg)} seconds')
         for event_type, uuids in event_dict.items():
             if event_type in ["NIEUW_ONDERDEEL", "NIEUWE_INSTALLATIE"] or len(uuids) == 0:
                 continue
@@ -47,11 +47,12 @@ class FeedEventsProcessor:
             start = time.time()
             event_processor.process(uuids)
             end = time.time()
-            avg = round((end - start) / len(uuids), 2 )
+            avg = round((end - start) / len(uuids), 2)
             logging.info(
-                f'finished processing events of type NIEUW_ONDERDEEL in {str(end - start)} seconds. Average time per item = {str(avg)} seconds')
+                f'finished processing events of type NIEUW_ONDERDEEL in {str(round(end - start, 2))} seconds. Average time per item = {str(avg)} seconds')
 
     def create_processor(self, event_type, tx_context):
-        event_processor = EventProcessorFactory.CreateEventProcessor(event_type=event_type, tx_context=tx_context,
+        event_processor = EventProcessorFactory.CreateEventProcessor(event_type=event_type,
+                                                                     tx_context=tx_context,
                                                                      emInfraImporter=self.emInfraImporter)
         return event_processor
