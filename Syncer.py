@@ -1,9 +1,10 @@
 import logging
 import time
+import traceback
 
 from AgentSyncer import AgentSyncer
 from EMInfraImporter import EMInfraImporter
-from EventProcessors.RelationNotCreatedError import RelationNotCreatedError
+from EventProcessors.RelationNotCreatedError import RelationNotCreatedError, BetrokkeneRelationNotCreatedError
 from FeedEventsCollector import FeedEventsCollector
 from FeedEventsProcessor import FeedEventsProcessor
 from Neo4JConnector import Neo4JConnector
@@ -33,10 +34,11 @@ class Syncer:
             self.log_eventparams(eventsparams_to_process.event_dict)
             try:
                 self.events_processor.process_events(eventsparams_to_process)
-            except RelationNotCreatedError:
+            except BetrokkeneRelationNotCreatedError:
                 self.events_processor.tx_context.rollback()
                 self.sync_all_agents()
             except Exception as exc:
+                traceback.print_exception(exc)
                 self.events_processor.tx_context.rollback()
 
             # agents syncen of na 24h
@@ -44,7 +46,7 @@ class Syncer:
     @staticmethod
     def log_eventparams(event_dict):
         total = sum(len(events) for events in event_dict.values())
-        logging.info(f'fetched {total} assets to sync')
+        logging.info(f'fetched {total} asset events to sync')
         for k, v in event_dict.items():
             if len(v) > 0:
                 logging.info(f'number of events of type {k}: {len(v)}')

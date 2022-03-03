@@ -17,9 +17,9 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
 
         self.process_dicts(assetrelatie_dicts, uuids)
 
-    def process_dicts(self, assetrelatie_dicts, uuids: [str]):
+    def process_dicts(self, assetrelatie_dicts, uuids: {str}):
         logging.info(f'started creating {len(assetrelatie_dicts)} assetrelaties')
-        self.remove_all_asset_relaties(uuids)
+        self.remove_all_asset_relaties(list(uuids))
         for assetrelatie_dict in assetrelatie_dicts:
             try:
                 self.create_assetrelatie_from_jsonLd_dict(assetrelatie_dict)

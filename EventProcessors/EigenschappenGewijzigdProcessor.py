@@ -18,7 +18,7 @@ class EigenschappenGewijzigdProcessor(SpecificEventProcessor):
 
     def process_dicts(self, assetDicts):
         asset_processor = NieuwAssetProcessor()
-        logging.info(f'started changing actief of {len(assetDicts)} assets')
+        logging.info(f'started changing eigenschappen of {len(assetDicts)} assets')
         for asset_dict in assetDicts:
             flattened_dict = asset_processor.flatten_dict(input_dict=asset_dict)
 
