@@ -5,11 +5,11 @@ from unittest import TestCase, mock
 from neo4j.graph import Node
 
 from AgentSyncer import AgentSyncer
-from EMInfraImporter import EMInfraImporter
 from EventProcessors.ActiefGewijzigdProcessor import ActiefGewijzigdProcessor
 from EventProcessors.AssetRelatiesGewijzigdProcessor import AssetRelatiesGewijzigdProcessor
 from EventProcessors.BetrokkeneRelatiesGewijzigdProcessor import BetrokkeneRelatiesGewijzigdProcessor
 from EventProcessors.CommentaarGewijzigdProcessor import CommentaarGewijzigdProcessor
+from EventProcessors.EigenschappenGewijzigdProcessor import EigenschappenGewijzigdProcessor
 from EventProcessors.GeometrieOrLocatieGewijzigdProcessor import GeometrieOrLocatieGewijzigdProcessor
 from EventProcessors.NaamGewijzigdProcessor import NaamGewijzigdProcessor
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
@@ -21,7 +21,6 @@ from EventProcessors.ToestandGewijzigdProcessor import ToestandGewijzigdProcesso
 from EventProcessors.ToezichtGewijzigdProcessor import ToezichtGewijzigdProcessor
 from FeedEventsProcessor import FeedEventsProcessor
 from Neo4JConnector import Neo4JConnector
-from RequestHandler import RequestHandler
 from UnitTests.ResponseDouble import ResponseDouble
 
 
@@ -41,7 +40,7 @@ class EventProcessorsTests(TestCase):
     def test_nieuw_onderdeel(self):
         self.setUp()
 
-        uuid = '000a35d5-c4a5-4a36-8620-62c99e053ba0'
+        uuid = '00000000-0000-0000-0000-000000000001'
 
         processor = NieuwOnderdeelProcessor(self.tx_context, mock.Mock())
         processor.tx_context = self.tx_context
@@ -54,13 +53,14 @@ class EventProcessorsTests(TestCase):
         self.assertIn('Asset', result.labels)
         self.assertIn('Netwerkpoort', result.labels)
         self.assertEqual(uuid, result._properties['assetId.identificator'][0:36])
+        self.assertEqual('https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort', result._properties['typeURI'])
 
         self.tearDown()
 
     def test_nieuwe_installatie(self):
         self.setUp()
 
-        uuid = '00000453-56ce-4f8b-af44-960df526cb30'
+        uuid = '00000000-0000-0000-0000-000000000002'
 
         processor = NieuweInstallatieProcessor(self.tx_context, mock.Mock())
         processor.tx_context = self.tx_context
@@ -80,7 +80,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '000a35d5-c4a5-4a36-8620-62c99e053ba0'
+        uuid = '00000000-0000-0000-0000-000000000001'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -105,7 +105,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '00000453-56ce-4f8b-af44-960df526cb30'
+        uuid = '00000000-0000-0000-0000-000000000002'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -131,7 +131,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '000a35d5-c4a5-4a36-8620-62c99e053ba0'
+        uuid = '00000000-0000-0000-0000-000000000001'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -155,7 +155,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '000a35d5-c4a5-4a36-8620-62c99e053ba0'
+        uuid = '00000000-0000-0000-0000-000000000001'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -179,7 +179,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '000a35d5-c4a5-4a36-8620-62c99e053ba0'
+        uuid = '00000000-0000-0000-0000-000000000001'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -203,7 +203,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create test assets
-        uuids = ['000a35d5-c4a5-4a36-8620-62c99e053ba0', 'bbac4a9a-905a-4991-bafa-43126fb5db10',
+        uuids = ['00000000-0000-0000-0000-000000000001', 'bbac4a9a-905a-4991-bafa-43126fb5db10',
                  'c531aad8-e7c3-49f6-8c0d-c228a0c17c02']
         asset_processor = NieuwAssetProcessor()
         asset_processor.tx_context = self.tx_context
@@ -238,7 +238,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create test assets
-        uuids = ['000a35d5-c4a5-4a36-8620-62c99e053ba0']
+        uuids = ['00000000-0000-0000-0000-000000000001']
         asset_processor = NieuwAssetProcessor()
         asset_processor.tx_context = self.tx_context
         for uuid in uuids:
@@ -254,6 +254,7 @@ class EventProcessorsTests(TestCase):
         # create test relation
         relatie_processor = RelatieProcessor()
         relatie_processor.tx_context = self.tx_context
+        relatie_processor.remove_all_betrokkene_relaties(uuids)
         relatie_processor.create_betrokkenerelatie_from_jsonLd_dict(
             ResponseDouble.endpoint_orig['otl/betrokkenerelaties/search/' + uuids[0]][0])
 
@@ -284,7 +285,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '00000453-56ce-4f8b-af44-960df526cb30'
+        uuid = '00000000-0000-0000-0000-000000000002'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -310,7 +311,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '00000453-56ce-4f8b-af44-960df526cb30'
+        uuid = '00000000-0000-0000-0000-000000000002'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -336,7 +337,7 @@ class EventProcessorsTests(TestCase):
         self.setUp()
 
         # create a test asset
-        uuid = '00000453-56ce-4f8b-af44-960df526cb30'
+        uuid = '00000000-0000-0000-0000-000000000002'
         processor = NieuwAssetProcessor()
         processor.tx_context = self.tx_context
         processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
@@ -355,5 +356,38 @@ class EventProcessorsTests(TestCase):
         result_after_event = self.tx_context.run(query).single()[0]
         self.assertEqual('POINT Z (150000 250000 0)', result_after_event._properties['geometry'])
         self.assertEqual('Antwerpen', result_after_event._properties['loc:puntlocatie.loc:weglocatie.loc:gemeente'])
+
+        self.tearDown()
+
+
+    def test_eigenschappen_gewijzigd(self):
+        self.setUp()
+
+        # create a test asset
+        uuid = '00000000-0000-0000-0000-000000000001'
+        processor = NieuwAssetProcessor()
+        processor.tx_context = self.tx_context
+        processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
+
+        # test before change
+        query = "MATCH (n{uuid:'" + uuid + "'}) return n"
+        result_before_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('E', result_before_event._properties['config'])
+        self.assertEqual(120, result_before_event._properties['nNILANCapaciteit'])
+        self.assertEqual('BELFLANTLa_LS2.1', result_before_event._properties['naam'])
+        self.assertEqual('https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort', result_before_event._properties['typeURI'])
+
+        # make the change
+        processor = EigenschappenGewijzigdProcessor(self.tx_context, mock.Mock())
+        processor.process_dicts(ResponseDouble.endpoint_changed['otl/assets/search/' + uuid])
+
+        # test after change
+        result_after_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('STM-1', result_after_event._properties['config'])
+        self.assertEqual(200, result_after_event._properties['nNILANCapaciteit'])
+        self.assertEqual('BELFLANTLa_LS2.1', result_after_event._properties['naam'])
+        self.assertEqual('in-gebruik', result_after_event._properties['toestand'])
+        self.assertEqual('https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort', result_after_event._properties['typeURI'])
+        self.assertEqual(len(result_before_event._properties), len(result_after_event._properties))
 
         self.tearDown()

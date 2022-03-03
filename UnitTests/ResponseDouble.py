@@ -16,7 +16,7 @@ class ResponseDouble:
             "AIMDBStatus.isActief": True,
             "AIMNaamObject.naam": "BELFLANTLa",
             "Netwerkelement.modelnaam": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkelemModelnaam/AM1+",
-            "Netwerkelement.nSAPAddress": "143900008000000000000000000200601D33FA3101",
+            "Netwerkelement.nSAPAddress": "143900008200601D33FA3101",
             "Netwerkelement.ipAddressBeheer": "n/a",
             "Netwerkelement.serienummer": "04R204151849",
             "AIMObject.assetId": {
@@ -42,19 +42,19 @@ class ResponseDouble:
             "AIMToestand.toestand": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlAIMToestand/in-gebruik",
             "Link.geleidingsgroepTnummer": 0
         }],
-        'otl/assets/search/000a35d5-c4a5-4a36-8620-62c99e053ba0': [{
+        'otl/assets/search/00000000-0000-0000-0000-000000000001': [{
             "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-            "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA",
-            "Netwerkpoort.config": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkpoortConfig/STM-1",
+            "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA",
+            "Netwerkpoort.config": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkpoortConfig/E",
             "Netwerkpoort.merk": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkMerk/NOKIA",
             "loc:Locatie.puntlocatie": "",
             "AIMDBStatus.isActief": True,
-            "Netwerkpoort.nNILANCapaciteit": 155,
+            "Netwerkpoort.nNILANCapaciteit": 120,
             "AIMObject.typeURI": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
             "Netwerkpoort.golflengte": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkpoortGolflengte/NULL",
             "AIMObject.assetId": {
                 "DtcIdentificator.toegekendDoor": "AWV",
-                "DtcIdentificator.identificator": "000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "DtcIdentificator.identificator": "00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "AIMObject.notitie": "",
             "loc:Locatie.omschrijving": "",
@@ -63,15 +63,15 @@ class ResponseDouble:
             "loc:Locatie.geometrie": "",
             "AIMNaamObject.naam": "BELFLANTLa_LS2.1"
         }],
-        'otl/assets/search/00000453-56ce-4f8b-af44-960df526cb30': [{
+        'otl/assets/search/00000000-0000-0000-0000-000000000002': [{
             "@type": "https://lgc.data.wegenenverkeer.be/ns/installatie#Kast",
-            "@id": "https://data.awvvlaanderen.be/id/asset/00000453-56ce-4f8b-af44-960df526cb30-bGdjOmluc3RhbGxhdGllI0thc3Q",
+            "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000002-bGdjOmluc3RhbGxhdGllI0thc3Q",
             "NaampadObject.naampad": "057A5/KAST",
             "AIMObject.notitie": "",
             "AIMObject.typeURI": "https://lgc.data.wegenenverkeer.be/ns/installatie#Kast",
             "AIMDBStatus.isActief": True,
             "AIMObject.assetId": {
-                "DtcIdentificator.identificator": "00000453-56ce-4f8b-af44-960df526cb30-bGdjOmluc3RhbGxhdGllI0thc3Q",
+                "DtcIdentificator.identificator": "00000000-0000-0000-0000-000000000002-bGdjOmluc3RhbGxhdGllI0thc3Q",
                 "DtcIdentificator.toegekendDoor": "AWV"
             },
             "tz:Toezicht.toezichtgroep": {
@@ -120,13 +120,13 @@ class ResponseDouble:
             "AIMToestand.toestand": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlAIMToestand/in-gebruik",
             "loc:Locatie.geometrie": ""
         }],
-        'otl/betrokkenerelaties/search/000a35d5-c4a5-4a36-8620-62c99e053ba0': [
+        'otl/betrokkenerelaties/search/00000000-0000-0000-0000-000000000001': [
             {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#HeeftBetrokkene",
                 "@id": "https://data.awvvlaanderen.be/id/assetrelatie/e48b9474-babd-450a-964f-5b4a8902fb4c-b25kZXJkZWVsI0hlZWZ0QmV0cm9ra2VuZQ",
                 "RelatieObject.bron": {
                     "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                    "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                    "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
                 },
                 "RelatieObject.doel": {
                     "@type": "http://purl.org/dc/terms/Agent",
@@ -137,13 +137,13 @@ class ResponseDouble:
                 "HeeftBetrokkene.rol": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlBetrokkenheidRol/toezichter"
             }
         ],
-        'otl/assetrelaties/search/000a35d5-c4a5-4a36-8620-62c99e053ba0': [
+        'otl/assetrelaties/search/00000000-0000-0000-0000-000000000001': [
             {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#HoortBij",
                 "@id": "https://data.awvvlaanderen.be/id/assetrelatie/1ce81d00-43c8-438f-893f-3468f56b218a-b25kZXJkZWVsI0hvb3J0Qmlq",
                 "RelatieObject.bron": {
                     "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                    "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                    "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
                 },
                 "RelatieObject.doel": {
                     "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/installatie#Link",
@@ -157,7 +157,7 @@ class ResponseDouble:
                 "AIMDBStatus.isActief": True,
                 "RelatieObject.bronAssetId": {
                     "DtcIdentificator.toegekendDoor": "AWV",
-                    "DtcIdentificator.identificator": "000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                    "DtcIdentificator.identificator": "00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
                 },
                 "RelatieObject.assetId": {
                     "DtcIdentificator.identificator": "1ce81d00-43c8-438f-893f-3468f56b218a-b25kZXJkZWVsI0hvb3J0Qmlq",
@@ -179,9 +179,9 @@ class ResponseDouble:
         }]
     }
     endpoint_changed = {
-        'otl/assets/search/000a35d5-c4a5-4a36-8620-62c99e053ba0': [{
+        'otl/assets/search/00000000-0000-0000-0000-000000000001': [{
             "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-            "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA",
+            "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA",
             "Netwerkpoort.config": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkpoortConfig/STM-1",
             "Netwerkpoort.merk": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkMerk/NOKIA",
             "loc:Locatie.puntlocatie": "",
@@ -191,7 +191,7 @@ class ResponseDouble:
             "Netwerkpoort.golflengte": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkpoortGolflengte/NULL",
             "AIMObject.assetId": {
                 "DtcIdentificator.toegekendDoor": "AWV",
-                "DtcIdentificator.identificator": "000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "DtcIdentificator.identificator": "00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "AIMObject.notitie": "aangepaste notitie",
             "loc:Locatie.omschrijving": "",
@@ -200,15 +200,15 @@ class ResponseDouble:
             "loc:Locatie.geometrie": "",
             "AIMNaamObject.naam": "nieuwe_naam"
         }],
-        'otl/assets/search/00000453-56ce-4f8b-af44-960df526cb30': [{
+        'otl/assets/search/00000000-0000-0000-0000-000000000002': [{
             "@type": "https://lgc.data.wegenenverkeer.be/ns/installatie#Kast",
-            "@id": "https://data.awvvlaanderen.be/id/asset/00000453-56ce-4f8b-af44-960df526cb30-bGdjOmluc3RhbGxhdGllI0thc3Q",
+            "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000002-bGdjOmluc3RhbGxhdGllI0thc3Q",
             "NaampadObject.naampad": "057A5/057A5.K",
             "AIMObject.notitie": "",
             "AIMObject.typeURI": "https://lgc.data.wegenenverkeer.be/ns/installatie#Kast",
             "AIMDBStatus.isActief": True,
             "AIMObject.assetId": {
-                "DtcIdentificator.identificator": "00000453-56ce-4f8b-af44-960df526cb30-bGdjOmluc3RhbGxhdGllI0thc3Q",
+                "DtcIdentificator.identificator": "00000000-0000-0000-0000-000000000002-bGdjOmluc3RhbGxhdGllI0thc3Q",
                 "DtcIdentificator.toegekendDoor": "AWV"
             },
             "tz:Toezicht.toezichtgroep": {
@@ -257,13 +257,13 @@ class ResponseDouble:
             "AIMToestand.toestand": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlAIMToestand/in-gebruik",
             "loc:Locatie.geometrie": ""
         }],
-        'otl/betrokkenerelaties/search/000a35d5-c4a5-4a36-8620-62c99e053ba0': [
+        'otl/betrokkenerelaties/search/00000000-0000-0000-0000-000000000001': [
             {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#HeeftBetrokkene",
                 "@id": "https://data.awvvlaanderen.be/id/assetrelatie/1cdb583d-c1b9-4d74-8bb3-9556a5e59a2b-b25kZXJkZWVsI0hlZWZ0QmV0cm9ra2VuZQ",
                 "RelatieObject.bron": {
                     "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                    "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                    "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
                 },
                 "RelatieObject.doel": {
                     "@type": "http://purl.org/dc/terms/Agent",
@@ -274,13 +274,13 @@ class ResponseDouble:
                 "AIMDBStatus.isActief": True
             }
         ],
-        'otl/assetrelaties/search/000a35d5-c4a5-4a36-8620-62c99e053ba0': [
+        'otl/assetrelaties/search/00000000-0000-0000-0000-000000000001': [
             {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Bevestiging",
                 "@id": "https://data.awvvlaanderen.be/id/assetrelatie/cb9aa0d4-b6ad-474f-9aef-345408313a64-b25kZXJkZWVsI0JldmVzdGlnaW5n",
                 "RelatieObject.bron": {
                     "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                    "@id": "https://data.awvvlaanderen.be/id/asset/000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                    "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
                 },
                 "RelatieObject.doel": {
                     "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkelement",
@@ -290,7 +290,7 @@ class ResponseDouble:
                 "AIMDBStatus.isActief": True,
                 "RelatieObject.bronAssetId": {
                     "DtcIdentificator.toegekendDoor": "AWV",
-                    "DtcIdentificator.identificator": "000a35d5-c4a5-4a36-8620-62c99e053ba0-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                    "DtcIdentificator.identificator": "00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
                 },
                 "RelatieObject.doelAssetId": {
                     "DtcIdentificator.toegekendDoor": "AWV",

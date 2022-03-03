@@ -26,7 +26,7 @@ class SyncBetrokkeneRelatiesEdgeCaseTests(TestCase):
         self.setUp()
 
         # create test assets
-        uuids = ['000a35d5-c4a5-4a36-8620-62c99e053ba0']
+        uuids = ['00000000-0000-0000-0000-000000000001']
         asset_processor = NieuwAssetProcessor()
         asset_processor.tx_context = self.tx_context
         for uuid in uuids:

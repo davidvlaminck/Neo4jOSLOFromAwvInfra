@@ -5,6 +5,7 @@ from EventProcessors.ActiefGewijzigdProcessor import ActiefGewijzigdProcessor
 from EventProcessors.AssetRelatiesGewijzigdProcessor import AssetRelatiesGewijzigdProcessor
 from EventProcessors.BetrokkeneRelatiesGewijzigdProcessor import BetrokkeneRelatiesGewijzigdProcessor
 from EventProcessors.CommentaarGewijzigdProcessor import CommentaarGewijzigdProcessor
+from EventProcessors.EigenschappenGewijzigdProcessor import EigenschappenGewijzigdProcessor
 from EventProcessors.GeometrieOrLocatieGewijzigdProcessor import GeometrieOrLocatieGewijzigdProcessor
 from EventProcessors.NaamGewijzigdProcessor import NaamGewijzigdProcessor
 from EventProcessors.NieuwOnderdeelProcessor import NieuwOnderdeelProcessor
@@ -35,6 +36,8 @@ class EventProcessorFactory:
             pass
         elif event_type == 'DOCUMENTEN_GEWIJZIGD':
             pass
+        elif event_type == 'EIGENSCHAPPEN_GEWIJZIGD':
+            return EigenschappenGewijzigdProcessor(tx_context, emInfraImporter)
         elif event_type == 'ELEKTRICITEITSAANSLUITING_GEWIJZIGD':
             pass
         elif event_type == 'GEOMETRIE_GEWIJZIGD' or event_type == 'LOCATIE_GEWIJZIGD':

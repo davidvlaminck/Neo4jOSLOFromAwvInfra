@@ -43,6 +43,6 @@ class NieuwOnderdeelProcessor(SpecificEventProcessor, NieuwAssetProcessor, Relat
             for betrokkenerelatieDict in betrokkenerelatie_dicts:
                 self.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatieDict)
             end = time.time()
-            logging.info(f'created {len(assetrelatie_dicts)} assetrelaties in {str(round(end - start, 2))} seconds.')
+            logging.info(f'created {len(assetrelatie_dicts)} betrokkenerelaties in {str(round(end - start, 2))} seconds.')
 
         logging.info('done')
