@@ -12,14 +12,19 @@ class FeedEventsCollector:
         event_dict = self.create_empty_event_dict()
         while True:
             completed_page_number += 1
-            page = self.emInfraImporter.get_event_from_page(completed_page_number)
-            entry_value = page['entries'][0]['content']['value']
-            event_type = entry_value['event-type']
-            event_uuids = entry_value['uuids']
-            full_sync = 'event-id' not in entry_value
-            event_dict[event_type].update(event_uuids)
+            page = self.emInfraImporter.get_events_from_page(page_num=completed_page_number, page_size=10)
+            stop_after_this_page = False
 
-            if len(event_dict[event_type]) >= 50:
+            for entry in page['entries']:
+                entry_value = entry['content']['value']
+                event_type = entry_value['event-type']
+                event_uuids = entry_value['uuids']
+                full_sync = 'event-id' not in entry_value
+                event_dict[event_type].update(event_uuids)
+                if len(event_dict[event_type]) >= 50:
+                    stop_after_this_page = True
+
+            if stop_after_this_page:
                 links = page['links']
                 page_num = next(l for l in links if l['rel'] == 'self')['href'].split('/')[1]
                 EventParams = namedtuple('EventParams', 'event_dict page_num full_sync')

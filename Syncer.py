@@ -23,6 +23,7 @@ class Syncer:
         while True:
             completed_page_number = self.connector.get_page_by_get_or_create_params()
             logging.info(f'starting a sync cycle, page: {str(completed_page_number + 1)}')
+            start = time.time()
             eventsparams_to_process = self.events_collector.collect_starting_from_page(completed_page_number)
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
@@ -31,7 +32,9 @@ class Syncer:
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
                 continue
 
-            self.log_eventparams(eventsparams_to_process.event_dict)
+            end = time.time()
+
+            self.log_eventparams(eventsparams_to_process.event_dict, round(end - start, 2))
             try:
                 self.events_processor.process_events(eventsparams_to_process)
             except BetrokkeneRelationNotCreatedError:
@@ -44,9 +47,9 @@ class Syncer:
             # agents syncen of na 24h
 
     @staticmethod
-    def log_eventparams(event_dict):
+    def log_eventparams(event_dict, time: float):
         total = sum(len(events) for events in event_dict.values())
-        logging.info(f'fetched {total} asset events to sync')
+        logging.info(f'fetched {total} asset events to sync in {time} seconds')
         for k, v in event_dict.items():
             if len(v) > 0:
                 logging.info(f'number of events of type {k}: {len(v)}')
