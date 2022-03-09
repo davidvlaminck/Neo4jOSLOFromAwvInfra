@@ -24,7 +24,7 @@ class Syncer:
             completed_page_number = self.connector.get_page_by_get_or_create_params()
             logging.info(f'starting a sync cycle, page: {str(completed_page_number + 1)}')
             start = time.time()
-            eventsparams_to_process = self.events_collector.collect_starting_from_page(completed_page_number)
+            eventsparams_to_process = self.events_collector.collect_starting_from_page(completed_page_number, 10)
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:

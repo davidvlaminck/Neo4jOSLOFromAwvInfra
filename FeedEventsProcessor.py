@@ -17,6 +17,9 @@ class FeedEventsProcessor:
         self.process_events_by_event_params(event_params, self.tx_context)
 
         page_num = event_params.page_num
+        if event_params.incomplete_page:
+            page_num -= 1
+
         self.neo4J_connector.update_params(self.tx_context, page_num)
         self.neo4J_connector.commit_transaction(self.tx_context)
 

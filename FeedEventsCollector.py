@@ -8,12 +8,17 @@ class FeedEventsCollector:
     def __init__(self, emInfraImporter: EMInfraImporter):
         self.emInfraImporter = emInfraImporter
 
-    def collect_starting_from_page(self, completed_page_number: int):
+    def collect_starting_from_page(self, completed_page_number: int, page_size: int = 1):
         event_dict = self.create_empty_event_dict()
         while True:
             completed_page_number += 1
-            page = self.emInfraImporter.get_events_from_page(page_num=completed_page_number, page_size=10)
+            page = self.emInfraImporter.get_events_from_page(page_num=completed_page_number, page_size=page_size)
             stop_after_this_page = False
+            incomplete_page = False
+            full_sync = False
+
+            if len(page['entries']) < page_size:
+                incomplete_page = True
 
             for entry in page['entries']:
                 entry_value = entry['content']['value']
@@ -27,8 +32,8 @@ class FeedEventsCollector:
             if stop_after_this_page:
                 links = page['links']
                 page_num = next(l for l in links if l['rel'] == 'self')['href'].split('/')[1]
-                EventParams = namedtuple('EventParams', 'event_dict page_num full_sync')
-                return EventParams(event_dict=event_dict, page_num=page_num, full_sync=full_sync)
+                EventParams = namedtuple('EventParams', 'event_dict page_num full_sync incomplete_page')
+                return EventParams(event_dict=event_dict, page_num=page_num, full_sync=full_sync, incomplete_page=incomplete_page)
 
     @staticmethod
     def create_empty_event_dict() -> {}:
