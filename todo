@@ -1,21 +1,18 @@
-indexen toevoegen op Neo4J db
-https://stackoverflow.com/questions/38149000/neo4j-batch-update-of-data?fbclid=IwAR1XkG_5aU7HzOHxjyAyknwNmubsQQG4JQL2VH7q9JCHmzJ5Nbl6Ft_KeK8
-https://www.markhneedham.com/blog/2019/03/14/neo4j-delete-dynamic-properties/?fbclid=IwAR1MhLk5abYTWkUR6KQegP8y9YQ0VmPP7bt-Xp6MmfUXG7aChI6zbrZljGM
+herwerk FeedEventsCollector.collect_starting_from_page zodat dit per event kan stoppen ipv per pagina
 
-Syncer
-start sync acties
-while True:
-    start collecting and processing
-    wait 30 seconds
+Syncer aanpassen zodat bij een lege databank een Params object wordt aangemaakt met:
+- feedpage: houdt bij op welke pagina laatst gewerkt werd, default = -1
+- event_id: houdt het laatste event bij dat verwerkt werd, default = -1
+- pagesize: aantal events per pagina, default = 100
+- freshstart: duidt aan dat een volledige sync nodig is, default = True
+- otltype: houdt een cijfer bij dat overeenkomt met een OSLO conforme endpoint die gesynct moet worden, default = -1
+- cursor: houdt de cursor bij voor de volgende pagina van de endpoint op te halen, default empty string
 
-FeedEventsCollector
-verzamelt feed events tot er genoeg zijn om te verwerken (> 99 uuids)
-gebruikt Params object in de databank
+Als freshstart = True en otltype op -1 dan
+- zet otltype op 1
+- haal de laatste feedpage op uit EM-Infra en vul die in op feedpage
+- haal de laatste event_id op uit die pagina en vul die in op event_id
+(zodat hiermee kan gestart worden na een volledige sync)
 
-FeedEventsProcessor
-verwerkt alle feed events adhv type
-> gebruikt factory om eventProcessors te maken die de events verwerken
-
-<TYPE>EventsProcessor
-verwerkt event van een specifiek type, door specifieke query's te lanceren, adhv een Model
-eerste nieuwe installatie en nieuw onderdeel doen, dan de rest
+Haal per olttype (assets, agents, assetrelaties, betrokkenerelaties) alle objecten op. Doorloop de pagina's a.d.h.v. de cursor
+Na afloop zet freshstart op False

@@ -20,7 +20,9 @@ class FeedEventsCollector:
             if len(page['entries']) < page_size:
                 incomplete_page = True
 
-            for entry in page['entries']:
+            entries = sorted(page['entries'], key=lambda p: int(p['content']['value']['event-id']))
+
+            for entry in entries:
                 entry_value = entry['content']['value']
                 event_type = entry_value['event-type']
                 event_uuids = entry_value['uuids']
