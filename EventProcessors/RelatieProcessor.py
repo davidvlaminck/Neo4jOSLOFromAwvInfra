@@ -59,9 +59,7 @@ class RelatieProcessor:
                                                     relatie_type=relatie_type,
                                                     params=relatie_dict)
         if len(relatie) == 0:
-            return
-            # do not raise an error, the relation will be created when the missing is created and relation event is processed
-            # raise AssetRelationNotCreatedError('One of the nodes might be missing')
+            raise AssetRelationNotCreatedError('One of the nodes might be missing')
 
     def create_betrokkenerelatie_from_jsonLd_dict(self, json_dict):
         flattened_dict = NieuwAssetProcessor().flatten_dict(json_dict)

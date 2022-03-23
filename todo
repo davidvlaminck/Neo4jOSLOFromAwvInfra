@@ -1,4 +1,5 @@
 herwerk FeedEventsCollector.collect_starting_from_page zodat dit per event kan stoppen ipv per pagina
+herwerk EMInfraImporter zodat een opvraging kan gebeuren met een cursor => gebruik self.cursor
 
 Syncer aanpassen zodat bij een lege databank een Params object wordt aangemaakt met:
 - feedpage: houdt bij op welke pagina laatst gewerkt werd, default = -1

@@ -4,6 +4,8 @@ class NieuwAssetProcessor:
 
     @staticmethod
     def create_asset_by_dict(tx, params: dict, ns: str, assettype: str):
+        if '-' in assettype:
+            assettype = '`' + assettype + '`'
         tx.run(f"CREATE (a:Asset:{ns}:{assettype} $params) ", params=params)
 
     def create_asset_from_jsonLd_dict(self, json_dict):

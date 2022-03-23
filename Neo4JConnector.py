@@ -7,10 +7,24 @@ class Neo4JConnector:
 
     def get_page_by_get_or_create_params(self):
         with self.driver.session() as session:
-            params = session.run("MATCH (p:Params) RETURN p.page").single()
+            params = session.run("MATCH (p:Params) RETURN p").single()
             if params is None:
-                params = session.run("CREATE (p:Params {page:-1}) RETURN p.page").single()
+                params = session.run("CREATE (p:Params {page:-1, event_id:-1, pagesize:100, freshstart:True, otltype:-1, cursor:''}) RETURN p").single()
             return params[0]
+
+    def get_params_by_get_or_create_params(self):
+        with self.driver.session() as session:
+            params = session.run("MATCH (p:Params) RETURN p").single()
+            if params is None:
+                params = session.run("CREATE (p:Params {page:-1, event_id:-1, pagesize:100, freshstart:True, otltype:-1, cursor:''}) RETURN p").single()
+            return params[0]
+
+    def save_props_to_params(self, params: dict):
+        with self.driver.session() as session:
+            tx = session.begin_transaction()
+            tx.run(f"MATCH (p:Params) SET p += $params", params=params)
+            tx.commit()
+            tx.close()
 
     def update_params(self, tx: Transaction, page_num: int):
         tx.run(f"MATCH (p:Params) SET p.page = {page_num}")

@@ -15,7 +15,8 @@ class EMInfraImporter:
         url = f"feedproxy/feed/assets/{page_num}/{page_size}"
         return self.request_handler.get_jsondict(url)
 
-    def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100) -> [dict]:
+    def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100,
+                                              only_next_page:bool = False) -> [dict]:
         url = f"core/api/otl/{url_part}/search"
         body_fixed_part = '{"size": ' + f'{size}' + ''
         if filter_string != '{}':
@@ -39,8 +40,20 @@ class EMInfraImporter:
                 self.cursor = response.headers['em-paging-next-cursor']
             else:
                 self.cursor = ''
+            if only_next_page:
+                return json_list
             if self.cursor == '':
                 return json_list
+
+    def get_assets_from_webservice_by_naam(self, naam: str) -> [dict]:
+        filter_string = '{ "naam": ' + f'"{naam}"' + ' }'
+        return self.get_objects_from_oslo_search_endpoint(url_part='assets', filter_string=filter_string)
+
+    def import_all_assets_from_webservice(self) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='assets')
+
+    def import_assets_from_webservice_page_by_page(self, page_size:int) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='assets', size=page_size, only_next_page=True)
 
     def import_assets_from_webservice_by_uuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
@@ -50,15 +63,31 @@ class EMInfraImporter:
     def import_all_agents_from_webservice(self) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='agents')
 
+    def import_agents_from_webservice_page_by_page(self, page_size:int) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='agents', size=page_size, only_next_page=True)
+
     def import_agents_from_webservice_by_uuids(self, agent_uuids: [str]) -> [dict]:
         agent_list_string = '", "'.join(agent_uuids)
         filter_string = '{ "uuid": ' + f'["{agent_list_string}"]' + ' }'
         return self.get_objects_from_oslo_search_endpoint(url_part='agents', filter_string=filter_string)
 
+    def import_all_assetrelaties_from_webservice(self) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties')
+
+    def import_assetrelaties_from_webservice_page_by_page(self, page_size:int) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', size=page_size, only_next_page=True)
+
     def import_assetrelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
         filter_string = '{ "asset": ' + f'["{asset_list_string}"]' + ' }'
         return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', filter_string=filter_string)
+
+    def import_all_betrokkenerelaties_from_webservice(self) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties')
+
+    def import_betrokkenerelaties_from_webservice_page_by_page(self, page_size:int) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', size=page_size, only_next_page=True)
+
 
     def import_betrokkenerelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
