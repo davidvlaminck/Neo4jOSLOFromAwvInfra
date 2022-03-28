@@ -16,11 +16,7 @@ class FeedEventsProcessor:
 
         self.process_events_by_event_params(event_params, self.tx_context)
 
-        page_num = event_params.page_num
-        if event_params.incomplete_page:
-            page_num -= 1
-
-        self.neo4J_connector.update_params(self.tx_context, page_num)
+        self.neo4J_connector.update_params(self.tx_context, event_params.page_num, event_params.event_id)
         self.neo4J_connector.commit_transaction(self.tx_context)
 
     def process_events_by_event_params(self, event_params, tx_context):
@@ -30,7 +26,7 @@ class FeedEventsProcessor:
         if "NIEUW_ONDERDEEL" in event_dict.keys() and len(event_dict["NIEUW_ONDERDEEL"]) > 0:
             event_processor = self.create_processor("NIEUW_ONDERDEEL", tx_context)
             start = time.time()
-            event_processor.process(event_dict["NIEUW_ONDERDEEL"], event_params.full_sync)
+            event_processor.process(event_dict["NIEUW_ONDERDEEL"])
             end = time.time()
             avg = round((end - start) / len(event_params.event_dict["NIEUW_ONDERDEEL"]), 2)
             logging.info(
@@ -38,7 +34,7 @@ class FeedEventsProcessor:
         if "NIEUWE_INSTALLATIE" in event_dict.keys() and len(event_dict["NIEUWE_INSTALLATIE"]) > 0:
             event_processor = self.create_processor("NIEUWE_INSTALLATIE", tx_context)
             start = time.time()
-            event_processor.process(event_dict["NIEUWE_INSTALLATIE"], event_params.full_sync)
+            event_processor.process(event_dict["NIEUWE_INSTALLATIE"])
             end = time.time()
             avg = round((end - start) / len(event_params.event_dict["NIEUWE_INSTALLATIE"]), 2)
             logging.info(

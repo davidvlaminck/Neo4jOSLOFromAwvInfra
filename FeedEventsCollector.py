@@ -1,41 +1,45 @@
 from collections import namedtuple
-from typing import NamedTuple
 
 from EMInfraImporter import EMInfraImporter
+
+EventParams = namedtuple('EventParams', 'event_dict page_num event_id')
 
 
 class FeedEventsCollector:
     def __init__(self, emInfraImporter: EMInfraImporter):
         self.emInfraImporter = emInfraImporter
 
-    def collect_starting_from_page(self, completed_page_number: int, page_size: int = 1):
+    def collect_starting_from_page(self, completed_page_number: int, completed_event_id: int, page_size: int) -> EventParams:
         event_dict = self.create_empty_event_dict()
         while True:
-            completed_page_number += 1
             page = self.emInfraImporter.get_events_from_page(page_num=completed_page_number, page_size=page_size)
             stop_after_this_page = False
-            incomplete_page = False
-            full_sync = False
-
-            if len(page['entries']) < page_size:
-                incomplete_page = True
+            last_event_id = -1
 
             entries = sorted(page['entries'], key=lambda p: int(p['content']['value']['event-id']))
 
             for entry in entries:
                 entry_value = entry['content']['value']
+                event_id = entry_value['event-id']
+                if event_id <= completed_event_id:
+                    continue
                 event_type = entry_value['event-type']
                 event_uuids = entry_value['uuids']
-                full_sync = 'event-id' not in entry_value
                 event_dict[event_type].update(event_uuids)
+
                 if len(event_dict[event_type]) >= 50:
                     stop_after_this_page = True
 
+                if stop_after_this_page:
+                    last_event_id = event_id
+
             if stop_after_this_page:
                 links = page['links']
-                page_num = next(l for l in links if l['rel'] == 'self')['href'].split('/')[1]
-                EventParams = namedtuple('EventParams', 'event_dict page_num full_sync incomplete_page')
-                return EventParams(event_dict=event_dict, page_num=page_num, full_sync=full_sync, incomplete_page=incomplete_page)
+                page_num = next(link for link in links if link['rel'] == 'self')['href'].split('/')[1]
+
+                return EventParams(event_dict=event_dict, page_num=page_num, event_id=last_event_id)
+
+            completed_page_number += 1
 
     @staticmethod
     def create_empty_event_dict() -> {}:

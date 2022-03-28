@@ -28,10 +28,8 @@ class RelatieProcessor:
         logging.info(f'removed_all_betrokkene_relaties_from {len(asset_uuids)} assets in {str(round(end - start, 2))} seconds.')
 
     @staticmethod
-    def _create_assetrelatie_by_dict(tx, bron_uuid='', doel_uuid='', relatie_type='', params=None):
-        query = "MATCH (a:Asset), (b) " \
-                f"WHERE a.uuid = '{bron_uuid}' " \
-                f"AND b.uuid = '{doel_uuid}' " \
+    def _create_assetrelatie_by_dict(tx, bron_uuid:str ='', doel_uuid:str ='', relatie_type:str ='', params=None):
+        query = "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b {uuid: '" + doel_uuid + "'}) " \
                 f"CREATE (a)-[r:{relatie_type} " \
                 "$params]->(b) " \
                 f"RETURN r"

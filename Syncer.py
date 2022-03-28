@@ -61,6 +61,7 @@ class Syncer:
                 for asset in assets:
                     asset_processor.create_asset_from_jsonLd_dict(asset)
             elif otltype == 3:
+                start = time.time()
                 assetrelaties = self.eminfra_importer.import_assetrelaties_from_webservice_page_by_page(page_size)
                 relatie_processor = RelatieProcessor()
                 relatie_processor.tx_context = tx_context
@@ -69,6 +70,8 @@ class Syncer:
                         relatie_processor.create_assetrelatie_from_jsonLd_dict(assetrelatie)
                     except AssetRelationNotCreatedError:
                         pass
+                end = time.time()
+                logging.info(f'time for 100 relations: {round(end - start, 2)}')
             elif otltype == 4:
                 betrokkenerelaties = self.eminfra_importer.import_betrokkenerelaties_from_webservice_page_by_page(page_size)
                 relatie_processor = RelatieProcessor()
@@ -132,11 +135,11 @@ class Syncer:
         return self.recur_find_last_page(current_num + current_step * new_i,
                                          int(current_step / step), step, page_size)
 
-    def perform_syncing(self, current_page, completed_event_id):
+    def perform_syncing(self, current_page: int, completed_event_id: int, page_size: int):
         while True:
             logging.info(f'starting a sync cycle, page: {str(current_page + 1)} event_id: {str(completed_event_id)}')
             start = time.time()
-            eventsparams_to_process = self.events_collector.collect_starting_from_page(current_page, 10)
+            eventsparams_to_process = self.events_collector.collect_starting_from_page(current_page, completed_event_id, page_size)
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:

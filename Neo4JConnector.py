@@ -26,8 +26,8 @@ class Neo4JConnector:
             tx.commit()
             tx.close()
 
-    def update_params(self, tx: Transaction, page_num: int):
-        tx.run(f"MATCH (p:Params) SET p.page = {page_num}")
+    def update_params(self, tx: Transaction, page_num: int, event_id: int):
+        tx.run(f"MATCH (p:Params) SET p.page = {page_num}, event_id = {event_id}")
 
     def close(self):
         self.driver.close()

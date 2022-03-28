@@ -25,7 +25,14 @@ class NieuwAssetProcessor:
             else:
                 asset_dict[k] = v
 
-        asset_dict["uuid"] = asset_dict['assetId.identificator'][0:36]
+        if 'assetId.identificator' not in asset_dict:
+            asset_dict["uuid"] = asset_dict['assetIdUri'].split('/asset/')[1][0:36]
+        else:
+            asset_dict["uuid"] = asset_dict['assetId.identificator'][0:36]
+
+        if 'typeURI' not in asset_dict:
+            asset_dict['typeURI'] = json_dict['@type']
+
         asset_dict["geometry"] = self.get_wkt_from_puntlocatie(json_dict)
         if 'loc:geometrie' in json_dict.keys():
             geometrie = json_dict['loc:geometrie']
