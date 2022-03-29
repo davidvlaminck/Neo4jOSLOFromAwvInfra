@@ -16,7 +16,7 @@ class EMInfraImporter:
         return self.request_handler.get_jsondict(url)
 
     def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100,
-                                              only_next_page:bool = False) -> [dict]:
+                                              only_next_page: bool = False) -> [dict]:
         url = f"core/api/otl/{url_part}/search"
         body_fixed_part = '{"size": ' + f'{size}' + ''
         if filter_string != '{}':
@@ -52,7 +52,7 @@ class EMInfraImporter:
     def import_all_assets_from_webservice(self) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='assets')
 
-    def import_assets_from_webservice_page_by_page(self, page_size:int) -> [dict]:
+    def import_assets_from_webservice_page_by_page(self, page_size: int) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='assets', size=page_size, only_next_page=True)
 
     def import_assets_from_webservice_by_uuids(self, asset_uuids: [str]) -> [dict]:
@@ -63,7 +63,7 @@ class EMInfraImporter:
     def import_all_agents_from_webservice(self) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='agents')
 
-    def import_agents_from_webservice_page_by_page(self, page_size:int) -> [dict]:
+    def import_agents_from_webservice_page_by_page(self, page_size: int) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='agents', size=page_size, only_next_page=True)
 
     def import_agents_from_webservice_by_uuids(self, agent_uuids: [str]) -> [dict]:
@@ -74,7 +74,7 @@ class EMInfraImporter:
     def import_all_assetrelaties_from_webservice(self) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties')
 
-    def import_assetrelaties_from_webservice_page_by_page(self, page_size:int) -> [dict]:
+    def import_assetrelaties_from_webservice_page_by_page(self, page_size: int) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', size=page_size, only_next_page=True)
 
     def import_assetrelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
@@ -85,9 +85,9 @@ class EMInfraImporter:
     def import_all_betrokkenerelaties_from_webservice(self) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties')
 
-    def import_betrokkenerelaties_from_webservice_page_by_page(self, page_size:int) -> [dict]:
-        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', size=page_size, only_next_page=True)
-
+    def import_betrokkenerelaties_from_webservice_page_by_page(self, page_size: int) -> [dict]:
+        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', size=page_size,
+                                                          only_next_page=True)
 
     def import_betrokkenerelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
