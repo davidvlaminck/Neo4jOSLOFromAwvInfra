@@ -24,7 +24,7 @@ class Syncer:
 
     def start_syncing(self):
         while True:
-            params = self.connector.get_params_by_get_or_create_params()
+            params = self.connector.get_page_by_get_or_create_params()
             if params['freshstart']:
                 self.perform_fresh_start_sync(params)
             else:
@@ -39,7 +39,7 @@ class Syncer:
             self.save_last_feedevent_to_params(page_size)
 
         while True:
-            params = self.connector.get_params_by_get_or_create_params()
+            params = self.connector.get_page_by_get_or_create_params()
             otltype = params['otltype']
             cursor = params['cursor']
             page_size = params['pagesize']
