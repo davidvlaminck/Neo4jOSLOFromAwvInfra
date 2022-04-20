@@ -28,7 +28,7 @@ class Syncer:
             if params['freshstart']:
                 self.perform_fresh_start_sync(params)
             else:
-                self.perform_syncing(params['page'], params['event_id'], params['pagesize'])
+                self.perform_syncing()
 
     def perform_fresh_start_sync(self, params: dict):
         otltype = params['otltype']
@@ -137,10 +137,15 @@ class Syncer:
         return self.recur_find_last_page(current_num + current_step * new_i,
                                          int(current_step / step), step, page_size)
 
-    def perform_syncing(self, current_page: int, completed_event_id: int, page_size: int):
+    def perform_syncing(self):
         while True:
+            params = self.connector.get_page_by_get_or_create_params()
+            current_page = params['page']
+            completed_event_id = params['event_id']
+            page_size = params['pagesize']
             logging.info(f'starting a sync cycle, page: {str(current_page + 1)} event_id: {str(completed_event_id)}')
             start = time.time()
+
             eventsparams_to_process = self.events_collector.collect_starting_from_page(current_page, completed_event_id, page_size)
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
