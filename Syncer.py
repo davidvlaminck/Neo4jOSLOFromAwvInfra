@@ -28,7 +28,7 @@ class Syncer:
             if params['freshstart']:
                 self.perform_fresh_start_sync(params)
             else:
-                self.perform_syncing(params['page'], params['event_id'])
+                self.perform_syncing(params['page'], params['event_id'], params['pagesize'])
 
     def perform_fresh_start_sync(self, params: dict):
         otltype = params['otltype']
@@ -46,6 +46,8 @@ class Syncer:
             # start syncing by getting all objects
             if otltype == -1:
                 otltype = 1
+            if otltype >= 5:
+                break
 
             tx_context = self.connector.start_transaction()
             self.eminfra_importer.cursor = cursor
@@ -88,7 +90,7 @@ class Syncer:
             self.connector.save_props_to_params(
                 {'otltype': otltype,
                  'cursor': cursor})
-            if otltype == 5:
+            if otltype >= 5:
                 self.connector.save_props_to_params(
                     {'freshstart': False})
             self.connector.commit_transaction(tx_context)

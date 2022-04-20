@@ -20,14 +20,14 @@ class FeedEventsCollector:
 
             for entry in entries:
                 entry_value = entry['content']['value']
-                event_id = entry_value['event-id']
+                event_id = int(entry_value['event-id'])
                 if event_id <= completed_event_id:
                     continue
                 event_type = entry_value['event-type']
                 event_uuids = entry_value['uuids']
                 event_dict[event_type].update(event_uuids)
 
-                if len(event_dict[event_type]) >= 50:
+                if len(event_dict[event_type]) >= 200:
                     stop_after_this_page = True
 
                 if stop_after_this_page:
@@ -39,7 +39,8 @@ class FeedEventsCollector:
 
                 return EventParams(event_dict=event_dict, page_num=page_num, event_id=last_event_id)
 
-            completed_page_number += 1
+            if len(entries) == page_size:
+                completed_page_number += 1
 
     @staticmethod
     def create_empty_event_dict() -> {}:

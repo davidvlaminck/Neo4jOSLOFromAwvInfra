@@ -16,11 +16,9 @@ CREATE (p:Params {feedEvent: 123, page: 2})
 
 dump
 cd bin
-neo4j-admin.bat dump --database=neo4j --to=C:/resources/dumps/neo4j/neo4j-20220209.dump
+neo4j-admin.bat dump --database=neo4j --to=C:/resources/dumps/neo4j/neo4j-20220419.dump
 load
 bin/neo4j-admin load --from=/dumps/neo4j/neo4j-<timestamp>.dump --database=neo4j --force
 
 
-CREATE INDEX Asset_uuid IF NOT EXISTS
-FOR (n:Asset)
-ON (n.uuid)
+CREATE CONSTRAINT Asset_uuid IF NOT EXISTS ON (n:uuid) ASSERT n.id IS UNIQUE

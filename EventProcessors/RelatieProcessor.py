@@ -14,7 +14,7 @@ class RelatieProcessor:
     def remove_all_asset_relaties(self, asset_uuids: [str]):
         start = time.time()
         query = f"UNWIND $params as uuids " \
-                "MATCH ({uuid: uuids})-[r]-() WHERE r <> 'HeeftBetrokkene' DELETE r"
+                "MATCH (Asset {uuid: uuids})-[r]-(Asset) DELETE r"
         self.tx_context.run(query, params=asset_uuids)
         end = time.time()
         logging.info(f'removed_all_asset_relaties_from {len(asset_uuids)} assets in {str(round(end - start, 2))} seconds.')
@@ -28,11 +28,11 @@ class RelatieProcessor:
         logging.info(f'removed_all_betrokkene_relaties_from {len(asset_uuids)} assets in {str(round(end - start, 2))} seconds.')
 
     @staticmethod
-    def _create_assetrelatie_by_dict(tx, bron_uuid:str ='', doel_uuid:str ='', relatie_type:str ='', params=None):
-        query = "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b {uuid: '" + doel_uuid + "'}) " \
+    def _create_relatie_by_dict(tx, bron_uuid:str = '', doel_uuid:str = '', relatie_type:str = '', params=None):
+        query = "MATCH (a {uuid: '" + bron_uuid + "'}), (b {uuid: '" + doel_uuid + "'}) " \
                 f"CREATE (a)-[r:{relatie_type} " \
                 "$params]->(b) " \
-                f"RETURN r"
+                f"RETURN a, r, b"
         return tx.run(query, params=params).data()
 
     def create_assetrelatie_from_jsonLd_dict(self, json_dict):
@@ -53,9 +53,9 @@ class RelatieProcessor:
             else:
                 relatie_dict[k] = v
 
-        relatie = self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
-                                                    relatie_type=relatie_type,
-                                                    params=relatie_dict)
+        relatie = self._create_relatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
+                                               relatie_type=relatie_type,
+                                               params=relatie_dict)
         if len(relatie) == 0:
             raise AssetRelationNotCreatedError('One of the nodes might be missing')
 
@@ -79,8 +79,8 @@ class RelatieProcessor:
             else:
                 relatie_dict[k] = v
 
-        relatie = self._create_assetrelatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
-                                                    relatie_type=relatie_type,
-                                                    params=relatie_dict)
+        relatie = self._create_relatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
+                                               relatie_type=relatie_type,
+                                               params=relatie_dict)
         if len(relatie) == 0:
             raise BetrokkeneRelationNotCreatedError('One of the nodes might be missing')

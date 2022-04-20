@@ -72,30 +72,40 @@ class EMInfraImporter:
         return self.get_objects_from_oslo_search_endpoint(url_part='agents', filter_string=filter_string)
 
     def import_all_assetrelaties_from_webservice(self) -> [dict]:
-        return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties')
+        return self.get_distinct_set_from_list_of_relations(
+            self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties'))
 
     def import_assetrelaties_from_webservice_page_by_page(self, page_size: int) -> [dict]:
-        return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', size=page_size, only_next_page=True)
+        return self.get_distinct_set_from_list_of_relations(
+            self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', size=page_size, only_next_page=True))
 
     def import_assetrelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
         filter_string = '{ "asset": ' + f'["{asset_list_string}"]' + ' }'
-        return self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', filter_string=filter_string)
+        return self.get_distinct_set_from_list_of_relations(
+            self.get_objects_from_oslo_search_endpoint(url_part='assetrelaties', filter_string=filter_string))
 
     def import_all_betrokkenerelaties_from_webservice(self) -> [dict]:
-        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties')
+        return self.get_distinct_set_from_list_of_relations(
+            self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties'))
 
     def import_betrokkenerelaties_from_webservice_page_by_page(self, page_size: int) -> [dict]:
-        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', size=page_size,
-                                                          only_next_page=True)
+        return self.get_distinct_set_from_list_of_relations(
+            self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', size=page_size, only_next_page=True))
 
     def import_betrokkenerelaties_from_webservice_by_assetuuids(self, asset_uuids: [str]) -> [dict]:
         asset_list_string = '", "'.join(asset_uuids)
         filter_string = '{ "bronAsset": ' + f'["{asset_list_string}"]' + ' }'
-        return self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', filter_string=filter_string)
+        return self.get_distinct_set_from_list_of_relations(
+            self.get_objects_from_oslo_search_endpoint(url_part='betrokkenerelaties', filter_string=filter_string))
 
     @staticmethod
     def get_asset_id_from_uuid_and_typeURI(uuid, typeURI):
         shortUri = typeURI.split('/ns/')[1]
         shortUri_encoded = base64.b64encode(shortUri.encode('utf-8'))
         return uuid + '-' + shortUri_encoded.decode("utf-8")
+
+    @staticmethod
+    def get_distinct_set_from_list_of_relations(relation_list: [dict]) -> [dict]:
+        return list({x["RelatieObject.assetId"]["DtcIdentificator.identificator"]: x for x in relation_list}.values())
+

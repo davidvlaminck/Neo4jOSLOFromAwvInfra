@@ -23,11 +23,14 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             naampad = None
+            naam = None
             if 'NaampadObject.naampad' in asset_dict:
                 naampad = asset_dict['NaampadObject.naampad']
+            if 'AIMNaamObject.naam' in asset_dict:
+                naam = asset_dict['AIMNaamObject.naam']
             self.tx_context.run(f"MATCH (a:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.naam = $naam, a.naampad = $naampad",
                                 uuid=asset_dict['AIMObject.assetId']['DtcIdentificator.identificator'][0:36],
-                                naam=asset_dict['AIMNaamObject.naam'],
+                                naam=naam,
                                 naampad=naampad)
         logging.info('done')
