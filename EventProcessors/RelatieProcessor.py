@@ -53,9 +53,11 @@ class RelatieProcessor:
             else:
                 relatie_dict[k] = v
 
-        relatie = self._create_relatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
-                                               relatie_type=relatie_type,
-                                               params=relatie_dict)
+        query = "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b:Asset {uuid: '" + doel_uuid + "'}) " \
+            f"CREATE (a)-[r:{relatie_type} $params]->(b) " \
+            f"RETURN a, r, b"
+        relatie = self.tx_context.run(query, params=relatie_dict).data()
+
         if len(relatie) == 0:
             raise AssetRelationNotCreatedError('One of the nodes might be missing')
 
@@ -68,7 +70,6 @@ class RelatieProcessor:
 
         bron_uuid = json_dict['RelatieObject.bron']['@id'].split('/')[-1][0:36]
         doel_uuid = json_dict['RelatieObject.doel']['@id'].split('/')[-1][0:36]
-        relatie_type = json_dict["@type"].split('#')[1]
 
         for k, v in flattened_dict.items():
             if k in ['@type', '@id', "RelatieObject.bron.@type", "RelatieObject.bron.@id", "RelatieObject.doel.@type",
@@ -79,8 +80,16 @@ class RelatieProcessor:
             else:
                 relatie_dict[k] = v
 
-        relatie = self._create_relatie_by_dict(tx=self.tx_context, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
-                                               relatie_type=relatie_type,
-                                               params=relatie_dict)
+        agent_encoded = 'cHVybDpBZ2VudA'
+        if json_dict['RelatieObject.bron'].endswith(agent_encoded):
+            query = "MATCH (a:Agent {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid + "'}) " \
+                f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
+                f"RETURN a, r, b"
+        else:
+            query = "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid + "'}) " \
+                f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
+                f"RETURN a, r, b"
+        relatie = self.tx_context.run(query, params=relatie_dict).data()
+
         if len(relatie) == 0:
-            raise BetrokkeneRelationNotCreatedError('One of the nodes might be missing')
+            raise BetrokkeneRelationNotCreatedError('One of the nodes may be missing')
