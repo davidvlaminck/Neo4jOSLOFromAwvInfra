@@ -184,8 +184,6 @@ class Syncer:
         agentsyncer.sync_agents()
 
 
-
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     connector = Neo4JConnector("bolt://localhost:7687", "neo4jPython", "python")
@@ -194,3 +192,4 @@ if __name__ == '__main__':
     eminfra_importer = EMInfraImporter(request_handler)
     syncer = Syncer(connector=connector, request_handler=request_handler, eminfra_importer=eminfra_importer)
     syncer.start_syncing()
+

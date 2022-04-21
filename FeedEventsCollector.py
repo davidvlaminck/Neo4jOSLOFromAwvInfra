@@ -34,17 +34,21 @@ class FeedEventsCollector:
                 if stop_after_this_page:
                     last_event_id = event_id
 
+            if int(entries[-1]['content']['value']['event-id']) == completed_event_id:
+                stop_after_this_page = True
+                last_event_id = int(entries[-1]['content']['value']['event-id'])
+
             if stop_after_this_page:
                 links = page['links']
                 page_num = next(link for link in links if link['rel'] == 'self')['href'].split('/')[1]
 
                 return EventParams(event_dict=event_dict, page_num=page_num, event_id=last_event_id)
 
-            if last_event_id == -1:
-                links = page['links']
-                page_num = next(link for link in links if link['rel'] == 'self')['href'].split('/')[1]
+            #if last_event_id == -1:
+             #   links = page['links']
+              #  page_num = next(link for link in links if link['rel'] == 'self')['href'].split('/')[1]
 
-                return EventParams(event_dict={'':[]}, page_num=page_num, event_id=completed_event_id)
+                #return EventParams(event_dict={'':[]}, page_num=page_num, event_id=completed_event_id)
 
             if len(entries) == page_size:
                 completed_page_number += 1
