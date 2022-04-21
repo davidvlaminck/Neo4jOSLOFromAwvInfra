@@ -13,15 +13,11 @@ show all
 Match (n)-[r]->(m)
 Return n,r,m
 
-params object voor feed:
-CREATE (p:Params {feedEvent: 123, page: 2})
-
 dump
 cd bin
 neo4j-admin.bat dump --database=neo4j --to=C:/resources/dumps/neo4j/neo4j-20220419.dump
 load
 bin/neo4j-admin load --from=/dumps/neo4j/neo4j-<timestamp>.dump --database=neo4j --force
-
 
 CREATE CONSTRAINT Asset_uuid IF NOT EXISTS ON (n:Asset) ASSERT n.uuid IS UNIQUE
 CREATE CONSTRAINT Agent_uuid IF NOT EXISTS ON (n:Agent) ASSERT n.uuid IS UNIQUE
