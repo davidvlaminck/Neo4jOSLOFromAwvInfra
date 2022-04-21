@@ -198,8 +198,8 @@ class EventProcessorsTests(TestCase):
 
         self.tearDown()
 
-    def create_events(self, assetuuids):
+    def create_events(self, asset_uuids):
         eventsparams_to_process = EventParams(event_dict={
-            'RELATIES_GEWIJZIGD': set(assetuuids),
+            'RELATIES_GEWIJZIGD': set(asset_uuids),
         }, page_num='12427', event_id=5839578)
         return eventsparams_to_process
