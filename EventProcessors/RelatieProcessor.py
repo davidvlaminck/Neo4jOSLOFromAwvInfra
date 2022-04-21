@@ -80,8 +80,7 @@ class RelatieProcessor:
             else:
                 relatie_dict[k] = v
 
-        agent_encoded = 'cHVybDpBZ2VudA'
-        if json_dict['RelatieObject.bron'].endswith(agent_encoded):
+        if json_dict['RelatieObject.bron']['@type'] == 'http://purl.org/dc/terms/Agent':
             query = "MATCH (a:Agent {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid + "'}) " \
                 f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
                 f"RETURN a, r, b"

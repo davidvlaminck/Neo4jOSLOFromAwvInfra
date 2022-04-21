@@ -107,5 +107,5 @@ class EMInfraImporter:
 
     @staticmethod
     def get_distinct_set_from_list_of_relations(relation_list: [dict]) -> [dict]:
-        return list({x["RelatieObject.assetId"]["DtcIdentificator.identificator"]: x for x in relation_list}.values())
+        return list({x["@id"]: x for x in relation_list}.values())
 

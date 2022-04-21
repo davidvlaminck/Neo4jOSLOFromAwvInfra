@@ -27,7 +27,8 @@ class FeedEventsCollector:
                 event_uuids = entry_value['uuids']
                 event_dict[event_type].update(event_uuids)
 
-                if len(event_dict[event_type]) >= 200:
+                next_page = next((link for link in page['links'] if link['rel'] == 'previous'), None)
+                if len(event_dict[event_type]) >= 200 or next_page is None:
                     stop_after_this_page = True
 
                 if stop_after_this_page:
@@ -38,6 +39,12 @@ class FeedEventsCollector:
                 page_num = next(link for link in links if link['rel'] == 'self')['href'].split('/')[1]
 
                 return EventParams(event_dict=event_dict, page_num=page_num, event_id=last_event_id)
+
+            if last_event_id == -1:
+                links = page['links']
+                page_num = next(link for link in links if link['rel'] == 'self')['href'].split('/')[1]
+
+                return EventParams(event_dict={'':[]}, page_num=page_num, event_id=completed_event_id)
 
             if len(entries) == page_size:
                 completed_page_number += 1

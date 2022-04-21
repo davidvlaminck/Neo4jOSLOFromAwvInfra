@@ -75,6 +75,7 @@ class Syncer:
                 end = time.time()
                 logging.info(f'time for 100 relations: {round(end - start, 2)}')
             elif otltype == 4:
+                start = time.time()
                 betrokkenerelaties = self.eminfra_importer.import_betrokkenerelaties_from_webservice_page_by_page(page_size)
                 relatie_processor = RelatieProcessor()
                 relatie_processor.tx_context = tx_context
@@ -83,6 +84,8 @@ class Syncer:
                         relatie_processor.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatie)
                     except BetrokkeneRelationNotCreatedError:
                         pass
+                end = time.time()
+                logging.info(f'time for 100 betrokkenerelations: {round(end - start, 2)}')
 
             cursor = self.eminfra_importer.cursor
             if cursor == '':
