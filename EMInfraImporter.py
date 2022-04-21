@@ -1,8 +1,6 @@
 ﻿import base64
 import json
 
-import requests
-
 from RequestHandler import RequestHandler
 
 

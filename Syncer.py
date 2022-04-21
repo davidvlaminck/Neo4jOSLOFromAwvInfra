@@ -1,13 +1,13 @@
 import logging
 import time
 import traceback
+from datetime import datetime
 
 from AgentSyncer import AgentSyncer
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
 from EventProcessors.RelatieProcessor import RelatieProcessor
-from EventProcessors.RelationNotCreatedError import RelationNotCreatedError, BetrokkeneRelationNotCreatedError, \
-    AssetRelationNotCreatedError
+from EventProcessors.RelationNotCreatedError import BetrokkeneRelationNotCreatedError, AssetRelationNotCreatedError
 from FeedEventsCollector import FeedEventsCollector
 from FeedEventsProcessor import FeedEventsProcessor
 from Neo4JConnector import Neo4JConnector
@@ -31,19 +31,18 @@ class Syncer:
                 self.perform_syncing()
 
     def perform_fresh_start_sync(self, params: dict):
-        otltype = params['otltype']
-        cursor = params['cursor']
         page_size = params['pagesize']
         page = params['page']
         if page == -1:
             self.save_last_feedevent_to_params(page_size)
 
         while True:
+            # main sync loop for getting all assets/agents/relations
             params = self.connector.get_page_by_get_or_create_params()
             otltype = params['otltype']
             cursor = params['cursor']
             page_size = params['pagesize']
-            # start syncing by getting all objects
+
             if otltype == -1:
                 otltype = 1
             if otltype >= 5:
@@ -71,7 +70,7 @@ class Syncer:
                     try:
                         relatie_processor.create_assetrelatie_from_jsonLd_dict(assetrelatie)
                     except AssetRelationNotCreatedError:
-                        pass
+                        raise AssetRelationNotCreatedError
                 end = time.time()
                 logging.info(f'time for 100 relations: {round(end - start, 2)}')
             elif otltype == 4:
@@ -83,7 +82,7 @@ class Syncer:
                     try:
                         relatie_processor.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatie)
                     except BetrokkeneRelationNotCreatedError:
-                        pass
+                        raise BetrokkeneRelationNotCreatedError
                 end = time.time()
                 logging.info(f'time for 100 betrokkenerelations: {round(end - start, 2)}')
 
@@ -102,9 +101,10 @@ class Syncer:
         start_num = 1
         step = 5
         start_num = self.recur_exp_find_start_page(current_num=start_num, step=step, page_size=page_size)
-        current_page_num = self.recur_find_last_page(current_num=int(start_num/step), current_step=int(start_num/step), step=step, page_size=page_size)
+        current_page_num = self.recur_find_last_page(current_num=int(start_num / step), current_step=int(start_num / step),
+                                                     step=step, page_size=page_size)
 
-        #doublecheck
+        # doublecheck
         event_page = self.eminfra_importer.get_events_from_page(page_num=current_page_num, page_size=page_size)
         links = event_page['links']
         prev_link = next((l for l in links if l['rel'] == 'previous'), None)
@@ -112,7 +112,7 @@ class Syncer:
             raise RuntimeError('algorithm did not result in the last page')
 
         # find last event_id
-        entries=event_page['entries']
+        entries = event_page['entries']
         event_ids = list(map(lambda x: int(x['content']['value']['event-id']), entries))
         last_event_id = max(event_ids)
 
@@ -123,7 +123,7 @@ class Syncer:
     def recur_exp_find_start_page(self, current_num, step, page_size):
         event_page = self.eminfra_importer.get_events_from_page(page_num=current_num, page_size=page_size)
         if 'message' not in event_page:
-            return self.recur_exp_find_start_page(current_num=current_num*step, step=step, page_size=100)
+            return self.recur_exp_find_start_page(current_num=current_num * step, step=step, page_size=100)
         return current_num
 
     def recur_find_last_page(self, current_num, current_step, step, page_size):
@@ -149,11 +149,13 @@ class Syncer:
             logging.info(f'starting a sync cycle, page: {str(current_page + 1)} event_id: {str(completed_event_id)}')
             start = time.time()
 
-            eventsparams_to_process = self.events_collector.collect_starting_from_page(current_page, completed_event_id, page_size)
+            eventsparams_to_process = self.events_collector.collect_starting_from_page(current_page, completed_event_id,
+                                                                                       page_size)
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:
                 logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
+                self.connector.save_props_to_params({'last_update_utc': datetime.utcnow()})
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
                 continue
 
@@ -192,4 +194,3 @@ if __name__ == '__main__':
     eminfra_importer = EMInfraImporter(request_handler)
     syncer = Syncer(connector=connector, request_handler=request_handler, eminfra_importer=eminfra_importer)
     syncer.start_syncing()
-
