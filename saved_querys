@@ -13,6 +13,8 @@ show all
 Match (n)-[r]->(m)
 Return n,r,m
 
+RETURN apoc.version() AS output;
+
 dump
 cd bin
 neo4j-admin.bat dump --database=neo4j --to=C:/resources/dumps/neo4j/neo4j-20220419.dump
