@@ -1,10 +1,10 @@
+import json
 import logging
 
 from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.RelatieProcessor import RelatieProcessor
-from EventProcessors.RelationNotCreatedError import RelationNotCreatedError, AssetRelationNotCreatedError
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
