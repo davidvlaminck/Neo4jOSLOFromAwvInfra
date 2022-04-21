@@ -26,47 +26,53 @@ class EventProcessorsTests(TestCase):
     def create_uuid_from_int(self, i: int = 0):
         i_str = str(i)
         if i < 10:
+            i_str = '00' + i_str
+        elif i < 100:
             i_str = '0' + i_str
-        return '00000000-0000-0000-0000-0000000000' + i_str
+        return '00000000-0000-0000-0000-000000000' + i_str
 
     def create_assetrelatie_in_double(self, i: int = 0):
         i_str = str(i)
         if i < 10:
+            i_str = '00' + i_str
+        elif i < 100:
             i_str = '0' + i_str
         j = i + 1
         j_str = str(j)
         if j < 10:
+            j_str = '00' + j_str
+        elif j < 100:
             j_str = '0' + j_str
         k = i + 2
         k_str = str(k)
         if k < 10:
+            k_str = '00' + k_str
+        elif k < 100:
             k_str = '0' + k_str
 
-        relaties = []
-
-        relatie_uuid_j = f'00000000-00{i_str}-00{j_str}-0000-000000000000'
-        relatie_uuid_k = f'00000000-00{i_str}-00{k_str}-0000-000000000000'
+        relatie_uuid_j = f'00000000-0{i_str}-0{j_str}-0000-000000000000'
+        relatie_uuid_k = f'00000000-0{i_str}-0{k_str}-0000-000000000000'
 
         relatie_i_j = {
             "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Sturing",
             "@id": f"https://data.awvvlaanderen.be/id/assetrelatie/{relatie_uuid_j}-b25kZXJkZWVsI0JldmVzdGlnaW5n",
             "RelatieObject.bron": {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-0000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.doel": {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-0000000000{j_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000{j_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.typeURI": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Sturing",
             "AIMDBStatus.isActief": True,
             "RelatieObject.bronAssetId": {
                 "DtcIdentificator.toegekendDoor": "AWV",
-                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-0000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.doelAssetId": {
                 "DtcIdentificator.toegekendDoor": "AWV",
-                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-0000000000{j_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-000000000{j_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.assetId": {
                 "DtcIdentificator.identificator": f"{relatie_uuid_j}-b25kZXJkZWVsI0JldmVzdGlnaW5n",
@@ -78,21 +84,21 @@ class EventProcessorsTests(TestCase):
             "@id": f"https://data.awvvlaanderen.be/id/assetrelatie/{relatie_uuid_k}-b25kZXJkZWVsI0JldmVzdGlnaW5n",
             "RelatieObject.bron": {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-0000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.doel": {
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
-                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-0000000000{k_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "@id": f"https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000{k_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.typeURI": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Sturing",
             "AIMDBStatus.isActief": True,
             "RelatieObject.bronAssetId": {
                 "DtcIdentificator.toegekendDoor": "AWV",
-                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-0000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-000000000{i_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.doelAssetId": {
                 "DtcIdentificator.toegekendDoor": "AWV",
-                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-0000000000{k_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
+                "DtcIdentificator.identificator": f"00000000-0000-0000-0000-000000000{k_str}-b25kZXJkZWVsI05ldHdlcmtwb29ydA"
             },
             "RelatieObject.assetId": {
                 "DtcIdentificator.identificator": f"{relatie_uuid_k}-b25kZXJkZWVsI0JldmVzdGlnaW5n",
@@ -100,32 +106,32 @@ class EventProcessorsTests(TestCase):
             }
         }
 
-        if 'otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + i_str not in ResponseDouble.endpoint_orig:
-            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + i_str] = []
-        if 'otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + j_str not in ResponseDouble.endpoint_orig:
-            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + j_str] = []
-        if 'otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + k_str not in ResponseDouble.endpoint_orig:
-            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + k_str] = []
+        if 'otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + i_str not in ResponseDouble.endpoint_orig:
+            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + i_str] = []
+        if 'otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + j_str not in ResponseDouble.endpoint_orig:
+            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + j_str] = []
+        if 'otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + k_str not in ResponseDouble.endpoint_orig:
+            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + k_str] = []
 
-        if j < 90:
-            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + i_str].append(
+        if j < 900:
+            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + i_str].append(
                 relatie_i_j)
-            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + j_str].append(
+            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + j_str].append(
                 relatie_i_j)
-        if k < 90:
-            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + i_str].append(
+        if k < 900:
+            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + i_str].append(
                 relatie_i_k)
-            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + k_str].append(
+            ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + k_str].append(
                 relatie_i_k)
-        ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + i_str] = \
-            EMInfraImporter.get_distinct_set_from_list_of_relations(ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + i_str])
-        ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + j_str] = \
-            EMInfraImporter.get_distinct_set_from_list_of_relations(ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + j_str])
-        ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + k_str] = \
-            EMInfraImporter.get_distinct_set_from_list_of_relations(ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-0000000000' + k_str])
+        ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + i_str] = \
+            EMInfraImporter.get_distinct_set_from_list_of_relations(ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + i_str])
+        ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + j_str] = \
+            EMInfraImporter.get_distinct_set_from_list_of_relations(ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + j_str])
+        ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + k_str] = \
+            EMInfraImporter.get_distinct_set_from_list_of_relations(ResponseDouble.endpoint_orig['otl/assetrelaties/search/' + '00000000-0000-0000-0000-000000000' + k_str])
 
     def create_assets_in_double(self):
-        for i in range(90):
+        for i in range(900):
             uuid = self.create_uuid_from_int(i)
             ResponseDouble.endpoint_orig['otl/assets/search/' + uuid] = [{
                 "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
@@ -145,7 +151,7 @@ class EventProcessorsTests(TestCase):
 
         # create test assets
         uuids = []
-        for i in range(90):
+        for i in range(900):
             uuid = self.create_uuid_from_int(i)
             uuids.append(uuid)
 
@@ -153,8 +159,6 @@ class EventProcessorsTests(TestCase):
         asset_processor.tx_context = self.tx_context
         for uuid in uuids:
             asset_processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
-
-        uuids = uuids[0:3]
 
         # create a fake EMinfra importer
         emInfraImporter = mock.Mock()
@@ -169,7 +173,7 @@ class EventProcessorsTests(TestCase):
         emInfraImporter.import_assetrelaties_from_webservice_by_assetuuids = import_assetrelaties_from_webservice_by_assetuuids_fixed
 
         # test before change
-        query = 'UNWIND $params as uuids MATCH (Asset {uuid: uuids})-[r]-(Asset) return count(r)'
+        query = 'UNWIND $params as uuids MATCH (n:Asset {uuid: uuids})-[r]-() return count(r)'
         result_before_event = self.tx_context.run(query, params=uuids).single()[0]
         self.assertEqual(0, result_before_event)
 
@@ -190,7 +194,7 @@ class EventProcessorsTests(TestCase):
 
         # test after change
         result_after_event = self.tx_context.run(query, params=uuids).single()[0]
-        self.assertEqual(355, result_after_event)
+        self.assertEqual(3595, result_after_event)
 
         self.tearDown()
 
