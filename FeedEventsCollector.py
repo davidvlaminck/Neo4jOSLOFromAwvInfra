@@ -34,7 +34,9 @@ class FeedEventsCollector:
                 if stop_after_this_page:
                     last_event_id = event_id
 
-            if int(entries[-1]['content']['value']['event-id']) == completed_event_id:
+            if len(entries) == 0:
+                stop_after_this_page = True
+            elif int(entries[-1]['content']['value']['event-id']) == completed_event_id and len(entries) != page_size:
                 stop_after_this_page = True
                 last_event_id = int(entries[-1]['content']['value']['event-id'])
 
