@@ -2,18 +2,19 @@ from neo4j import GraphDatabase, Transaction
 
 
 class Neo4JConnector:
-    def __init__(self, uri, user, password):
-        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+    def __init__(self, uri, user, password, database: str = 'neo4j'):
+        self.driver = GraphDatabase.driver(uri=uri, auth=(user, password))
+        self.db = database
 
     def get_page_by_get_or_create_params(self):
-        with self.driver.session() as session:
+        with self.driver.session(database=self.db) as session:
             params = session.run("MATCH (p:Params) RETURN p").single()
             if params is None:
                 params = session.run("CREATE (p:Params {page:-1, event_id:-1, pagesize:100, freshstart:True, otltype:-1, cursor:''}) RETURN p").single()
             return params[0]
 
     def save_props_to_params(self, params: dict):
-        with self.driver.session() as session:
+        with self.driver.session(database=self.db) as session:
             tx = session.begin_transaction()
             tx.run(f"MATCH (p:Params) SET p += $params", params=params)
             tx.commit()
@@ -27,14 +28,14 @@ class Neo4JConnector:
         self.driver.close()
 
     def perform_create_asset(self, params: dict, ns: str, assettype: str):
-        with self.driver.session() as session:
+        with self.driver.session(database=self.db) as session:
             tx = session.begin_transaction()
             self._create_asset_by_dict(tx, params, ns, assettype)
             tx.commit()
             tx.close()
 
     def perform_create_relatie(self, bron_uuid='', doel_uuid='', relatie_type='', params=None):
-        with self.driver.session() as session:
+        with self.driver.session(database=self.db) as session:
             session.write_transaction(self._create_relatie_by_dict, bron_uuid=bron_uuid, doel_uuid=doel_uuid,
                                       relatie_type=relatie_type, params=params)
 
@@ -55,7 +56,7 @@ class Neo4JConnector:
         return result
 
     def start_transaction(self) -> Transaction:
-        return self.driver.session().begin_transaction()
+        return self.driver.session(database=self.db).begin_transaction()
 
     @staticmethod
     def commit_transaction(tx_context: Transaction):
