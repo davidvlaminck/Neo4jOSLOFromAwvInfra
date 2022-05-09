@@ -25,6 +25,8 @@ class SchadebeheerderGewijzigdProcessor(SpecificEventProcessor):
             korte_uri = flattened_dict['typeURI'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
+            if '-' in assettype:
+                assettype = '`' + assettype + '`'
 
             toezicht_attributen = ['tz:schadebeheerder.tz:naam', 'tz:schadebeheerder.tz:referentie']
 

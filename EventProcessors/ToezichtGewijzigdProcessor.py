@@ -25,6 +25,8 @@ class ToezichtGewijzigdProcessor(SpecificEventProcessor):
             korte_uri = flattened_dict['typeURI'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
+            if '-' in assettype:
+                assettype = '`' + assettype + '`'
 
             toezicht_attributen = ['tz:toezichter.tz:gebruikersnaam', 'tz:toezichter.tz:voornaam', 'tz:toezichter.tz:email',
                                    'tz:toezichter.tz:naam', 'tz:toezichtgroep.tz:naam', 'tz:toezichtgroep.tz:referentie']

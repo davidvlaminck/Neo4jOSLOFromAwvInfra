@@ -22,6 +22,8 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
             korte_uri = asset_dict['@type'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
+            if '-' in assettype:
+                assettype = '`' + assettype + '`'
             naampad = None
             naam = None
             if 'NaampadObject.naampad' in asset_dict:
