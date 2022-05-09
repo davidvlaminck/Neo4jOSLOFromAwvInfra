@@ -17,7 +17,7 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
         self.process_dicts(assetDicts)
 
     def process_dicts(self, assetDicts):
-        logging.info(f'started changing naam/naampad of {len(assetDicts)} assets')
+        logging.info(f'started changing naam/naampad/parent of {len(assetDicts)} assets')
         for asset_dict in assetDicts:
             korte_uri = asset_dict['@type'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
