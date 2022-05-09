@@ -24,5 +24,9 @@
             "client_id" : "1fdf6f18-e333-4eff-acd3-d38d06bcea57",
             "key_path" : "C:\\resources\\datamanager_dev_private.json"
         }
-    ]
+    ],
+     "time" : {
+         "start" : "06:00:00",
+         "end" : "23:50:00"
+     }
 }

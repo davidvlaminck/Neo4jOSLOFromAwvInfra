@@ -15,12 +15,18 @@ from RequestHandler import RequestHandler
 
 
 class Syncer:
-    def __init__(self, connector: Neo4JConnector, request_handler: RequestHandler, eminfra_importer: EMInfraImporter):
+    def __init__(self, connector: Neo4JConnector, request_handler: RequestHandler, eminfra_importer: EMInfraImporter, settings=None):
         self.connector = connector
         self.request_handler = request_handler
         self.eminfra_importer = eminfra_importer
         self.events_collector = FeedEventsCollector(eminfra_importer)
         self.events_processor = FeedEventsProcessor(connector, eminfra_importer)
+        self.settings = settings
+        self.sync_start = None
+        self.sync_end = None
+        if 'time' in self.settings:
+            self.sync_start = self.settings['time']['start']
+            self.sync_end = self.settings['time']['end']
 
     def start_syncing(self):
         while True:
@@ -140,8 +146,22 @@ class Syncer:
         return self.recur_find_last_page(current_num + current_step * new_i,
                                          int(current_step / step), step, page_size)
 
+    def calculate_sync_allowed_by_time(self):
+        if self.sync_start is None:
+            return True
+
+        start_struct = time.strptime(self.sync_start, "%H:%M:%S")
+        end_struct = time.strptime(self.sync_end, "%H:%M:%S")
+        now = datetime.utcnow().time()
+        start = now.replace(hour=start_struct.tm_hour, minute=start_struct.tm_min, second=start_struct.tm_sec)
+        end = now.replace(hour=end_struct.tm_hour, minute=end_struct.tm_min, second=end_struct.tm_sec)
+        v = start < now < end
+        return v
+
     def perform_syncing(self):
-        while True:
+        sync_allowed_by_time = self.calculate_sync_allowed_by_time()
+
+        while sync_allowed_by_time:
             params = self.connector.get_page_by_get_or_create_params()
             current_page = params['page']
             completed_event_id = params['event_id']
@@ -165,13 +185,14 @@ class Syncer:
             try:
                 self.events_processor.process_events(eventsparams_to_process)
             except BetrokkeneRelationNotCreatedError:
+                # agents syncen of na 24h
                 self.events_processor.tx_context.rollback()
                 self.sync_all_agents()
             except Exception as exc:
                 traceback.print_exception(exc)
                 self.events_processor.tx_context.rollback()
 
-            # agents syncen of na 24h
+            sync_allowed_by_time = self.calculate_sync_allowed_by_time()
 
     @staticmethod
     def log_eventparams(event_dict, time: float):
@@ -184,3 +205,4 @@ class Syncer:
     def sync_all_agents(self):
         agentsyncer = AgentSyncer(emInfraImporter=self.eminfra_importer, neo4J_connector=self.connector)
         agentsyncer.sync_agents()
+
