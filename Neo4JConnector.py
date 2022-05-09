@@ -10,6 +10,7 @@ class Neo4JConnector:
         with self.driver.session(database=self.db) as session:
             params = session.run("MATCH (p:Params) RETURN p").single()
             if params is None:
+                self.set_default_constraints_and_indices(session)
                 params = session.run("CREATE (p:Params {page:-1, event_id:-1, pagesize:100, freshstart:True, otltype:-1, cursor:''}) RETURN p").single()
             return params[0]
 
@@ -62,4 +63,8 @@ class Neo4JConnector:
     def commit_transaction(tx_context: Transaction):
         tx_context.commit()
         tx_context.close()
+
+    def set_default_constraints_and_indices(self, session: Transaction):
+        session.run("CREATE CONSTRAINT Asset_uuid IF NOT EXISTS FOR (n:Asset) REQUIRE n.uuid IS UNIQUE")
+        session.run("CREATE CONSTRAINT Agent_uuid IF NOT EXISTS FOR (n:Agent) REQUIRE n.uuid IS UNIQUE")
 
