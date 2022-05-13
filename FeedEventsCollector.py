@@ -11,17 +11,21 @@ class FeedEventsCollector:
 
     def collect_starting_from_page(self, completed_page_number: int, completed_event_id: int, page_size: int) -> EventParams:
         event_dict = self.create_empty_event_dict()
+        searching_where_stopped = True
         while True:
             page = self.emInfraImporter.get_events_from_page(page_num=completed_page_number, page_size=page_size)
             stop_after_this_page = False
-            last_event_id = -1
+            last_event_id = ''
 
-            entries = sorted(page['entries'], key=lambda p: int(p['content']['value']['event-id']))
+            entries = sorted(page['entries'], key=lambda e: (e['content']['value']['event-id'], e['id']))
 
             for entry in entries:
                 entry_value = entry['content']['value']
-                event_id = int(entry_value['event-id'])
-                if event_id <= completed_event_id:
+                entry_uuid = entry['id']
+                if searching_where_stopped and completed_event_id != '' and entry_uuid != completed_event_id:
+                    continue
+                elif entry_uuid == completed_event_id:
+                    searching_where_stopped = False
                     continue
                 event_type = entry_value['event-type']
                 event_uuids = entry_value['uuids']
@@ -32,13 +36,13 @@ class FeedEventsCollector:
                     stop_after_this_page = True
 
                 if stop_after_this_page:
-                    last_event_id = event_id
+                    last_event_id = entry_uuid
 
             if len(entries) == 0:
                 stop_after_this_page = True
-            elif int(entries[-1]['content']['value']['event-id']) == completed_event_id and len(entries) != page_size:
+            elif entries[-1]['id'] == completed_event_id and len(entries) != page_size:
                 stop_after_this_page = True
-                last_event_id = int(entries[-1]['content']['value']['event-id'])
+                last_event_id = entries[-1]['id']
 
             if stop_after_this_page:
                 links = page['links']

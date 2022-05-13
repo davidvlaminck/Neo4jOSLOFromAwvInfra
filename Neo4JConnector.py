@@ -11,7 +11,7 @@ class Neo4JConnector:
             params = session.run("MATCH (p:Params) RETURN p").single()
             if params is None:
                 self.set_default_constraints_and_indices(session)
-                params = session.run("CREATE (p:Params {page:-1, event_id:-1, pagesize:100, freshstart:True, otltype:-1, cursor:''}) RETURN p").single()
+                params = session.run("CREATE (p:Params {page:-1, event_id:'', pagesize:100, freshstart:True, otltype:-1, cursor:''}) RETURN p").single()
             return params[0]
 
     def save_props_to_params(self, params: dict):
@@ -23,7 +23,7 @@ class Neo4JConnector:
 
     @staticmethod
     def update_params(tx: Transaction, page_num: int, event_id: int):
-        tx.run(f"MATCH (p:Params) SET p.page = {page_num}, p.event_id = {event_id}")
+        tx.run(f"MATCH (p:Params) SET p.page = {page_num}, p.event_id = '{event_id}'")
 
     def close(self):
         self.driver.close()
