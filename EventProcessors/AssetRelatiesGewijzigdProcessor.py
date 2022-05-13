@@ -20,9 +20,15 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
     def process_dicts(self, assetrelatie_dicts, uuids: {str}):
         logging.info(f'started creating {len(assetrelatie_dicts)} assetrelaties')
         self.remove_all_asset_relaties(list(uuids))
-        relaties_created = self.create_assetrelaties_from_list_of_jsondicts(assetrelatie_dicts)
-        if relaties_created < len(assetrelatie_dicts):
-            raise RuntimeError
+        relaties_created_uuids = self.create_assetrelaties_from_list_of_jsondicts(assetrelatie_dicts)
+        dicts_uuids = list(map(lambda x: x['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36], assetrelatie_dicts))
+        if len(dicts_uuids) != len(relaties_created_uuids):
+            missing = list(set(dicts_uuids) - set(relaties_created_uuids))
+            logging.error("Could not create one or more relations:")
+            for relatie_uuid in missing:
+                logging.error(next (r for r in assetrelatie_dicts if r['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36] == relatie_uuid))
+            raise RuntimeError("Could not create one or more relations.")
+
         logging.info('done')
 
     def create_assetrelaties_from_list_of_jsondicts(self, assetrelatie_dicts):
@@ -32,7 +38,7 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
                 "MATCH (b:Asset {uuid: row.doel_uuid}) " \
                 "CALL apoc.create.relationship(a, row.relatie_type, row.relatie_dict, b) " \
                 "YIELD rel " \
-                "RETURN count(rel);"
+                "RETURN collect(rel.uuid);"
         return self.tx_context.run(query, params=paramslist).single()[0]
 
     def create_paramslist_from_list_of_jsondicts(self, assetrelatie_dicts):

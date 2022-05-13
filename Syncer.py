@@ -76,7 +76,8 @@ class Syncer:
                     try:
                         relatie_processor.create_assetrelatie_from_jsonLd_dict(assetrelatie)
                     except AssetRelationNotCreatedError:
-                        raise AssetRelationNotCreatedError
+                        pass
+                        #raise AssetRelationNotCreatedError
                 end = time.time()
                 logging.info(f'time for 100 relations: {round(end - start, 2)}')
             elif otltype == 4:
@@ -88,7 +89,8 @@ class Syncer:
                     try:
                         relatie_processor.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatie)
                     except BetrokkeneRelationNotCreatedError:
-                        raise BetrokkeneRelationNotCreatedError
+                        pass
+                        # raise BetrokkeneRelationNotCreatedError
                 end = time.time()
                 logging.info(f'time for 100 betrokkenerelations: {round(end - start, 2)}')
 

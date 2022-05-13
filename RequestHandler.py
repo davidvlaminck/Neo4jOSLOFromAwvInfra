@@ -6,9 +6,8 @@ from requests import Response
 
 
 class RequestHandler:
-    def __init__(self, requester, base_path: str = 'https://services.apps.mow.vlaanderen.be/eminfra/'):
+    def __init__(self, requester):
         self.requester = requester
-        requester.first_part_url = base_path
 
     def get_jsondict(self, url):
         response = self._perform_get_request(url)

@@ -16,6 +16,7 @@ class FeedEventsProcessor:
 
         self.process_events_by_event_params(event_params, self.tx_context)
 
+        # TODO add last_update to latest timestamp of events
         self.neo4J_connector.update_params(self.tx_context, event_params.page_num, event_params.event_id)
         self.neo4J_connector.commit_transaction(self.tx_context)
 

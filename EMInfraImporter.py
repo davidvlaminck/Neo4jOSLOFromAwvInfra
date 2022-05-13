@@ -7,6 +7,7 @@ from RequestHandler import RequestHandler
 class EMInfraImporter:
     def __init__(self, request_handler: RequestHandler):
         self.request_handler = request_handler
+        self.request_handler.requester.first_part_url += 'eminfra/'
         self.cursor = ''
 
     def get_events_from_page(self, page_num: int, page_size: int = 1):
