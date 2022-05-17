@@ -30,11 +30,18 @@ class Syncer:
 
     def start_syncing(self):
         while True:
-            params = self.connector.get_page_by_get_or_create_params()
-            if params['freshstart']:
-                self.perform_fresh_start_sync(params)
-            else:
-                self.perform_syncing()
+            try:
+                params = self.connector.get_page_by_get_or_create_params()
+                if params['freshstart']:
+                    self.perform_fresh_start_sync(params)
+                else:
+                    self.perform_syncing()
+            except Exception as ex:
+                logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
+                logging.error(ex)
+                logging.info('Retrying in 30 seconds.')
+                time.sleep(30)
+
 
     def perform_fresh_start_sync(self, params: dict):
         page_size = params['pagesize']
@@ -205,6 +212,8 @@ class Syncer:
                 logging.info(f'number of events of type {k}: {len(v)}')
 
     def sync_all_agents(self):
+        logging.info(f'sync_all_agents started')
         agentsyncer = AgentSyncer(emInfraImporter=self.eminfra_importer, neo4J_connector=self.connector)
         agentsyncer.sync_agents()
+        logging.info(f'sync_all_agents done')
 
