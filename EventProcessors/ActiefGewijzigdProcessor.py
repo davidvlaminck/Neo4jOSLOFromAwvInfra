@@ -24,7 +24,7 @@ class ActiefGewijzigdProcessor(SpecificEventProcessor):
             assettype = korte_uri.split('#')[1]
             if '-' in assettype:
                 assettype = '`' + assettype + '`'
-            self.tx_context.run(f"MATCH (a:Asset "
+            self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.isActief = $isActief",
                                 uuid=asset_dict['AIMObject.assetId']['DtcIdentificator.identificator'][0:36],
                                 isActief=asset_dict['AIMDBStatus.isActief'])

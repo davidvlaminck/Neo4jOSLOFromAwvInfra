@@ -52,7 +52,7 @@ class EigenschappenGewijzigdProcessor(SpecificEventProcessor):
                 if attribuut not in excluded_attributes:
                     params[attribuut] = flattened_dict[attribuut]
 
-            self.tx_context.run(f"MATCH (a:Asset "
+            self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",
                                 uuid=flattened_dict['assetId.identificator'][0:36],
                                 params=params)

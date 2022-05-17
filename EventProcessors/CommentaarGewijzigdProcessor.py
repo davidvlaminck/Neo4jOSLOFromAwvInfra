@@ -24,7 +24,7 @@ class CommentaarGewijzigdProcessor(SpecificEventProcessor):
             assettype = korte_uri.split('#')[1]
             if '-' in assettype:
                 assettype = '`' + assettype + '`'
-            self.tx_context.run(f"MATCH (a:Asset "
+            self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.notitie = $notitie",
                                 uuid=asset_dict['AIMObject.assetId']['DtcIdentificator.identificator'][0:36],
                                 notitie=asset_dict['AIMObject.notitie'])

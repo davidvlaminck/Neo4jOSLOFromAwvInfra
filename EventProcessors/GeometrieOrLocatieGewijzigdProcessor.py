@@ -57,7 +57,7 @@ class GeometrieOrLocatieGewijzigdProcessor(SpecificEventProcessor):
 
 
 
-            self.tx_context.run(f"MATCH (a:Asset "
+            self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",
                                 uuid=flattened_dict['assetId.identificator'][0:36],
                                 params=params)
