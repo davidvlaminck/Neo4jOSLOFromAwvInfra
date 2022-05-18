@@ -5,6 +5,7 @@ from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.RelatieProcessor import RelatieProcessor
+from EventProcessors.RelationNotCreatedError import RelationNotCreatedError
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
@@ -27,7 +28,7 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
             logging.error("Could not create one or more relations:")
             for relatie_uuid in missing:
                 logging.error(next (r for r in assetrelatie_dicts if r['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36] == relatie_uuid))
-            raise RuntimeError("Could not create one or more relations.")
+            # raise RelationNotCreatedError("Could not create one or more relations.")
 
         logging.info('done')
 

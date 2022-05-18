@@ -128,8 +128,7 @@ class Syncer:
 
         # find last event_id
         entries = event_page['entries']
-        event_ids = list(map(lambda x: int(x['content']['value']['event-id']), entries))
-        last_event_id = max(event_ids)
+        last_event_id = entries[0]['id']
 
         self.connector.save_props_to_params(
             {'event_id': last_event_id,

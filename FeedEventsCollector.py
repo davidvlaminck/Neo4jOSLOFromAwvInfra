@@ -32,7 +32,7 @@ class FeedEventsCollector:
                 event_dict[event_type].update(event_uuids)
 
                 next_page = next((link for link in page['links'] if link['rel'] == 'previous'), None)
-                if len(event_dict[event_type]) >= 200 or next_page is None:
+                if len(event_dict[event_type]) >= 1 or next_page is None:
                     stop_after_this_page = True
 
                 if stop_after_this_page:
