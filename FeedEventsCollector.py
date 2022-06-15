@@ -9,7 +9,7 @@ class FeedEventsCollector:
     def __init__(self, emInfraImporter: EMInfraImporter):
         self.emInfraImporter = emInfraImporter
 
-    def collect_starting_from_page(self, completed_page_number: int, completed_event_id: int, page_size: int) -> EventParams:
+    def collect_starting_from_page(self, completed_page_number: int, completed_event_id: str, page_size: int) -> EventParams:
         event_dict = self.create_empty_event_dict()
         searching_where_stopped = True
         while True:
@@ -32,7 +32,7 @@ class FeedEventsCollector:
                 event_dict[event_type].update(event_uuids)
 
                 next_page = next((link for link in page['links'] if link['rel'] == 'previous'), None)
-                if len(event_dict[event_type]) >= 1 or next_page is None:
+                if len(event_dict[event_type]) >= 200 or next_page is None:
                     stop_after_this_page = True
 
                 if stop_after_this_page:

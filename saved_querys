@@ -25,3 +25,9 @@ bin/neo4j-admin load --from=/dumps/neo4j/neo4j-<timestamp>.dump --database=neo4j
 DROP constraint ON (n:Asset) ASSERT n.uuid is UNIQUE
 CREATE CONSTRAINT Asset_uuid IF NOT EXISTS FOR (n:Asset) REQUIRE n.uuid IS UNIQUE
 CREATE CONSTRAINT Agent_uuid IF NOT EXISTS FOR (n:Agent) REQUIRE n.uuid IS UNIQUE
+
+
+MATCH (a:Asset)-[:HoortBij]->(l) WHERE a.eanNummer IS NOT NULL AND not a.typeURI CONTAINS 'lgc'
+RETURN a.eanNummer as EAN, l.uuid as uuid, 'otl' as cat UNION ALL
+MATCH (a:Asset) WHERE a.eanNummer IS NOT NULL AND a.typeURI CONTAINS 'lgc'
+return a.eanNummer as EAN, a.uuid as uuid, 'lgc' as cat
