@@ -30,9 +30,14 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
                 naampad = asset_dict['NaampadObject.naampad']
             if 'AIMNaamObject.naam' in asset_dict:
                 naam = asset_dict['AIMNaamObject.naam']
+            elif 'AbstracteAanvullendeGeometrie.naam' in asset_dict:
+                naam = asset_dict['AbstracteAanvullendeGeometrie.naam']
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.naam = $naam, a.naampad = $naampad",
-                                uuid=asset_dict['AIMObject.assetId']['DtcIdentificator.identificator'][0:36],
+                                uuid=self.get_uuid_from_asset_dict(asset_dict),
                                 naam=naam,
                                 naampad=naampad)
         logging.info('done')
+
+
+

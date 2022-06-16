@@ -13,3 +13,8 @@ class SpecificEventProcessor(ABC):
     @abstractmethod
     def process(self, uuids: [str]):
         pass
+
+    @staticmethod
+    def get_uuid_from_asset_dict(asset_dict: dict) -> str:
+        index = asset_dict['@id'].rfind('/')
+        return asset_dict['@id'][index+1:index+37]

@@ -26,7 +26,7 @@ class ToestandGewijzigdProcessor(SpecificEventProcessor):
                 assettype = '`' + assettype + '`'
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.toestand = $toestand",
-                                uuid=asset_dict['AIMObject.assetId']['DtcIdentificator.identificator'][0:36],
+                                uuid=self.get_uuid_from_asset_dict(asset_dict),
                                 toestand=asset_dict['AIMToestand.toestand'].replace(
                                     'https://wegenenverkeer.data.vlaanderen.be/id/concept/KlAIMToestand/', ''))
         logging.info('done')

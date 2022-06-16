@@ -40,6 +40,6 @@ class ToezichtGewijzigdProcessor(SpecificEventProcessor):
 
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",
-                                uuid=flattened_dict['assetId.identificator'][0:36],
+                                uuid=self.get_uuid_from_asset_dict(asset_dict),
                                 params=params)
         logging.info('done')
