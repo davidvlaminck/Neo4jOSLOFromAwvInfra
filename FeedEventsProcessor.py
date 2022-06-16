@@ -1,5 +1,7 @@
 import logging
 import time
+from datetime import datetime
+
 from EMInfraImporter import EMInfraImporter
 from EventProcessorFactory import EventProcessorFactory
 from Neo4JConnector import Neo4JConnector
@@ -16,8 +18,8 @@ class FeedEventsProcessor:
 
         self.process_events_by_event_params(event_params, self.tx_context)
 
-        # TODO add last_update to latest timestamp of events
         self.neo4J_connector.update_params(self.tx_context, event_params.page_num, event_params.event_id)
+        self.neo4J_connector.save_props_to_params({'last_sync_utc': datetime.utcnow(), 'last_update_utc': datetime.utcnow()})
         self.neo4J_connector.commit_transaction(self.tx_context)
 
     def process_events_by_event_params(self, event_params, tx_context):

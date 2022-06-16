@@ -183,7 +183,7 @@ class Syncer:
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:
                 logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
-                self.connector.save_props_to_params({'last_update_utc': datetime.utcnow()})
+                self.connector.save_props_to_params({'last_sync_utc': datetime.utcnow()})
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
                 continue
 
