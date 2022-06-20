@@ -42,12 +42,13 @@ class Syncer:
                 logging.info('Retrying in 30 seconds.')
                 time.sleep(30)
 
-
     def perform_fresh_start_sync(self, params: dict):
         page_size = params['pagesize']
         page = params['page']
         if page == -1:
-            self.save_last_feedevent_to_params(page_size)
+            tx_context = self.connector.start_transaction()
+            self.save_last_feedevent_to_params(page_size, tx_context=tx_context)
+            self.connector.commit_transaction(tx_context)
 
         while True:
             # main sync loop for getting all assets/agents/relations
@@ -104,15 +105,15 @@ class Syncer:
             cursor = self.eminfra_importer.cursor
             if cursor == '':
                 otltype += 1
-            self.connector.save_props_to_params(
+            self.connector.save_props_to_params(tx=tx_context, params=
                 {'otltype': otltype,
                  'cursor': cursor})
             if otltype >= 5:
-                self.connector.save_props_to_params(
+                self.connector.save_props_to_params(tx=tx_context, params=
                     {'freshstart': False})
             self.connector.commit_transaction(tx_context)
 
-    def save_last_feedevent_to_params(self, page_size: int):
+    def save_last_feedevent_to_params(self, page_size: int, tx_context):
         start_num = 1
         step = 5
         start_num = self.recur_exp_find_start_page(current_num=start_num, step=step, page_size=page_size)
@@ -130,7 +131,7 @@ class Syncer:
         entries = event_page['entries']
         last_event_id = entries[0]['id']
 
-        self.connector.save_props_to_params(
+        self.connector.save_props_to_params(tx=tx_context, params=
             {'event_id': last_event_id,
              'page': current_page_num})
 
@@ -183,7 +184,11 @@ class Syncer:
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:
                 logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
-                self.connector.save_props_to_params({'last_sync_utc': datetime.utcnow()})
+                with self.connector.driver.session(database=self.connector.db) as session:
+                    tx = session.begin_transaction()
+                    self.connector.save_props_to_params(params={'last_sync_utc': datetime.utcnow()}, tx=tx)
+                    tx.commit()
+                    tx.close()
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
                 continue
 

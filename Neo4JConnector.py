@@ -14,12 +14,8 @@ class Neo4JConnector:
                 params = session.run("CREATE (p:Params {page:-1, event_id:'', pagesize:100, freshstart:True, otltype:-1, cursor:''}) RETURN p").single()
             return params[0]
 
-    def save_props_to_params(self, params: dict):
-        with self.driver.session(database=self.db) as session:
-            tx = session.begin_transaction()
-            tx.run(f"MATCH (p:Params) SET p += $params", params=params)
-            tx.commit()
-            tx.close()
+    def save_props_to_params(self, tx: Transaction, params: dict):
+        tx.run(f"MATCH (p:Params) SET p += $params", params=params)
 
     @staticmethod
     def update_params(tx: Transaction, page_num: int, event_id: int):

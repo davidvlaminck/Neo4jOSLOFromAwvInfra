@@ -1,3 +1,5 @@
+import logging
+
 from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
@@ -59,4 +61,5 @@ class EventProcessorFactory:
         elif event_type == 'VPLAN_GEWIJZIGD':
             pass
         else:
+            logging.error(f'events of type {event_type} are not supported.')
             raise NotImplementedError
