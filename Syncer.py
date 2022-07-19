@@ -201,6 +201,9 @@ class Syncer:
                 # agents syncen of na 24h
                 self.events_processor.tx_context.rollback()
                 self.sync_all_agents()
+            except AssetRelationNotCreatedError:
+                self.events_processor.tx_context.rollback()
+                self.sync_all_agents()
             except Exception as exc:
                 traceback.print_exception(exc)
                 self.events_processor.tx_context.rollback()

@@ -5,7 +5,7 @@ from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.RelatieProcessor import RelatieProcessor
-from EventProcessors.RelationNotCreatedError import RelationNotCreatedError
+from EventProcessors.RelationNotCreatedError import AssetRelationNotCreatedError
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 
 
@@ -25,10 +25,13 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
         dicts_uuids = list(map(lambda x: x['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36], assetrelatie_dicts))
         if len(dicts_uuids) != len(relaties_created_uuids):
             missing = list(set(dicts_uuids) - set(relaties_created_uuids))
-            logging.error("Could not create one or more relations:")
-            for relatie_uuid in missing:
-                logging.error(next (r for r in assetrelatie_dicts if r['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36] == relatie_uuid))
-            # raise RelationNotCreatedError("Could not create one or more relations.")
+            logging.error("Could not create one or more relations. Retry after syncing the assets")
+            missing_relaties = list(filter(lambda r: r['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36] in missing, assetrelatie_dicts))
+            for missing_relatie in missing_relaties:
+                logging.error(missing_relatie)
+            assets_to_sync_after_error = self.find_assets_to_resync_after_error(missing_relaties)
+            raise AssetRelationNotCreatedError(message="Could not create one or more relations.",
+                                               asset_uuids=assets_to_sync_after_error)
 
         logging.info('done')
 
@@ -68,3 +71,16 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
                                'relatie_dict': relatie_dict})
 
         return param_list
+
+    def find_assets_to_resync_after_error(self, missing_relaties) -> [str]:
+        asset_uuids = []
+        for missing_relatie in missing_relaties:
+            asset_uuids.append(missing_relatie['RelatieObject.doelAssetId']['DtcIdentificator.identificator'][0:36])
+            asset_uuids.append(missing_relatie['RelatieObject.bronAssetId']['DtcIdentificator.identificator'][0:36])
+        asset_uuids = set(asset_uuids)
+        match_query = "MATCH (n) WHERE n.uuid IN $uuids RETURN n.uuid;"
+        lists_assets_found = self.tx_context.run(match_query, uuids=list(asset_uuids)).values()
+        assets_found = list(map(lambda x: x[0], lists_assets_found))
+        missing = list(asset_uuids - set(assets_found))
+        # missing = ['33b43528-a932-4724-a50a-69af525f63fb']
+        return missing

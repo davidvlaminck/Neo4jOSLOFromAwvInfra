@@ -4,6 +4,7 @@ from datetime import datetime
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessorFactory import EventProcessorFactory
+from EventProcessors.RelationNotCreatedError import AssetRelationNotCreatedError
 from Neo4JConnector import Neo4JConnector
 
 
@@ -16,12 +17,22 @@ class FeedEventsProcessor:
     def process_events(self, event_params: ()):
         self.tx_context = self.neo4J_connector.start_transaction()
 
-        self.process_events_by_event_params(event_params, self.tx_context)
+        try:
+            self.process_events_by_event_params(event_params, self.tx_context)
 
-        self.neo4J_connector.update_params(self.tx_context, event_params.page_num, event_params.event_id)
-        self.neo4J_connector.save_props_to_params(tx=self.tx_context,
-                                                  params={'last_sync_utc': datetime.utcnow(), 'last_update_utc': datetime.utcnow()})
-        self.neo4J_connector.commit_transaction(self.tx_context)
+            self.neo4J_connector.update_params(self.tx_context, event_params.page_num, event_params.event_id)
+            self.neo4J_connector.save_props_to_params(tx=self.tx_context,
+                                                      params={'last_sync_utc': datetime.utcnow(),
+                                                              'last_update_utc': datetime.utcnow()})
+            self.neo4J_connector.commit_transaction(self.tx_context)
+        except AssetRelationNotCreatedError as arnc:
+            self.tx_context.rollback()
+            self.tx_context = self.neo4J_connector.start_transaction()
+            event_processor = self.create_processor("NIEUW_ONDERDEEL", self.tx_context)
+            event_processor.process(arnc.asset_uuids)
+            self.neo4J_connector.commit_transaction(self.tx_context)
+            # what about assets that will be created and then later again when an event is processed?
+            # ==> check before creating new assets
 
     def process_events_by_event_params(self, event_params, tx_context):
         event_dict = event_params.event_dict
