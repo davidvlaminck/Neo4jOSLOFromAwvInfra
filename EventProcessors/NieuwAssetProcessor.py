@@ -2,6 +2,12 @@ class NieuwAssetProcessor:
     def __init__(self):
         self.tx_context = None
 
+    def filter_out_existing_assets(self, uuids: [str]) -> [str]:
+        query = "MATCH (a:Asset) WHERE a.uuid in $uuids RETURN a.uuid"
+        filtered_dicts_uuids = self.tx_context.run(query, uuids=uuids).data()
+        filtered_uuids = list(map(lambda x: x['a.uuid'], filtered_dicts_uuids))
+        return list(set(uuids) - set(filtered_uuids))
+
     @staticmethod
     def create_asset_by_dict(tx, params: dict, ns: str, assettype: str):
         if '-' in assettype:

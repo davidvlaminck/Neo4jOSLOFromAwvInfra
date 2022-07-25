@@ -82,5 +82,4 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
         lists_assets_found = self.tx_context.run(match_query, uuids=list(asset_uuids)).values()
         assets_found = list(map(lambda x: x[0], lists_assets_found))
         missing = list(asset_uuids - set(assets_found))
-        # missing = ['33b43528-a932-4724-a50a-69af525f63fb']
         return missing

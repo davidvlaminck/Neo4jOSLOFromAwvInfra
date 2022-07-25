@@ -15,6 +15,8 @@ class NieuwOnderdeelProcessor(SpecificEventProcessor, NieuwAssetProcessor, Relat
         super().__init__(tx_context, emInfraImporter)
 
     def process(self, uuids: [str], full_sync: bool = False):
+        uuids = self.filter_out_existing_assets(uuids)
+
         assetDicts = self.emInfraImporter.import_assets_from_webservice_by_uuids(asset_uuids=uuids)
 
         logging.info(f'started creating {len(assetDicts)} assets')
@@ -46,3 +48,5 @@ class NieuwOnderdeelProcessor(SpecificEventProcessor, NieuwAssetProcessor, Relat
             logging.info(f'created {len(assetrelatie_dicts)} betrokkenerelaties in {str(round(end - start, 2))} seconds.')
 
         logging.info('done')
+
+

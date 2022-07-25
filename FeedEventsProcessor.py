@@ -31,8 +31,6 @@ class FeedEventsProcessor:
             event_processor = self.create_processor("NIEUW_ONDERDEEL", self.tx_context)
             event_processor.process(arnc.asset_uuids)
             self.neo4J_connector.commit_transaction(self.tx_context)
-            # what about assets that will be created and then later again when an event is processed?
-            # ==> check before creating new assets
 
     def process_events_by_event_params(self, event_params, tx_context):
         event_dict = event_params.event_dict
