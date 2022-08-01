@@ -4,7 +4,7 @@ class NieuwAssetProcessor:
 
     def filter_out_existing_assets(self, uuids: [str]) -> [str]:
         query = "MATCH (a:Asset) WHERE a.uuid in $uuids RETURN a.uuid"
-        filtered_dicts_uuids = self.tx_context.run(query, uuids=uuids).data()
+        filtered_dicts_uuids = self.tx_context.run(query, uuids=list(uuids)).data()
         filtered_uuids = list(map(lambda x: x['a.uuid'], filtered_dicts_uuids))
         return list(set(uuids) - set(filtered_uuids))
 
