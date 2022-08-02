@@ -10,7 +10,8 @@ from Syncer import Syncer
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     connector = Neo4JConnector(uri="bolt://localhost:7687", user="neo4jPython", password="python")
-    settings_manager = SettingsManager(settings_path='C:\\resources\\settings_neo4jmodelcreator.json')
+    settings_manager = SettingsManager(settings_path='/home/davidlinux/Documents/AWV/resources/settings_neo4jmodelcreator.json')
+    # settings_manager = SettingsManager(settings_path='C:\\resources\\settings_neo4jmodelcreator.json')
 
     requester = RequesterFactory.create_requester(settings=settings_manager.settings, auth_type='JWT', env='prd')
     request_handler = RequestHandler(requester)

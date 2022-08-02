@@ -3,6 +3,8 @@ import time
 import traceback
 from datetime import datetime
 
+import neo4j.exceptions
+
 from AgentSyncer import AgentSyncer
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
@@ -49,6 +51,8 @@ class Syncer:
             tx_context = self.connector.start_transaction()
             self.save_last_feedevent_to_params(page_size, tx_context=tx_context)
             self.connector.commit_transaction(tx_context)
+
+        self.check_apoc()
 
         while True:
             # main sync loop for getting all assets/agents/relations
@@ -223,4 +227,19 @@ class Syncer:
         agentsyncer = AgentSyncer(emInfraImporter=self.eminfra_importer, neo4J_connector=self.connector)
         agentsyncer.sync_agents()
         logging.info(f'sync_all_agents done')
+
+    def check_apoc(self):
+        apoc_check_query = 'RETURN apoc.version() AS output;'
+
+        tx_context = self.connector.start_transaction()
+        try:
+            result = tx_context.run(apoc_check_query)
+            version = result.data()[0]['output']
+            logging.info(f'The apoc plugin is installed, version {version}')
+            tx_context.commit()
+        except neo4j.exceptions.ClientError as exc:
+            if "Unknown function 'apoc.version'" in exc.message:
+                tx_context.rollback()
+                logging.error('The apoc plugin is not enabled in this Neo4J database. Please install it first.')
+                raise RuntimeError('The apoc plugin is not enabled in this Neo4J database. Please install it first.')
 

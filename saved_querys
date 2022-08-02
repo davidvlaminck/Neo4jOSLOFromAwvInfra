@@ -8,6 +8,7 @@ delete all:
 MATCH (n)
 DETACH DELETE n
 
+delete all (2):
 CALL apoc.periodic.iterate('MATCH (n) RETURN n', 'DETACH DELETE n', {batchSize:1000})
 
 show all
@@ -22,6 +23,7 @@ neo4j-admin.bat dump --database=neo4j --to=C:/resources/dumps/neo4j/neo4j-202204
 load
 bin/neo4j-admin load --from=/dumps/neo4j/neo4j-<timestamp>.dump --database=neo4j --force
 
+drop and create constraints
 DROP constraint ON (n:Asset) ASSERT n.uuid is UNIQUE
 CREATE CONSTRAINT Asset_uuid IF NOT EXISTS FOR (n:Asset) REQUIRE n.uuid IS UNIQUE
 CREATE CONSTRAINT Agent_uuid IF NOT EXISTS FOR (n:Agent) REQUIRE n.uuid IS UNIQUE
