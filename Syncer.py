@@ -111,7 +111,8 @@ class Syncer:
                 otltype += 1
             self.connector.save_props_to_params(tx=tx_context, params=
                 {'otltype': otltype,
-                 'cursor': cursor})
+                 'cursor': cursor,
+                 'last_update_utc': datetime.utcnow()})
             if otltype >= 5:
                 self.connector.save_props_to_params(tx=tx_context, params=
                     {'freshstart': False})
