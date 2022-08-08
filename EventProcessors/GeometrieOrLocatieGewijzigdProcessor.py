@@ -25,7 +25,7 @@ class GeometrieOrLocatieGewijzigdProcessor(SpecificEventProcessor):
             korte_uri = flattened_dict['typeURI'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
-            if '-' in assettype:
+            if '-' in assettype or '.' in assettype:
                 assettype = '`' + assettype + '`'
 
             flattened_dict["geometry"] = asset_processor.get_wkt_from_puntlocatie(flattened_dict)
