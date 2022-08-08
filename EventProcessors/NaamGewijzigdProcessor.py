@@ -22,7 +22,7 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
             korte_uri = asset_dict['@type'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
-            if '-' in assettype:
+            if '-' in assettype or '.' in assettype:
                 assettype = '`' + assettype + '`'
             naampad = None
             naam = None

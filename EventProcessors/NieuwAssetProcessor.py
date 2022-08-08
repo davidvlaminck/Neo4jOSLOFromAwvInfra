@@ -10,7 +10,7 @@ class NieuwAssetProcessor:
 
     @staticmethod
     def create_asset_by_dict(tx, params: dict, ns: str, assettype: str):
-        if '-' in assettype:
+        if '-' in assettype or '.' in assettype:
             assettype = '`' + assettype + '`'
         tx.run(f"CREATE (a:Asset:{ns}:{assettype} $params) ", params=params)
 
