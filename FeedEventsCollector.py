@@ -6,8 +6,8 @@ EventParams = namedtuple('EventParams', 'event_dict page_num event_id')
 
 
 class FeedEventsCollector:
-    def __init__(self, emInfraImporter: EMInfraImporter):
-        self.emInfraImporter = emInfraImporter
+    def __init__(self, em_infra_importer: EMInfraImporter):
+        self.emInfraImporter = em_infra_importer
 
     def collect_starting_from_page(self, completed_page_number: int, completed_event_id: str, page_size: int) -> EventParams:
         event_dict = self.create_empty_event_dict()
@@ -17,7 +17,7 @@ class FeedEventsCollector:
             stop_after_this_page = False
             last_event_id = ''
 
-            entries = sorted(page['entries'], key=lambda e: (e['content']['value']['event-id'], e['id']))
+            entries = list(reversed(page['entries']))
 
             for entry in entries:
                 entry_value = entry['content']['value']

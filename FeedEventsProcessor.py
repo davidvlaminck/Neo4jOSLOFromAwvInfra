@@ -9,9 +9,9 @@ from Neo4JConnector import Neo4JConnector
 
 
 class FeedEventsProcessor:
-    def __init__(self, neo4J_connector: Neo4JConnector, emInfraImporter: EMInfraImporter):
+    def __init__(self, neo4J_connector: Neo4JConnector, em_infra_importer: EMInfraImporter):
         self.neo4J_connector = neo4J_connector
-        self.emInfraImporter = emInfraImporter
+        self.emInfraImporter = em_infra_importer
         self.tx_context = None
 
     def process_events(self, event_params: ()):

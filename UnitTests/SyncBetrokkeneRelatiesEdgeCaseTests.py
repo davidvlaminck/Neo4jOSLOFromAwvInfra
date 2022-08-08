@@ -15,7 +15,7 @@ class SyncBetrokkeneRelatiesEdgeCaseTests(TestCase):
     def setUp(self) -> None:
         logging.basicConfig(level=logging.INFO)
         self.connector = Neo4JConnector("bolt://localhost:7687", "neo4jPython", "python")
-        self.feedEventsProcessor = FeedEventsProcessor(neo4J_connector=self.connector, emInfraImporter=mock.Mock())
+        self.feedEventsProcessor = FeedEventsProcessor(neo4J_connector=self.connector, em_infra_importer=mock.Mock())
         self.tx_context = self.connector.start_transaction()
 
     def tearDown(self) -> None:
