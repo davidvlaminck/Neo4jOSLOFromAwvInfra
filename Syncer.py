@@ -30,14 +30,16 @@ class Syncer:
             self.sync_start = self.settings['time']['start']
             self.sync_end = self.settings['time']['end']
 
-    def start_syncing(self):
+    def start_syncing(self, stop=False):
         while True:
             try:
                 params = self.connector.get_page_by_get_or_create_params()
                 if params['freshstart']:
                     self.perform_fresh_start_sync(params)
                 else:
-                    self.perform_syncing()
+                    self.perform_syncing(stop=stop)
+                    if stop:
+                        break
             except Exception as ex:
                 logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
                 logging.error(ex)
@@ -172,7 +174,7 @@ class Syncer:
         v = start < now < end
         return v
 
-    def perform_syncing(self):
+    def perform_syncing(self, stop=False):
         sync_allowed_by_time = self.calculate_sync_allowed_by_time()
 
         while sync_allowed_by_time:
@@ -188,13 +190,19 @@ class Syncer:
 
             total_events = sum(len(lists) for lists in eventsparams_to_process.event_dict.values())
             if total_events == 0:
-                logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
                 with self.connector.driver.session(database=self.connector.db) as session:
                     tx = session.begin_transaction()
                     self.connector.save_props_to_params(params={'last_sync_utc': datetime.utcnow()}, tx=tx)
                     tx.commit()
                     tx.close()
+
+                if stop:
+                    logging.info(f"The database is fully synced.")
+                    break
+                logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
+
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
+
                 continue
 
             end = time.time()
