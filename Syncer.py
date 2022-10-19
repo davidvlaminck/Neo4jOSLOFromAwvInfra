@@ -30,15 +30,15 @@ class Syncer:
             self.sync_start = self.settings['time']['start']
             self.sync_end = self.settings['time']['end']
 
-    def start_syncing(self, stop=False):
+    def start_syncing(self, stop_when_fully_synced=False):
         while True:
             try:
                 params = self.connector.get_page_by_get_or_create_params()
                 if params['freshstart']:
                     self.perform_fresh_start_sync(params)
                 else:
-                    self.perform_syncing(stop=stop)
-                    if stop:
+                    self.perform_syncing(stop_when_fully_synced=stop_when_fully_synced)
+                    if stop_when_fully_synced:
                         break
             except Exception as ex:
                 logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
@@ -174,7 +174,7 @@ class Syncer:
         v = start < now < end
         return v
 
-    def perform_syncing(self, stop=False):
+    def perform_syncing(self, stop_when_fully_synced=False):
         sync_allowed_by_time = self.calculate_sync_allowed_by_time()
 
         while sync_allowed_by_time:
@@ -196,7 +196,7 @@ class Syncer:
                     tx.commit()
                     tx.close()
 
-                if stop:
+                if stop_when_fully_synced:
                     logging.info(f"The database is fully synced.")
                     break
                 logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
