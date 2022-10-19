@@ -64,3 +64,17 @@ class Neo4JConnector:
         session.run("CREATE CONSTRAINT Asset_uuid IF NOT EXISTS FOR (n:Asset) REQUIRE n.uuid IS UNIQUE")
         session.run("CREATE CONSTRAINT Agent_uuid IF NOT EXISTS FOR (n:Agent) REQUIRE n.uuid IS UNIQUE")
 
+    def query(self, query):
+        assert self.driver is not None, "Driver not initialized!"
+        session = None
+        response = None
+
+        try:
+            session = self.driver.session(database=self.db)
+            response = list(session.run(query))
+        except Exception as e:
+            print("Query failed:", e)
+        finally:
+            if session is not None:
+                session.close()
+        return response
