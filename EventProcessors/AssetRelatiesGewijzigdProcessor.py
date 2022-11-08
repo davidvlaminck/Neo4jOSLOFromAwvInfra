@@ -49,13 +49,16 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
         param_list = []
         for json_dict in assetrelatie_dicts:
             relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'],
-                            'uuid': json_dict['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36]}
+                            'uuid': json_dict['@id'][46:82]}
+
             if "AIMDBStatus.isActief" in json_dict:
                 relatie_dict['isActief'] = json_dict["AIMDBStatus.isActief"]
 
-            bron_uuid = json_dict['RelatieObject.bronAssetId']['DtcIdentificator.identificator'][0:36]
-            doel_uuid = json_dict['RelatieObject.doelAssetId']['DtcIdentificator.identificator'][0:36]
-            relatie_type = json_dict["RelatieObject.typeURI"].split('#')[1]
+            a = len('https://data.awvvlaanderen.be/id/assetrelatie/')
+
+            bron_uuid = json_dict['RelatieObject.bron']['@id'][39:75]
+            doel_uuid = json_dict['RelatieObject.doel']['@id'][39:75]
+            relatie_type = json_dict['@type'].split('#')[1]
 
             for k, v in json_dict.items():
                 if k in ['@type', '@id', "RelatieObject.doel", "RelatieObject.assetId", "AIMDBStatus.isActief",
