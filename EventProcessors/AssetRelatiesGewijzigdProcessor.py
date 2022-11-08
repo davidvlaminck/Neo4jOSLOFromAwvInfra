@@ -49,8 +49,9 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
         param_list = []
         for json_dict in assetrelatie_dicts:
             relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'],
-                            'isActief': json_dict["AIMDBStatus.isActief"],
                             'uuid': json_dict['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36]}
+            if "AIMDBStatus.isActief" in json_dict:
+                relatie_dict['isActief'] = json_dict["AIMDBStatus.isActief"]
 
             bron_uuid = json_dict['RelatieObject.bronAssetId']['DtcIdentificator.identificator'][0:36]
             doel_uuid = json_dict['RelatieObject.doelAssetId']['DtcIdentificator.identificator'][0:36]
