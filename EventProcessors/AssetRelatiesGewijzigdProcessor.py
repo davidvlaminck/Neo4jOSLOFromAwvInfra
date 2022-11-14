@@ -22,11 +22,11 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
         logging.info(f'started creating {len(assetrelatie_dicts)} assetrelaties')
         self.remove_all_asset_relaties(list(uuids))
         relaties_created_uuids = self.create_assetrelaties_from_list_of_jsondicts(assetrelatie_dicts)
-        dicts_uuids = list(map(lambda x: x['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36], assetrelatie_dicts))
+        dicts_uuids = list(map(lambda x: x['@id'][46:82], assetrelatie_dicts))
         if len(dicts_uuids) != len(relaties_created_uuids):
             missing = list(set(dicts_uuids) - set(relaties_created_uuids))
             logging.error("Could not create one or more relations. Retry after syncing the assets")
-            missing_relaties = list(filter(lambda r: r['RelatieObject.assetId']['DtcIdentificator.identificator'][0:36] in missing, assetrelatie_dicts))
+            missing_relaties = list(filter(lambda r: r['@id'][46:82] in missing, assetrelatie_dicts))
             for missing_relatie in missing_relaties:
                 logging.error(missing_relatie)
             assets_to_sync_after_error = self.find_assets_to_resync_after_error(missing_relaties)
