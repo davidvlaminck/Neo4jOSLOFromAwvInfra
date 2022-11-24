@@ -77,7 +77,8 @@ class Neo4JConnector:
                 session = self.driver.session(database=self.db)
                 return list(session.run(query))
             except Exception as e:
-                logging.error("Query failed:", e)
+                logging.error("Query failed")
+                logging.error(e)
                 logging.error('Are settings and/or connection to the Neo4J database okay?')
                 logging.info('Retrying in 30 seconds.')
                 time.sleep(30)
