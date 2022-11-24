@@ -81,7 +81,8 @@ class Neo4JConnector:
                 response = list(session.run(query))
                 return response
             except Exception as e:
-                logging.error("Query failed:", e)
+                logging.error("Query failed")
+                logging.error(e)
                 logging.error('Are settings and/or connection to the Neo4J database okay?')
                 logging.info('Retrying in 30 seconds.')
                 time.sleep(30)
