@@ -79,8 +79,10 @@ class AssetRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProcessor):
     def find_assets_to_resync_after_error(self, missing_relaties) -> [str]:
         asset_uuids = []
         for missing_relatie in missing_relaties:
-            asset_uuids.append(missing_relatie['RelatieObject.doelAssetId']['DtcIdentificator.identificator'][0:36])
-            asset_uuids.append(missing_relatie['RelatieObject.bronAssetId']['DtcIdentificator.identificator'][0:36])
+            bron_uuid = missing_relatie['RelatieObject.bron']['@id'][39:75]
+            doel_uuid = missing_relatie['RelatieObject.doel']['@id'][39:75]
+            asset_uuids.append(bron_uuid)
+            asset_uuids.append(doel_uuid)
         asset_uuids = set(asset_uuids)
         match_query = "MATCH (n) WHERE n.uuid IN $uuids RETURN n.uuid;"
         lists_assets_found = self.tx_context.run(match_query, uuids=list(asset_uuids)).values()
