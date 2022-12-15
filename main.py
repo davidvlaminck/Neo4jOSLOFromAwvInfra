@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # Set up connection to Neo4j instance (DBMS)
     username = config('username_neo4j', default='')  # not just username because this is predefined variable, see .env
     password = config('password_neo4j', default='')
-    connector = Neo4JConnector(uri="bolt://localhost:11003", user=username, password=password)
+    connector = Neo4JConnector(uri="bolt://localhost:7687", user=username, password=password)
 
     # Syncing settings
     settings_manager = SettingsManager(settings_path='.\\settings_neo4jmodelcreator.json')
