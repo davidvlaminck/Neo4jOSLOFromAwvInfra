@@ -1,3 +1,4 @@
 /venv/
 /.idea/
-./settings_neo4jmodelcreator.json
+./settings_neo4jmodelcreator.json!/main.py
+main.py
