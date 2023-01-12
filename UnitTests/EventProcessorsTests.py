@@ -356,6 +356,8 @@ class EventProcessorsTests(TestCase):
         result_after_event = self.tx_context.run(query).single()[0]
         self.assertEqual('POINT Z (150000 250000 0)', result_after_event._properties['geometry'])
         self.assertEqual('Antwerpen', result_after_event._properties['loc:puntlocatie.loc:weglocatie.loc:gemeente'])
+        self.assertEqual('Antwerpen', result_after_event._properties['loc:puntlocatie.loc:adres.loc:provincie'])
+        self.assertTrue('loc:puntlocatie.loc:adres.loc:nummer' not in result_after_event._properties)
 
         self.tearDown()
 

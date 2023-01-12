@@ -236,7 +236,6 @@ class ResponseDouble:
                     "loc:DtcAdres.straat": "Oosterloseweg",
                     "loc:DtcAdres.gemeente": "Geel",
                     "loc:DtcAdres.provincie": "Antwerpen",
-                    "loc:DtcAdres.nummer": "36"
                 },
                 "loc:DtcPuntlocatie.precisie": "https://loc.data.wegenenverkeer.be/id/concept/KlLocatiePrecisie/meter",
                 "loc:DtcPuntlocatie.bron": "https://loc.data.wegenenverkeer.be/id/concept/KlLocatieBron/manueel"
