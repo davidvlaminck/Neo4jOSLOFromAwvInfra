@@ -61,7 +61,11 @@ class ResponseDouble:
             "Netwerkpoort.technologie": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkTechnologie/SDH",
             "AIMToestand.toestand": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlAIMToestand/in-gebruik",
             "loc:Locatie.geometrie": "",
-            "AIMNaamObject.naam": "BELFLANTLa_LS2.1"
+            "AIMNaamObject.naam": "BELFLANTLa_LS2.1",
+            "tz:Schadebeheerder.schadebeheerder": {
+                "tz:DtcBeheerder.naam": "District Brecht",
+                "tz:DtcBeheerder.referentie": "123"
+            },
         }],
         'otl/assets/search/00000000-0000-0000-0000-000000000002': [{
             "@type": "https://lgc.data.wegenenverkeer.be/ns/installatie#Kast",

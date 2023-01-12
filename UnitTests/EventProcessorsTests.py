@@ -333,6 +333,32 @@ class EventProcessorsTests(TestCase):
 
         self.tearDown()
 
+    def test_schadebeheerder_gewijzigd_2(self):
+        self.setUp()
+
+        # create a test asset
+        uuid = '00000000-0000-0000-0000-000000000001'
+        processor = NieuwAssetProcessor()
+        processor.tx_context = self.tx_context
+        processor.create_asset_from_jsonLd_dict(ResponseDouble.endpoint_orig['otl/assets/search/' + uuid][0])
+
+        # test before change
+        query = "MATCH (n{uuid:'" + uuid + "'}) return n"
+        result_before_event = self.tx_context.run(query).single()[0]
+        self.assertEqual('District Brecht', result_before_event._properties['tz:schadebeheerder.tz:naam'])
+        self.assertEqual('123', result_before_event._properties['tz:schadebeheerder.tz:referentie'])
+
+        # make the change
+        processor = SchadebeheerderGewijzigdProcessor(self.tx_context, mock.Mock())
+        processor.process_dicts(ResponseDouble.endpoint_changed['otl/assets/search/' + uuid])
+
+        # test after change
+        result_after_event = self.tx_context.run(query).single()[0]
+        self.assertTrue('tz:schadebeheerder.tz:naam' not in result_after_event._properties)
+        self.assertTrue('tz:schadebeheerder.tz:referentie' not in result_after_event._properties)
+
+        self.tearDown()
+
     def test_locatie_gewijzigd(self):
         self.setUp()
 
@@ -347,6 +373,7 @@ class EventProcessorsTests(TestCase):
         result_before_event = self.tx_context.run(query).single()[0]
         self.assertEqual('POINT Z (192721.4 201119.2 0)', result_before_event._properties['geometry'])
         self.assertEqual('Geel', result_before_event._properties['loc:puntlocatie.loc:weglocatie.loc:gemeente'])
+        self.assertEqual('36', result_before_event._properties['loc:puntlocatie.loc:adres.loc:nummer'])
 
         # make the change
         processor = GeometrieOrLocatieGewijzigdProcessor(self.tx_context, mock.Mock())
