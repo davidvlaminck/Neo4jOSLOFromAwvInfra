@@ -34,7 +34,19 @@ class GeometrieOrLocatieGewijzigdProcessor(SpecificEventProcessor):
                 if geometrie != '' and flattened_dict["geometry"] == '':
                     flattened_dict["geometry"] = geometrie
 
-            attributen = list(filter(lambda x: 'loc:' in x or 'geo:' in x or x == 'geometry', flattened_dict.keys()))
+            attributen = ['geometry', 'loc:geometrie', 'loc:omschrijving', 'loc:puntlocatie.loc:adres.loc:bus',
+                          'loc:puntlocatie.loc:adres.loc:gemeente', 'loc:puntlocatie.loc:adres.loc:nummer',
+                          'loc:puntlocatie.loc:adres.loc:postcode', 'loc:puntlocatie.loc:adres.loc:provincie',
+                          'loc:puntlocatie.loc:adres.loc:straat', 'loc:puntlocatie.loc:bron',
+                          'loc:puntlocatie.loc:precisie',
+                          'loc:puntlocatie.loc:puntgeometrie.loc:lambert72.loc:xcoordinaat',
+                          'loc:puntlocatie.loc:puntgeometrie.loc:lambert72.loc:ycoordinaat',
+                          'loc:puntlocatie.loc:puntgeometrie.loc:lambert72.loc:zcoordinaat',
+                          'loc:puntlocatie.loc:weglocatie.loc:gemeente', 'loc:puntlocatie.loc:weglocatie.loc:ident2',
+                          'loc:puntlocatie.loc:weglocatie.loc:ident8',
+                          'loc:puntlocatie.loc:weglocatie.loc:referentiepaalAfstand',
+                          'loc:puntlocatie.loc:weglocatie.loc:referentiepaalOpschrift',
+                          'loc:puntlocatie.loc:weglocatie.loc:straatnaam']
 
             params = {}
             for attribuut in attributen:
