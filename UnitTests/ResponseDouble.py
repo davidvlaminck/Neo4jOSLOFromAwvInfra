@@ -182,7 +182,6 @@ class ResponseDouble:
         'otl/assets/search/00000000-0000-0000-0000-000000000001': [{
             "@type": "https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort",
             "@id": "https://data.awvvlaanderen.be/id/asset/00000000-0000-0000-0000-000000000001-b25kZXJkZWVsI05ldHdlcmtwb29ydA",
-            "Netwerkpoort.config": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkpoortConfig/STM-1",
             "Netwerkpoort.merk": "https://wegenenverkeer.data.vlaanderen.be/id/concept/KlNetwerkMerk/NOKIA",
             "loc:Locatie.puntlocatie": "",
             "AIMDBStatus.isActief": False,

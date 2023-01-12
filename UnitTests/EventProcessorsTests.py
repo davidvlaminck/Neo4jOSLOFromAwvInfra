@@ -359,7 +359,6 @@ class EventProcessorsTests(TestCase):
 
         self.tearDown()
 
-
     def test_eigenschappen_gewijzigd(self):
         self.setUp()
 
@@ -383,7 +382,7 @@ class EventProcessorsTests(TestCase):
 
         # test after change
         result_after_event = self.tx_context.run(query).single()[0]
-        self.assertEqual('STM-1', result_after_event._properties['config'])
+        self.assertTrue('config' not in result_after_event._properties)
         self.assertEqual(200, result_after_event._properties['nNILANCapaciteit'])
         self.assertEqual('BELFLANTLa_LS2.1', result_after_event._properties['naam'])
         self.assertEqual('in-gebruik', result_after_event._properties['toestand'])
