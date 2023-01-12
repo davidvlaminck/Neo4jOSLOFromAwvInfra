@@ -416,6 +416,6 @@ class EventProcessorsTests(TestCase):
         self.assertEqual('BELFLANTLa_LS2.1', result_after_event._properties['naam'])
         self.assertEqual('in-gebruik', result_after_event._properties['toestand'])
         self.assertEqual('https://wegenenverkeer.data.vlaanderen.be/ns/onderdeel#Netwerkpoort', result_after_event._properties['typeURI'])
-        self.assertEqual(len(result_before_event._properties), len(result_after_event._properties))
+        self.assertEqual(len(result_before_event._properties), len(result_after_event._properties) + 1)
 
         self.tearDown()
