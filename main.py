@@ -9,7 +9,7 @@ from Syncer import Syncer
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    connector = Neo4JConnector(uri="bolt://localhost:7687", user="neo4jPython", password="python")
+    connector = Neo4JConnector(uri="bolt://localhost:7687", user="neo4jPython", password="2AN3jjki!!ukEA#t")
     settings_manager = SettingsManager(settings_path='.\\settings_neo4jmodelcreator.json')
     # settings_manager = SettingsManager(settings_path='C:\\resources\\settings_neo4jmodelcreator.json')
 
