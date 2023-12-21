@@ -1,10 +1,12 @@
 import logging
+from types import NoneType
 
 from neo4j import Transaction
 
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.ActiefGewijzigdProcessor import ActiefGewijzigdProcessor
 from EventProcessors.AssetRelatiesGewijzigdProcessor import AssetRelatiesGewijzigdProcessor
+from EventProcessors.BestekGewijzigdProcessor import BestekGewijzigdProcessor
 from EventProcessors.BetrokkeneRelatiesGewijzigdProcessor import BetrokkeneRelatiesGewijzigdProcessor
 from EventProcessors.CommentaarGewijzigdProcessor import CommentaarGewijzigdProcessor
 from EventProcessors.EigenschappenGewijzigdProcessor import EigenschappenGewijzigdProcessor
@@ -16,50 +18,45 @@ from EventProcessors.SchadebeheerderGewijzigdProcessor import SchadebeheerderGew
 from EventProcessors.SpecificEventProcessor import SpecificEventProcessor
 from EventProcessors.ToestandGewijzigdProcessor import ToestandGewijzigdProcessor
 from EventProcessors.ToezichtGewijzigdProcessor import ToezichtGewijzigdProcessor
+from EventProcessors.WegLocatieGewijzigdProcessor import WeglocatieGewijzigdProcessor
 
 
 class EventProcessorFactory:
+    processor_dict = {
+        'NIEUWE_INSTALLATIE': NieuweInstallatieProcessor,
+        'NIEUW_ONDERDEEL': NieuwOnderdeelProcessor,
+        'ACTIEF_GEWIJZIGD': ActiefGewijzigdProcessor,
+        'BESTEK_GEWIJZIGD': BestekGewijzigdProcessor,
+        'BETROKKENE_RELATIES_GEWIJZIGD': BetrokkeneRelatiesGewijzigdProcessor,
+        'COMMENTAAR_GEWIJZIGD': CommentaarGewijzigdProcessor,
+        'EIGENSCHAPPEN_GEWIJZIGD': EigenschappenGewijzigdProcessor,
+        'GEOMETRIE_GEWIJZIGD': GeometrieOrLocatieGewijzigdProcessor,
+        'LOCATIE_GEWIJZIGD': GeometrieOrLocatieGewijzigdProcessor,
+        'NAAM_GEWIJZIGD': NaamGewijzigdProcessor,
+        'NAAMPAD_GEWIJZIGD': NaamGewijzigdProcessor,
+        'PARENT_GEWIJZIGD': NaamGewijzigdProcessor,
+        'RELATIES_GEWIJZIGD': AssetRelatiesGewijzigdProcessor,
+        'SCHADEBEHEERDER_GEWIJZIGD': SchadebeheerderGewijzigdProcessor,
+        'TOESTAND_GEWIJZIGD': ToestandGewijzigdProcessor,
+        'TOEZICHT_GEWIJZIGD': ToezichtGewijzigdProcessor,
+        'WEGLOCATIE_GEWIJZIGD': WeglocatieGewijzigdProcessor,
+        'COMMUNICATIEAANSLUITING_GEWIJZIGD': NoneType,
+        'DOCUMENTEN_GEWIJZIGD': NoneType,
+        'ELEKTRICITEITSAANSLUITING_GEWIJZIGD': NoneType,
+        'POSTIT_GEWIJZIGD': NoneType,
+        'TOEGANG_GEWIJZIGD': NoneType,
+        'VPLAN_GEWIJZIGD': NoneType
+    }
+    
     @classmethod
     def CreateEventProcessor(cls, event_type: str, tx_context: Transaction,
-                             emInfraImporter: EMInfraImporter) -> SpecificEventProcessor:
-        if event_type == 'NIEUWE_INSTALLATIE':
-            return NieuweInstallatieProcessor(tx_context, emInfraImporter)
-        elif event_type == 'NIEUW_ONDERDEEL':
-            return NieuwOnderdeelProcessor(tx_context, emInfraImporter)
-        elif event_type == 'ACTIEF_GEWIJZIGD':
-            return ActiefGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'BESTEK_GEWIJZIGD':
+                             em_infra_importer: EMInfraImporter) -> SpecificEventProcessor:
+        processor_type = cls.processor_dict.get(event_type)
+        if processor_type is NoneType:
             pass
-        elif event_type == 'BETROKKENE_RELATIES_GEWIJZIGD':
-            return BetrokkeneRelatiesGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'COMMENTAAR_GEWIJZIGD':
-            return CommentaarGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'COMMUNICATIEAANSLUITING_GEWIJZIGD':
-            pass
-        elif event_type == 'DOCUMENTEN_GEWIJZIGD':
-            pass
-        elif event_type == 'EIGENSCHAPPEN_GEWIJZIGD':
-            return EigenschappenGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'ELEKTRICITEITSAANSLUITING_GEWIJZIGD':
-            pass
-        elif event_type == 'GEOMETRIE_GEWIJZIGD' or event_type == 'LOCATIE_GEWIJZIGD':
-            return GeometrieOrLocatieGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'NAAM_GEWIJZIGD' or event_type == 'NAAMPAD_GEWIJZIGD' or event_type == 'PARENT_GEWIJZIGD':
-            return NaamGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'POSTIT_GEWIJZIGD':
-            pass
-        elif event_type == 'RELATIES_GEWIJZIGD':
-            return AssetRelatiesGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'SCHADEBEHEERDER_GEWIJZIGD':
-            return SchadebeheerderGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'TOEGANG_GEWIJZIGD':
-            pass
-        elif event_type == 'TOESTAND_GEWIJZIGD':
-            return ToestandGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'TOEZICHT_GEWIJZIGD':
-            return ToezichtGewijzigdProcessor(tx_context, emInfraImporter)
-        elif event_type == 'VPLAN_GEWIJZIGD':
-            pass
-        else:
+        elif processor_type is None:
             logging.error(f'events of type {event_type} are not supported.')
-            raise NotImplementedError
+            raise NotImplementedError(f'events of type {event_type} are not supported.')
+        else:
+            return processor_type(tx_context, em_infra_importer)
+

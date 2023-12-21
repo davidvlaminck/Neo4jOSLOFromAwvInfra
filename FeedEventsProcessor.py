@@ -68,5 +68,5 @@ class FeedEventsProcessor:
     def create_processor(self, event_type, tx_context):
         event_processor = EventProcessorFactory.CreateEventProcessor(event_type=event_type,
                                                                      tx_context=tx_context,
-                                                                     emInfraImporter=self.emInfraImporter)
+                                                                     em_infra_importer=self.emInfraImporter)
         return event_processor

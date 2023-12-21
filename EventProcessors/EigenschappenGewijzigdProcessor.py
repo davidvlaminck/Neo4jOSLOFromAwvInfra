@@ -39,7 +39,9 @@ class EigenschappenGewijzigdProcessor(SpecificEventProcessor):
                                'loc:puntlocatie.loc:weglocatie.loc:ident8',
                                'loc:puntlocatie.loc:weglocatie.loc:referentiepaalAfstand',
                                'loc:puntlocatie.loc:weglocatie.loc:referentiepaalOpschrift',
-                               'loc:puntlocatie.loc:weglocatie.loc:straatnaam']
+                               'loc:puntlocatie.loc:weglocatie.loc:straatnaam',
+                               'wl:Weglocatie.wegaanduiding', 'wl:Weglocatie.geometrie', 'wl:Weglocatie.wegsegment',
+                               'wl:Weglocatie.bron', 'wl:Weglocatie.score', 'bs:Bestek.bestekkoppeling']
 
         # for all assets remove the non-excluded-properties
         properties_keep_str = '{.' + ', .'.join(['`' + a + '`' if '-' in a or '@' in a or '.' in a or ':' in a else a
