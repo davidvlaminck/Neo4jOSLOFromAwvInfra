@@ -64,7 +64,7 @@ class AgentSyncer:
 
                 if k == '@id':
                     new_dict['assetIdUri'] = v
-                    new_dict['uuid'] = v.split('/')[-1][0:36]
+                    new_dict['uuid'] = v.split('/')[-1][:36]
                     continue
 
                 if ':' in k:

@@ -207,7 +207,8 @@ class Syncer:
 
             end = time.time()
 
-            self.log_eventparams(eventsparams_to_process.event_dict, round(end - start, 2))
+            self.log_eventparams(eventsparams_to_process.event_dict, round(end - start, 2),
+                                 event_timestamp=eventsparams_to_process.event_timestamp)
             try:
                 self.events_processor.process_events(eventsparams_to_process)
             except BetrokkeneRelationNotCreatedError:
@@ -224,9 +225,9 @@ class Syncer:
             sync_allowed_by_time = self.calculate_sync_allowed_by_time()
 
     @staticmethod
-    def log_eventparams(event_dict, time: float):
+    def log_eventparams(event_dict, time: float, event_timestamp: datetime):
         total = sum(len(events) for events in event_dict.values())
-        logging.info(f'fetched {total} asset events to sync in {time} seconds')
+        logging.info(f'fetched {total} asset events to sync in {time} seconds, starting from {event_timestamp}')
         for k, v in event_dict.items():
             if len(v) > 0:
                 logging.info(f'number of events of type {k}: {len(v)}')
