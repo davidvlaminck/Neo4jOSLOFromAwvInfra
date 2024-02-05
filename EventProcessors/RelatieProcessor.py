@@ -22,7 +22,7 @@ class RelatieProcessor:
     def remove_all_betrokkene_relaties(self, asset_uuids: [str]):
         start = time.time()
         query = f"UNWIND $params as uuids " \
-                "MATCH ({uuid: uuids})-[r:HeeftBetrokkene]-(a:Agent) DELETE r"
+                "MATCH (:Asset {uuid: uuids})-[r:HeeftBetrokkene]-(a:Agent) DELETE r"
         self.tx_context.run(query, params=asset_uuids)
         end = time.time()
         logging.info(f'removed_all_betrokkene_relaties_from {len(asset_uuids)} assets in {str(round(end - start, 2))} seconds.')
