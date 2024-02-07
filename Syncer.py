@@ -41,8 +41,9 @@ class Syncer:
                     if stop_when_fully_synced:
                         break
             except Exception as ex:
-                logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
                 logging.error(ex)
+                logging.error(ex.args)
+                logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
                 logging.info('Retrying in 30 seconds.')
                 time.sleep(30)
 
@@ -211,10 +212,16 @@ class Syncer:
                                  event_timestamp=eventsparams_to_process.event_timestamp)
             try:
                 self.events_processor.process_events(eventsparams_to_process)
-            except BetrokkeneRelationNotCreatedError:
+            except BetrokkeneRelationNotCreatedError as ex:
                 # agents syncen of na 24h
                 self.events_processor.tx_context.rollback()
-                self.sync_all_agents()
+                if len(ex.agent_uuids) > 0:
+                    self.sync_all_agents()
+                if len(ex.asset_uuids) > 0:
+                    self.events_processor.tx_context = self.connector.start_transaction()
+                    event_processor = self.events_processor.create_processor("NIEUW_ONDERDEEL", self.events_processor.tx_context)
+                    event_processor.process(ex.asset_uuids)
+                    self.connector.commit_transaction(self.events_processor.tx_context)
             except AssetRelationNotCreatedError:
                 self.events_processor.tx_context.rollback()
                 self.sync_all_agents()

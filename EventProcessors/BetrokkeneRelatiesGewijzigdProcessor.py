@@ -25,5 +25,7 @@ class BetrokkeneRelatiesGewijzigdProcessor(SpecificEventProcessor, RelatieProces
             try:
                 self.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatie_dict)
             except RelationNotCreatedError as ex:
-                raise BetrokkeneRelationNotCreatedError(str(ex))
+                raise ex
+            except Exception as ex:
+                raise ex
         logging.info('done')
