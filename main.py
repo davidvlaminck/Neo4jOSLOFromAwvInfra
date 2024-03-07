@@ -18,6 +18,8 @@ if __name__ == '__main__':
     password = config('password_neo4j', default='')
     connector = Neo4JConnector(uri="bolt://localhost:7687", user=username, password=password)
 
+
+
     # Syncing settings
     settings_manager = SettingsManager(settings_path='.\\settings_neo4jmodelcreator.json')
     requester = RequesterFactory.create_requester(settings=settings_manager.settings, auth_type='JWT', env='prd')
