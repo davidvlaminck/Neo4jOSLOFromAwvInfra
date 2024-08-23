@@ -12,8 +12,7 @@ class RequestHandler:
     def get_jsondict(self, url):
         response = self._perform_get_request(url)
         decoded_string = response.content.decode("utf-8")
-        dict_obj = json.loads(decoded_string)
-        return dict_obj
+        return json.loads(decoded_string)
 
     def _perform_get_request(self, url) -> Response:
         return self.requester.get(url=url)

@@ -71,12 +71,15 @@ class RelatieProcessor:
     def create_betrokkenerelatie_from_jsonLd_dict(self, json_dict):
         flattened_dict = NieuwAssetProcessor().flatten_dict(json_dict)
 
-        relatie_dict = {'assetIdUri': json_dict['@id'], 'typeURI': json_dict['@type'],
-                        'isActief': json_dict["AIMDBStatus.isActief"],
-                        'uuid': json_dict['@id'].split('/')[-1][0:36]}
+        relatie_dict = {
+            'assetIdUri': json_dict['@id'],
+            'typeURI': json_dict['@type'],
+            'isActief': json_dict["AIMDBStatus.isActief"],
+            'uuid': json_dict['@id'].split('/')[-1][:36],
+        }
 
-        bron_uuid = json_dict['RelatieObject.bron']['@id'].split('/')[-1][0:36]
-        doel_uuid = json_dict['RelatieObject.doel']['@id'].split('/')[-1][0:36]
+        bron_uuid = json_dict['RelatieObject.bron']['@id'].split('/')[-1][:36]
+        doel_uuid = json_dict['RelatieObject.doel']['@id'].split('/')[-1][:36]
 
         for k, v in flattened_dict.items():
             if k in ['@type', '@id', "RelatieObject.bron.@type", "RelatieObject.bron.@id", "RelatieObject.doel.@type",
@@ -90,12 +93,12 @@ class RelatieProcessor:
 
         if json_dict['RelatieObject.bron']['@type'] == 'http://purl.org/dc/terms/Agent':
             query = "MATCH (a:Agent {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid + "'}) " \
-                                                                                                   f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
-                                                                                                   f"RETURN a, r, b"
+                                                                                                       f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
+                                                                                                       f"RETURN a, r, b"
         else:
             query = "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid + "'}) " \
-                                                                                                   f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
-                                                                                                   f"RETURN a, r, b"
+                                                                                                       f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
+                                                                                                       f"RETURN a, r, b"
         relatie = self.tx_context.run(query, params=relatie_dict).data()
 
         if len(relatie) == 0:

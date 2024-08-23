@@ -26,7 +26,7 @@ class GeometrieOrLocatieGewijzigdProcessor(SpecificEventProcessor):
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             if '-' in assettype or '.' in assettype:
-                assettype = '`' + assettype + '`'
+                assettype = f'`{assettype}`'
 
             flattened_dict["geometry"] = asset_processor.get_wkt_from_puntlocatie(flattened_dict)
             if 'loc:geometrie' in flattened_dict.keys():
@@ -48,16 +48,10 @@ class GeometrieOrLocatieGewijzigdProcessor(SpecificEventProcessor):
                           'loc:puntlocatie.loc:weglocatie.loc:referentiepaalOpschrift',
                           'loc:puntlocatie.loc:weglocatie.loc:straatnaam']
 
-            params = {}
-            for attribuut in attributen:
-                if attribuut in flattened_dict.keys():
-                    params[attribuut] = flattened_dict[attribuut]
-                else:
-                    params[attribuut] = None
-
+            params = {attribuut: (flattened_dict[attribuut] if attribuut in flattened_dict.keys() else None)
+                      for attribuut in attributen}
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",
-                                uuid=self.get_uuid_from_asset_dict(asset_dict),
-                                params=params)
+                                uuid=self.get_uuid_from_asset_dict(asset_dict), params=params)
 
         logging.info('done')

@@ -52,7 +52,8 @@ class AgentSyncer:
             chunk = dicts_to_update[i:i + chunk_size]
             self.tx_context.run("UNWIND $params AS map MATCH (a:Agent) WHERE a.assetIdUri = map.assetIdUri SET a = map", params=chunk)
 
-    def clean_agent_dicts(self, agent_dicts):
+    @staticmethod
+    def clean_agent_dicts(agent_dicts):
         flattened_dicts = []
         for agent_dict in agent_dicts:
             old_dict = NieuwAssetProcessor().flatten_dict(input_dict=agent_dict)
@@ -75,4 +76,3 @@ class AgentSyncer:
             flattened_dicts.append(new_dict)
 
         return flattened_dicts
-

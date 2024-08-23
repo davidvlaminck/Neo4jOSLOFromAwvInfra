@@ -17,15 +17,15 @@ class EMInfraImporter:
     def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100,
                                               only_next_page: bool = False) -> [dict]:
         url = f"core/api/otl/{url_part}/search"
-        body_fixed_part = '{"size": ' + f'{size}' + ''
+        body_fixed_part = '{"size": ' + f'{size}'
         if filter_string != '{}':
-            body_fixed_part += ', "filters": ' + filter_string
+            body_fixed_part += f', "filters": {filter_string}'
 
         json_list = []
         while True:
             body = body_fixed_part
             if self.cursor != '':
-                body += ', "fromCursor": ' + f'"{self.cursor}"'
+                body += f', "fromCursor": "{self.cursor}"'
             body += '}'
             json_data = json.loads(body)
 
@@ -55,9 +55,7 @@ class EMInfraImporter:
         return self.get_objects_from_oslo_search_endpoint(url_part='assets', size=page_size, only_next_page=True)
 
     def import_assets_from_webservice_by_uuids(self, asset_uuids: [str]) -> [dict]:
-        asset_list_string = '", "'.join(asset_uuids)
-        filter_string = '{ "uuid": ' + f'["{asset_list_string}"]' + ' }'
-        return self.get_objects_from_oslo_search_endpoint(url_part='assets', filter_string=filter_string)
+        return self._extracted_from_import_agents_from_webservice_by_uuids_2(asset_uuids, 'assets')
 
     def import_all_agents_from_webservice(self) -> [dict]:
         return self.get_objects_from_oslo_search_endpoint(url_part='agents')
@@ -66,9 +64,17 @@ class EMInfraImporter:
         return self.get_objects_from_oslo_search_endpoint(url_part='agents', size=page_size, only_next_page=True)
 
     def import_agents_from_webservice_by_uuids(self, agent_uuids: [str]) -> [dict]:
-        agent_list_string = '", "'.join(agent_uuids)
-        filter_string = '{ "uuid": ' + f'["{agent_list_string}"]' + ' }'
-        return self.get_objects_from_oslo_search_endpoint(url_part='agents', filter_string=filter_string)
+        return self._extracted_from_import_agents_from_webservice_by_uuids_2(
+            agent_uuids, 'agents'
+        )
+
+    # TODO Rename this here and in `import_assets_from_webservice_by_uuids` and `import_agents_from_webservice_by_uuids`
+    def _extracted_from_import_agents_from_webservice_by_uuids_2(self, arg0, url_part):
+        asset_list_string = '", "'.join(arg0)
+        filter_string = '{ "uuid": ' + f'["{asset_list_string}"]' + ' }'
+        return self.get_objects_from_oslo_search_endpoint(
+            url_part=url_part, filter_string=filter_string
+        )
 
     def import_all_assetrelaties_from_webservice(self) -> [dict]:
         return self.get_distinct_set_from_list_of_relations(

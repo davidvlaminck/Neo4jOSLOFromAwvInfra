@@ -20,7 +20,7 @@ class Neo4JConnector:
 
     @staticmethod
     def save_props_to_params(tx: Transaction, params: dict):
-        tx.run(f"MATCH (p:Params) SET p += $params", params=params)
+        tx.run("MATCH (p:Params) SET p += $params", params=params)
 
     @staticmethod
     def update_params(tx: Transaction, page_num: int, event_id: int):
@@ -43,19 +43,17 @@ class Neo4JConnector:
 
     @staticmethod
     def _create_asset_by_dict(tx, params: dict, ns: str, assettype: str):
-        result = tx.run(f"CREATE (a:Asset:{ns}:{assettype} $params) ", params=params)
-        return result
+        return tx.run(f"CREATE (a:Asset:{ns}:{assettype} $params) ", params=params)
 
     @staticmethod
     def _create_relatie_by_dict(tx, bron_uuid='', doel_uuid='', relatie_type='', params=None):
         query = "MATCH (a:Asset), (b:Asset) " \
-                f"WHERE a.uuid = '{bron_uuid}' " \
-                f"AND b.uuid = '{doel_uuid}' " \
-                f"CREATE (a)-[r:{relatie_type} " \
-                "$params]->(b) " \
-                f"RETURN type(r), r.name"
-        result = tx.run(query, params=params)
-        return result
+                    f"WHERE a.uuid = '{bron_uuid}' " \
+                    f"AND b.uuid = '{doel_uuid}' " \
+                    f"CREATE (a)-[r:{relatie_type} " \
+                    "$params]->(b) " \
+                    f"RETURN type(r), r.name"
+        return tx.run(query, params=params)
 
     def start_transaction(self) -> Transaction:
         return self.driver.session(database=self.db).begin_transaction()
@@ -77,8 +75,7 @@ class Neo4JConnector:
         while True:
             try:
                 session = self.driver.session(database=self.db)
-                response = list(session.run(query))
-                return response
+                return list(session.run(query))
             except Exception as e:
                 logging.error("Query failed:", e)
                 logging.error('Are settings and/or connection to the Neo4J database okay?')

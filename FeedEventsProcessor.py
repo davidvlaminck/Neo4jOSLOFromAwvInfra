@@ -66,7 +66,5 @@ class FeedEventsProcessor:
                 f'finished processing events of type {event_type} in {str(round(end - start, 2))} seconds. Average time per item = {str(avg)} seconds')
 
     def create_processor(self, event_type, tx_context):
-        event_processor = EventProcessorFactory.CreateEventProcessor(event_type=event_type,
-                                                                     tx_context=tx_context,
-                                                                     em_infra_importer=self.emInfraImporter)
-        return event_processor
+        return EventProcessorFactory.CreateEventProcessor(
+            event_type=event_type, tx_context=tx_context, em_infra_importer=self.emInfraImporter)

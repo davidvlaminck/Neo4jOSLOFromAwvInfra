@@ -26,18 +26,13 @@ class ToezichtGewijzigdProcessor(SpecificEventProcessor):
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             if '-' in assettype or '.' in assettype:
-                assettype = '`' + assettype + '`'
+                assettype = f'`{assettype}`'
 
             toezicht_attributen = ['tz:toezichter.tz:gebruikersnaam', 'tz:toezichter.tz:voornaam', 'tz:toezichter.tz:email',
                                    'tz:toezichter.tz:naam', 'tz:toezichtgroep.tz:naam', 'tz:toezichtgroep.tz:referentie']
 
-            params = {}
-            for attribuut in toezicht_attributen:
-                if attribuut in flattened_dict.keys():
-                    params[attribuut] = flattened_dict[attribuut]
-                else:
-                    params[attribuut] = None
-
+            params = {attribuut: (flattened_dict[attribuut] if attribuut in flattened_dict.keys() else None)
+                      for attribuut in toezicht_attributen}
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",
                                 uuid=self.get_uuid_from_asset_dict(asset_dict),

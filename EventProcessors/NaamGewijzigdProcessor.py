@@ -23,7 +23,7 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             if '-' in assettype or '.' in assettype:
-                assettype = '`' + assettype + '`'
+                assettype = f'`{assettype}`'
             naampad = None
             naam = None
             if 'NaampadObject.naampad' in asset_dict:
@@ -38,6 +38,3 @@ class NaamGewijzigdProcessor(SpecificEventProcessor):
                                 naam=naam,
                                 naampad=naampad)
         logging.info('done')
-
-
-

@@ -30,10 +30,8 @@ class BestekGewijzigdProcessor(SpecificEventProcessor):
 
             attributen = ['bs:Bestek.bestekkoppeling']
 
-            params = {
-                attribuut: flattened_dict[attribuut] if attribuut in flattened_dict.keys() else None
-                for attribuut in attributen
-            }
+            params = {attribuut: flattened_dict[attribuut] if attribuut in flattened_dict.keys() else None
+                      for attribuut in attributen}
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",
                                 uuid=self.get_uuid_from_asset_dict(asset_dict),
