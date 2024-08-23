@@ -31,7 +31,7 @@ class EMInfraImporter:
             body += '}'
             json_data = json.loads(body)
 
-            response = self.requester.post(url=url, json_data=json_data)
+            response = self.requester.post(url=url, json=json_data)
 
             decoded_string = response.content.decode("utf-8")
             dict_obj = json.loads(decoded_string)
