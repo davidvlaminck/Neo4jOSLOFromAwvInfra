@@ -111,7 +111,7 @@ class Syncer:
             self.connector.save_props_to_params(tx=tx_context, params=
                 {'otltype': otltype,
                  'cursor': cursor,
-                 'last_update_utc': datetime.utcnow()})
+                 'last_update_utc': datetime.now(timezone.utc)})
             if otltype >= 5:
                 self.connector.save_props_to_params(tx=tx_context, params=
                     {'freshstart': False})
@@ -186,7 +186,7 @@ class Syncer:
             if total_events == 0:
                 with self.connector.driver.session(database=self.connector.db) as session:
                     tx = session.begin_transaction()
-                    self.connector.save_props_to_params(params={'last_sync_utc': datetime.utcnow()}, tx=tx)
+                    self.connector.save_props_to_params(params={'last_sync_utc': datetime.now(timezone.utc)}, tx=tx)
                     tx.commit()
                     tx.close()
 
