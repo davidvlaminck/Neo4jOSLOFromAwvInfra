@@ -42,8 +42,6 @@ class RelatieProcessor:
         if "AIMDBStatus.isActief" in json_dict:
             relatie_dict['isActief'] = json_dict["AIMDBStatus.isActief"]
 
-        a = len('https://data.awvvlaanderen.be/id/assetrelatie/')
-
         bron_uuid = json_dict['RelatieObject.bron']['@id'][39:75]
         doel_uuid = json_dict['RelatieObject.doel']['@id'][39:75]
         relatie_type = json_dict['@type'].split('#')[1]
