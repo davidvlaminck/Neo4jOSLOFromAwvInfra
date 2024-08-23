@@ -13,8 +13,7 @@ class RelatieProcessor:
 
     def remove_all_asset_relaties(self, asset_uuids: [str]):
         start = time.time()
-        query = f"UNWIND $params as uuids " \
-                "MATCH (a:Asset {uuid: uuids})-[r]-(b:Asset) DELETE r"
+        query = "UNWIND $params as uuids MATCH (a:Asset {uuid: uuids})-[r]-(b:Asset) DELETE r"
         self.tx_context.run(query, params=asset_uuids)
         end = time.time()
         logging.info(
@@ -22,8 +21,7 @@ class RelatieProcessor:
 
     def remove_all_betrokkene_relaties(self, asset_uuids: [str]):
         start = time.time()
-        query = f"UNWIND $params as uuids " \
-                "MATCH (:Asset {uuid: uuids})-[r:HeeftBetrokkene]-(a:Agent) DELETE r"
+        query = "UNWIND $params as uuids MATCH (:Asset {uuid: uuids})-[r:HeeftBetrokkene]-(a:Agent) DELETE r"
         self.tx_context.run(query, params=asset_uuids)
         end = time.time()
         logging.info(
@@ -55,14 +53,10 @@ class RelatieProcessor:
                      "RelatieObject.bronAssetId", "RelatieObject.doelAssetId", "RelatieObject.typeURI",
                      "RelatieObject.bron"]:
                 continue
-            if isinstance(v, dict):
-                relatie_dict[k] = json.dumps(v)
-            else:
-                relatie_dict[k] = v
-
+            relatie_dict[k] = json.dumps(v) if isinstance(v, dict) else v
         query = "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b:Asset {uuid: '" + doel_uuid + "'}) " \
-                                                                                               f"CREATE (a)-[r:{relatie_type} $params]->(b) " \
-                                                                                               f"RETURN a, r, b"
+                                                                                                   f"CREATE (a)-[r:{relatie_type} $params]->(b) " \
+                                                                                                   f"RETURN a, r, b"
         relatie = self.tx_context.run(query, params=relatie_dict).data()
 
         if len(relatie) == 0:
@@ -92,13 +86,13 @@ class RelatieProcessor:
                 relatie_dict[k] = v
 
         if json_dict['RelatieObject.bron']['@type'] == 'http://purl.org/dc/terms/Agent':
-            query = "MATCH (a:Agent {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid + "'}) " \
-                                                                                                       f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
-                                                                                                       f"RETURN a, r, b"
+            query = (
+                "MATCH (a:Agent {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid
+                + "'}) CREATE (a)-[r:HeeftBetrokkene $params]->(b) RETURN a, r, b")
         else:
-            query = "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid + "'}) " \
-                                                                                                       f"CREATE (a)-[r:HeeftBetrokkene $params]->(b) " \
-                                                                                                       f"RETURN a, r, b"
+            query = (
+                "MATCH (a:Asset {uuid: '" + bron_uuid + "'}), (b:Agent {uuid: '" + doel_uuid
+                + "'}) CREATE (a)-[r:HeeftBetrokkene $params]->(b) RETURN a, r, b")
         relatie = self.tx_context.run(query, params=relatie_dict).data()
 
         if len(relatie) == 0:
