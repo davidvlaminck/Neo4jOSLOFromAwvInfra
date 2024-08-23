@@ -2,10 +2,11 @@ import contextlib
 import logging
 import time
 import traceback
-from datetime import datetime
+from datetime import datetime, timezone
 
 import neo4j.exceptions
 
+from AbstractRequester import AbstractRequester
 from AgentSyncer import AgentSyncer
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
@@ -14,13 +15,12 @@ from EventProcessors.RelationNotCreatedError import BetrokkeneRelationNotCreated
 from FeedEventsCollector import FeedEventsCollector
 from FeedEventsProcessor import FeedEventsProcessor
 from Neo4JConnector import Neo4JConnector
-from RequestHandler import RequestHandler
 
 
 class Syncer:
-    def __init__(self, connector: Neo4JConnector, request_handler: RequestHandler, eminfra_importer: EMInfraImporter, settings=None):
+    def __init__(self, connector: Neo4JConnector, requester: AbstractRequester, eminfra_importer: EMInfraImporter, settings=None):
         self.connector = connector
-        self.request_handler = request_handler
+        self.requester = requester
         self.eminfra_importer = eminfra_importer
         self.events_collector = FeedEventsCollector(eminfra_importer)
         self.events_processor = FeedEventsProcessor(connector, eminfra_importer)
@@ -43,6 +43,7 @@ class Syncer:
                         break
             except Exception as ex:
                 logging.error(ex)
+                print(ex)
                 logging.error(ex.args)
                 logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
                 logging.info('Retrying in 30 seconds.')
@@ -164,7 +165,7 @@ class Syncer:
 
         start_struct = time.strptime(self.sync_start, "%H:%M:%S")
         end_struct = time.strptime(self.sync_end, "%H:%M:%S")
-        now = datetime.utcnow().time()
+        now = datetime.now(timezone.utc)
         start = now.replace(hour=start_struct.tm_hour, minute=start_struct.tm_min, second=start_struct.tm_sec)
         end = now.replace(hour=end_struct.tm_hour, minute=end_struct.tm_min, second=end_struct.tm_sec)
         return start < now < end
@@ -217,9 +218,11 @@ class Syncer:
             except AssetRelationNotCreatedError:
                 self.events_processor.tx_context.rollback()
                 self.sync_all_agents()
+                time.sleep(30)
             except Exception as exc:
                 traceback.print_exception(exc)
                 self.events_processor.tx_context.rollback()
+                time.sleep(30)
 
     @staticmethod
     def log_eventparams(event_dict, time: float, event_timestamp: datetime):

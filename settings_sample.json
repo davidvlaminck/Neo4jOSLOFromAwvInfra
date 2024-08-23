@@ -1,32 +1,44 @@
 {
-    "auth_options" : [
-        {
-            "type" : "cert",
-            "environment": "prd",
-            "cert_path" : "C:\\resources\\datamanager_eminfra_prd.awv.vlaanderen.be.crt",
-            "key_path" : "C:\\resources\\datamanager_eminfra_prd.awv.vlaanderen.be.key"
-        },
-        {
-            "type" : "JWT",
-            "environment": "prd",
-            "client_id" : "0eef6a36-f985-412d-a9d9-d4e91bd85633",
-            "key_path" : "C:\\resources\\datamanager_prd_private.json"
-        },
-        {
-            "type" : "JWT",
-            "environment": "tei",
-            "client_id" : "ead845a1-0528-4eef-9895-832895d6c03e",
-            "key_path" : "C:\\resources\\datamanager_tei_private.json"
-        },
-        {
-            "type" : "JWT",
-            "environment": "dev",
-            "client_id" : "1fdf6f18-e333-4eff-acd3-d38d06bcea57",
-            "key_path" : "C:\\resources\\datamanager_dev_private.json"
-        }
-    ],
-     "time" : {
-         "start" : "06:00:00",
-         "end" : "23:50:00"
-     }
+  "authentication": {
+    "JWT": {
+      "prd": {
+        "client_id": "0eef6a36-f985-412d-a9d9-d4e91bd85633",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_prd_private.json"
+      },
+      "tei": {
+        "client_id": "ead845a1-0528-4eef-9895-832895d6c03e",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_tei_private.json"
+      },
+      "dev": {
+        "client_id": "1fdf6f18-e333-4eff-acd3-d38d06bcea57",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_dev_private.json"
+      },
+      "aim": {
+        "client_id": "1fdf6f18-e333-4eff-acd3-d38d06bcea57",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_dev_private.json"
+      }
+    },
+    "cert": {
+      "prd": {
+        "cert_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_prd.awv.vlaanderen.be.crt",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_prd.awv.vlaanderen.be.key"
+      },
+      "tei": {
+        "cert_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_tei.awv.vlaanderen.be.crt",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_tei.awv.vlaanderen.be.key"
+      },
+      "dev": {
+        "cert_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_dev.awv.vlaanderen.be.crt",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_dev.awv.vlaanderen.be.key"
+      },
+      "aim": {
+        "cert_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_dev.awv.vlaanderen.be.crt",
+        "key_path": "/home/davidlinux/Documents/AWV/resources/datamanager_eminfra_dev.awv.vlaanderen.be.key"
+      }
+    }
+  },
+  "time": {
+    "start": "06:00:00",
+    "end": "23:50:00"
+  }
 }

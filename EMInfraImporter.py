@@ -1,18 +1,20 @@
 ﻿import base64
 import json
 
-from RequestHandler import RequestHandler
+from AbstractRequester import AbstractRequester
 
 
 class EMInfraImporter:
-    def __init__(self, request_handler: RequestHandler):
-        self.request_handler = request_handler
-        self.request_handler.requester.first_part_url += 'eminfra/'
+    def __init__(self, requester: AbstractRequester):
+        self.requester = requester
+        self.requester.first_part_url += 'eminfra/'
         self.cursor = ''
 
     def get_events_from_page(self, page_num: int, page_size: int = 1):
         url = f"feedproxy/feed/assets/{page_num}/{page_size}"
-        return self.request_handler.get_jsondict(url)
+        response = self.requester.get(url)
+        decoded_string = response.content.decode()
+        return json.loads(decoded_string)
 
     def get_objects_from_oslo_search_endpoint(self, url_part: str, filter_string: str = '{}', size: int = 100,
                                               only_next_page: bool = False) -> [dict]:
@@ -29,7 +31,7 @@ class EMInfraImporter:
             body += '}'
             json_data = json.loads(body)
 
-            response = self.request_handler.perform_post_request(url=url, json_data=json_data)
+            response = self.requester.post(url=url, json_data=json_data)
 
             decoded_string = response.content.decode("utf-8")
             dict_obj = json.loads(decoded_string)

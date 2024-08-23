@@ -1,30 +1,43 @@
 import requests
 
+from AbstractRequester import AbstractRequester
 from CertRequester import CertRequester
+from Enums import Environment, AuthType
 from JWTRequester import JWTRequester
 
 
 class RequesterFactory:
+    first_part_url_dict = {
+        Environment.PRD: 'https://services.apps.mow.vlaanderen.be/',
+        Environment.TEI: 'https://services.apps-tei.mow.vlaanderen.be/',
+        Environment.DEV: 'https://services.apps-dev.mow.vlaanderen.be/',
+        Environment.AIM: 'https://services-aim.apps-dev.mow.vlaanderen.be/'
+    }
+
     @classmethod
-    def create_requester(cls, settings=None, auth_type='', env='') -> requests.Session:
+    def create_requester(cls, auth_type: AuthType, env: Environment, settings: dict = None, **kwargs
+                         ) -> AbstractRequester:
+        specific_settings = {}
         try:
-            auth_info = next(a for a in settings['auth_options'] if a['type'] == auth_type and a['environment'] == env)
-        except StopIteration:
-            raise ValueError(f"Could not load the settings for {auth_type} {env}")
+            if auth_type == AuthType.JWT:
+                specific_settings = settings['authentication'][auth_type.name][env.name.lower()]
+            elif auth_type == AuthType.CERT:
+                specific_settings = settings['authentication'][auth_type.value][env.name.lower()]
+        except KeyError as e:
+            raise ValueError(f"Could not load the settings for {auth_type} {env}") from e
 
-        first_part_url = ''
-        if auth_info['environment'] == 'prd':
-            first_part_url = 'https://services.apps.mow.vlaanderen.be/'
-        elif auth_info['environment'] == 'tei':
-            first_part_url = 'https://services.apps-tei.mow.vlaanderen.be/'
-        elif auth_info['environment'] == 'dev':
-            first_part_url = 'https://services.apps-dev.mow.vlaanderen.be/'
+        try:
+            first_part_url = cls.first_part_url_dict[env]
+        except KeyError as exc:
+            raise ValueError(f"Invalid environment: {env}") from exc
 
-        if auth_info['type'] == 'JWT':
-            return JWTRequester(private_key_path=auth_info['key_path'],
-                                client_id=auth_info['client_id'],
+        if auth_type == AuthType.JWT:
+            return JWTRequester(private_key_path=specific_settings['key_path'],
+                                client_id=specific_settings['client_id'],
                                 first_part_url=first_part_url)
-        if auth_info['type'] == 'cert':
-            return CertRequester(cert_path=auth_info['cert_path'],
-                                 key_path=auth_info['key_path'],
+        elif auth_type == AuthType.CERT:
+            return CertRequester(cert_path=specific_settings['cert_path'],
+                                 key_path=specific_settings['key_path'],
                                  first_part_url=first_part_url)
+        else:
+            raise ValueError(f"Invalid authentication type: {auth_type}")
