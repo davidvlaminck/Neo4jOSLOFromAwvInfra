@@ -9,6 +9,7 @@ from Syncer import Syncer
 from decouple import Config, RepositoryEnv
 
 if __name__ == '__main__':
+    #Test
     # Settings
     logging.basicConfig(level=logging.INFO)
     config = Config(RepositoryEnv(r"C:\Users\devosar\PycharmProjects\Intelligent Incident Detection (IID)\utils\.env"))
