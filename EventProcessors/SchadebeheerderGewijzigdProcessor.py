@@ -26,16 +26,12 @@ class SchadebeheerderGewijzigdProcessor(SpecificEventProcessor):
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             if '-' in assettype or '.' in assettype:
-                assettype = '`' + assettype + '`'
+                assettype = f'`{assettype}`'
 
             toezicht_attributen = ['tz:schadebeheerder.tz:naam', 'tz:schadebeheerder.tz:referentie']
 
-            params = {}
-            for attribuut in toezicht_attributen:
-                if attribuut in flattened_dict.keys():
-                    params[attribuut] = flattened_dict[attribuut]
-                else:
-                    params[attribuut] = None
+            params = {attribuut: (flattened_dict[attribuut] if attribuut in flattened_dict.keys() else None)
+                      for attribuut in toezicht_attributen}
 
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",

@@ -23,7 +23,7 @@ class CommentaarGewijzigdProcessor(SpecificEventProcessor):
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             if '-' in assettype or '.' in assettype:
-                assettype = '`' + assettype + '`'
+                assettype = f'`{assettype}`'
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.notitie = $notitie",
                                 uuid=self.get_uuid_from_asset_dict(asset_dict),

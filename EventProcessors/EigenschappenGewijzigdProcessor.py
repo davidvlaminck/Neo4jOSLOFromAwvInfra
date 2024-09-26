@@ -44,8 +44,8 @@ class EigenschappenGewijzigdProcessor(SpecificEventProcessor):
                                'wl:Weglocatie.bron', 'wl:Weglocatie.score', 'bs:Bestek.bestekkoppeling']
 
         # for all assets remove the non-excluded-properties
-        properties_keep_str = '{.' + ', .'.join(['`' + a + '`' if '-' in a or '@' in a or '.' in a or ':' in a else a
-                                                 for a in excluded_attributes]) + '}'
+        properties_keep_str = ('{.' + ', .'.join([f'`{a}`' if '-' in a or '@' in a or '.' in a or ':' in a else a
+                                                  for a in excluded_attributes])) + '}'
         uuids_str = "['" + "','".join([a['@id'][39:75] for a in asset_dicts]) + "']"
 
         self.tx_context.run(f"""MATCH (n:Asset) 
@@ -60,13 +60,10 @@ class EigenschappenGewijzigdProcessor(SpecificEventProcessor):
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             if '-' in assettype or '.' in assettype:
-                assettype = '`' + assettype + '`'
+                assettype = f'`{assettype}`'
 
-            params = {}
-            for attribuut in flattened_dict.keys():
-                if attribuut not in excluded_attributes:
-                    params[attribuut] = flattened_dict[attribuut]
-
+            params = {attribuut: flattened_dict[attribuut] for attribuut in flattened_dict.keys()
+                      if attribuut not in excluded_attributes}
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a += $params",
                                 uuid=self.get_uuid_from_asset_dict(asset_dict),

@@ -1,59 +1,80 @@
-import datetime
+from datetime import datetime, timezone, timedelta
 import json
+import logging
 import sys
+from binascii import hexlify
+from os import urandom
 from pathlib import Path
 
 import jwt  # pip install pyjwt and cryptography
 import jwt.algorithms as jwt_algo
 import requests
-import string
-
-from random import choice
-
 from requests import Response
 
+from AbstractRequester import AbstractRequester
 
-class JWTRequester(requests.Session):
-    def __init__(self, private_key_path: Path, client_id: str, first_part_url: str = ''):
+
+class JWTRequester(AbstractRequester):
+    def __init__(self, private_key_path: Path, client_id: str, first_part_url: str = '', retries: int = 2):
         if 'cryptography' not in sys.modules:
             raise ModuleNotFoundError('needs module cryptography to work')
 
+        super().__init__(first_part_url=first_part_url)
         self.private_key_path: Path = private_key_path
         self.client_id: str = client_id
-        self.first_part_url: str = first_part_url
+        self.retries: int = retries
 
         self.oauth_token: str = ''
-        self.expires: datetime.datetime = datetime.datetime.now() - datetime.timedelta(seconds=1)
-        self.requested_at: datetime.datetime = self.expires
-        super().__init__()
+        self.expires: datetime = datetime.now(timezone.utc) - timedelta(seconds=1)
+        self.requested_at: datetime = self.expires
 
-    def get(self, url='', **kwargs) -> Response:
-        kwargs = self.modify_kwargs_for_bearer_token(kwargs)
-        return super().get(url=self.first_part_url + url, **kwargs)
+    def get(self, url: str = '', **kwargs) -> Response:
+        for _ in range(self.retries):
+            try:
+                kwargs = self.modify_kwargs_for_bearer_token(kwargs)
+                return super().get(url=url, **kwargs)
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Error in GET request: {e}")
 
-    def post(self, url='', **kwargs) -> Response:
-        kwargs = self.modify_kwargs_for_bearer_token(kwargs)
-        return super().post(url=self.first_part_url + url, **kwargs)
+    def post(self, url: str = '', **kwargs) -> Response:
+        for _ in range(self.retries):
+            try:
+                kwargs = self.modify_kwargs_for_bearer_token(kwargs)
+                return super().post(url=url, **kwargs)
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Error in GET request: {e}")
 
-    def put(self, url='', **kwargs) -> Response:
-        kwargs = self.modify_kwargs_for_bearer_token(kwargs)
-        return super().put(url=self.first_part_url + url, **kwargs)
+    def put(self, url: str = '', **kwargs) -> Response:
+        for _ in range(self.retries):
+            try:
+                kwargs = self.modify_kwargs_for_bearer_token(kwargs)
+                return super().put(url=url, **kwargs)
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Error in GET request: {e}")
 
-    def patch(self, url='', **kwargs) -> Response:
-        kwargs = self.modify_kwargs_for_bearer_token(kwargs)
-        return super().patch(url=self.first_part_url + url, **kwargs)
+    def patch(self, url: str = '', **kwargs) -> Response:
+        for _ in range(self.retries):
+            try:
+                kwargs = self.modify_kwargs_for_bearer_token(kwargs)
+                return super().patch(url=url, **kwargs)
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Error in GET request: {e}")
 
-    def delete(self, url='', **kwargs) -> Response:
-        kwargs = self.modify_kwargs_for_bearer_token(kwargs)
-        return super().delete(url=self.first_part_url + url, **kwargs)
+    def delete(self, url: str = '', **kwargs) -> Response:
+        for _ in range(self.retries):
+            try:
+                kwargs = self.modify_kwargs_for_bearer_token(kwargs)
+                return super().delete(url=url, **kwargs)
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Error in GET request: {e}")
 
     def get_oauth_token(self) -> str:
-        if self.expires > datetime.datetime.now():
+        if self.expires > datetime.now(timezone.utc):
             return self.oauth_token
 
         authentication_token = self.generate_authentication_token()
         self.oauth_token, expires_in = self.get_access_token(authentication_token)
-        self.expires = self.requested_at + datetime.timedelta(seconds=expires_in) - datetime.timedelta(minutes=1)
+        self.expires = self.requested_at + timedelta(seconds=expires_in) - timedelta(minutes=1)
 
         return self.oauth_token
 
@@ -62,31 +83,32 @@ class JWTRequester(requests.Session):
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
 
-        for arg in kwargs:
-            if arg == 'headers':
-                headers = kwargs[arg]
-                if 'accept' not in headers:
-                    headers['accept'] = ''
-                if headers['accept'] is not None:
-                    if headers['accept'] != '':
-                        headers['accept'] = f"{headers['accept']}, application/json"
-                    else:
-                        headers['accept'] = 'application/json'
-                headers['authorization'] = f'Bearer {bearer_token}'
-                if 'Content-Type' not in headers or headers['Content-Type'] is None:
-                    headers['Content-Type'] = 'application/vnd.awv.eminfra.v1+json'
-                kwargs['headers'] = headers
+        if kwargs.get('headers') is None:
+            return kwargs
+
+        headers = kwargs['headers']
+        if 'accept' not in headers:
+            headers['accept'] = ''
+        if headers['accept'] is not None:
+            if headers['accept'] != '':
+                headers['accept'] = f"{headers['accept']}, application/json"
+            else:
+                headers['accept'] = 'application/json'
+        headers['authorization'] = f'Bearer {bearer_token}'
+        if 'Content-Type' not in headers or headers['Content-Type'] is None:
+            headers['Content-Type'] = 'application/vnd.awv.eminfra.v1+json'
+        kwargs['headers'] = headers
 
         return kwargs
 
     def generate_authentication_token(self) -> str:
-        self.requested_at = datetime.datetime.utcnow()
+        self.requested_at = datetime.now(timezone.utc)
         # Authentication token generation
         payload = {'iss': self.client_id,
                    'sub': self.client_id,
                    'aud': 'https://authenticatie.vlaanderen.be/op',
-                   'exp': self.requested_at + datetime.timedelta(minutes=9),
-                   'jti': ''.join(choice(string.ascii_lowercase) for _ in range(20))
+                   'exp': self.requested_at + timedelta(minutes=9),
+                   'jti': hexlify(urandom(16)).decode()
                    }
 
         with open(self.private_key_path) as private_key:
@@ -118,13 +140,3 @@ class JWTRequester(requests.Session):
         response_json = response.json()
 
         return response_json['access_token'], response_json['expires_in']
-
-
-class SingletonJWTRequester(JWTRequester):
-    instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls.instance is None:
-            cls.instance = super(SingletonJWTRequester, cls).__new__(cls)
-        return cls.instance
-

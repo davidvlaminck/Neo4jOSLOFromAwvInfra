@@ -1,31 +1,33 @@
 import os
-import requests
+from pathlib import Path
+
 from requests import Response
 
+from AbstractRequester import AbstractRequester
 
-class CertRequester(requests.Session):
-    def __init__(self, cert_path='', key_path='', first_part_url=''):
-        super().__init__()
+
+class CertRequester(AbstractRequester):
+    def __init__(self, cert_path: Path, key_path: Path, first_part_url: str = ''):
+        super().__init__(first_part_url=first_part_url)
         self.cert_path = cert_path
         self.key_path = key_path
-        self.first_part_url = first_part_url
 
         if not os.path.isfile(cert_path):
-            raise FileNotFoundError(cert_path + " is not a valid path. Cert file does not exist.")
+            raise FileNotFoundError(f"{cert_path} is not a valid path. Cert file does not exist.")
         if not os.path.isfile(key_path):
-            raise FileNotFoundError(key_path + " is not a valid path. Key file does not exist.")
+            raise FileNotFoundError(f"{key_path} is not a valid path. Key file does not exist.")
 
-    def get(self, url='', **kwargs) -> Response:
-        return super().get(url=self.first_part_url + url, cert=(self.cert_path, self.key_path), **kwargs)
+    def get(self, url: str = '', **kwargs) -> Response:
+        return super().get(url=url, cert=(str(self.cert_path), str(self.key_path)), **kwargs)
 
-    def post(self, url='', **kwargs) -> Response:
-        return super().post(url=self.first_part_url + url, cert=(self.cert_path, self.key_path), **kwargs)
+    def post(self, url: str = '', **kwargs) -> Response:
+        return super().post(url=url, cert=(str(self.cert_path), str(self.key_path)), **kwargs)
 
-    def put(self, url='', **kwargs) -> Response:
-        return super().put(url=self.first_part_url + url, cert=(self.cert_path, self.key_path), **kwargs)
+    def put(self, url: str = '', **kwargs) -> Response:
+        return super().put(url=url, cert=(str(self.cert_path), str(self.key_path)), **kwargs)
 
-    def patch(self, url='', **kwargs) -> Response:
-        return super().patch(url=self.first_part_url + url, cert=(self.cert_path, self.key_path), **kwargs)
+    def patch(self, url: str = '', **kwargs) -> Response:
+        return super().patch(url=url, cert=(str(self.cert_path), str(self.key_path)), **kwargs)
 
-    def delete(self, url='', **kwargs) -> Response:
-        return super().delete(url=self.first_part_url + url, cert=(self.cert_path, self.key_path), **kwargs)
+    def delete(self, url: str = '', **kwargs) -> Response:
+        return super().delete(url=url, cert=(str(self.cert_path), str(self.key_path)), **kwargs)

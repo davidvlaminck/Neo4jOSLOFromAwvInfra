@@ -1,10 +1,12 @@
+import contextlib
 import logging
 import time
 import traceback
-from datetime import datetime
+from datetime import datetime, timezone
 
 import neo4j.exceptions
 
+from AbstractRequester import AbstractRequester
 from AgentSyncer import AgentSyncer
 from EMInfraImporter import EMInfraImporter
 from EventProcessors.NieuwAssetProcessor import NieuwAssetProcessor
@@ -13,13 +15,12 @@ from EventProcessors.RelationNotCreatedError import BetrokkeneRelationNotCreated
 from FeedEventsCollector import FeedEventsCollector
 from FeedEventsProcessor import FeedEventsProcessor
 from Neo4JConnector import Neo4JConnector
-from RequestHandler import RequestHandler
 
 
 class Syncer:
-    def __init__(self, connector: Neo4JConnector, request_handler: RequestHandler, eminfra_importer: EMInfraImporter, settings=None):
+    def __init__(self, connector: Neo4JConnector, requester: AbstractRequester, eminfra_importer: EMInfraImporter, settings=None):
         self.connector = connector
-        self.request_handler = request_handler
+        self.requester = requester
         self.eminfra_importer = eminfra_importer
         self.events_collector = FeedEventsCollector(eminfra_importer)
         self.events_processor = FeedEventsProcessor(connector, eminfra_importer)
@@ -41,8 +42,10 @@ class Syncer:
                     if stop_when_fully_synced:
                         break
             except Exception as ex:
-                logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
                 logging.error(ex)
+                print(ex)
+                logging.error(ex.args)
+                logging.error('Could not start synchronising. Do you have connection to the internet and the Neo4J database?')
                 logging.info('Retrying in 30 seconds.')
                 time.sleep(30)
 
@@ -87,11 +90,8 @@ class Syncer:
                 relatie_processor = RelatieProcessor()
                 relatie_processor.tx_context = tx_context
                 for assetrelatie in assetrelaties:
-                    try:
+                    with contextlib.suppress(AssetRelationNotCreatedError):
                         relatie_processor.create_assetrelatie_from_jsonLd_dict(assetrelatie)
-                    except AssetRelationNotCreatedError:
-                        pass
-                        #raise AssetRelationNotCreatedError
                 end = time.time()
                 logging.info(f'time for 100 relations: {round(end - start, 2)}')
             elif otltype == 4:
@@ -100,11 +100,8 @@ class Syncer:
                 relatie_processor = RelatieProcessor()
                 relatie_processor.tx_context = tx_context
                 for betrokkenerelatie in betrokkenerelaties:
-                    try:
+                    with contextlib.suppress(BetrokkeneRelationNotCreatedError):
                         relatie_processor.create_betrokkenerelatie_from_jsonLd_dict(betrokkenerelatie)
-                    except BetrokkeneRelationNotCreatedError:
-                        pass
-                        # raise BetrokkeneRelationNotCreatedError
                 end = time.time()
                 logging.info(f'time for 100 betrokkenerelations: {round(end - start, 2)}')
 
@@ -114,7 +111,7 @@ class Syncer:
             self.connector.save_props_to_params(tx=tx_context, params=
                 {'otltype': otltype,
                  'cursor': cursor,
-                 'last_update_utc': datetime.utcnow()})
+                 'last_update_utc': datetime.now(timezone.utc)})
             if otltype >= 5:
                 self.connector.save_props_to_params(tx=tx_context, params=
                     {'freshstart': False})
@@ -168,16 +165,13 @@ class Syncer:
 
         start_struct = time.strptime(self.sync_start, "%H:%M:%S")
         end_struct = time.strptime(self.sync_end, "%H:%M:%S")
-        now = datetime.utcnow().time()
+        now = datetime.now(timezone.utc)
         start = now.replace(hour=start_struct.tm_hour, minute=start_struct.tm_min, second=start_struct.tm_sec)
         end = now.replace(hour=end_struct.tm_hour, minute=end_struct.tm_min, second=end_struct.tm_sec)
-        v = start < now < end
-        return v
+        return start < now < end
 
     def perform_syncing(self, stop_when_fully_synced=False):
-        sync_allowed_by_time = self.calculate_sync_allowed_by_time()
-
-        while sync_allowed_by_time:
+        while self.calculate_sync_allowed_by_time():
             params = self.connector.get_page_by_get_or_create_params()
             current_page = params['page']
             completed_event_id = params['event_id']
@@ -192,14 +186,14 @@ class Syncer:
             if total_events == 0:
                 with self.connector.driver.session(database=self.connector.db) as session:
                     tx = session.begin_transaction()
-                    self.connector.save_props_to_params(params={'last_sync_utc': datetime.utcnow()}, tx=tx)
+                    self.connector.save_props_to_params(params={'last_sync_utc': datetime.now(timezone.utc)}, tx=tx)
                     tx.commit()
                     tx.close()
 
                 if stop_when_fully_synced:
-                    logging.info(f"The database is fully synced.")
+                    logging.info("The database is fully synced.")
                     break
-                logging.info(f"The database is fully synced. Continuing keep up to date in 30 seconds")
+                logging.info("The database is fully synced. Continuing keep up to date in 30 seconds")
 
                 time.sleep(30)  # wait 30 seconds to prevent overloading API
 
@@ -211,18 +205,24 @@ class Syncer:
                                  event_timestamp=eventsparams_to_process.event_timestamp)
             try:
                 self.events_processor.process_events(eventsparams_to_process)
-            except BetrokkeneRelationNotCreatedError:
+            except BetrokkeneRelationNotCreatedError as ex:
                 # agents syncen of na 24h
                 self.events_processor.tx_context.rollback()
-                self.sync_all_agents()
+                if len(ex.agent_uuids) > 0:
+                    self.sync_all_agents()
+                if len(ex.asset_uuids) > 0:
+                    self.events_processor.tx_context = self.connector.start_transaction()
+                    event_processor = self.events_processor.create_processor("NIEUW_ONDERDEEL", self.events_processor.tx_context)
+                    event_processor.process(ex.asset_uuids)
+                    self.connector.commit_transaction(self.events_processor.tx_context)
             except AssetRelationNotCreatedError:
                 self.events_processor.tx_context.rollback()
                 self.sync_all_agents()
+                time.sleep(30)
             except Exception as exc:
                 traceback.print_exception(exc)
                 self.events_processor.tx_context.rollback()
-
-            sync_allowed_by_time = self.calculate_sync_allowed_by_time()
+                time.sleep(30)
 
     @staticmethod
     def log_eventparams(event_dict, time: float, event_timestamp: datetime):
@@ -233,10 +233,10 @@ class Syncer:
                 logging.info(f'number of events of type {k}: {len(v)}')
 
     def sync_all_agents(self):
-        logging.info(f'sync_all_agents started')
+        logging.info('sync_all_agents started')
         agentsyncer = AgentSyncer(emInfraImporter=self.eminfra_importer, neo4J_connector=self.connector)
         agentsyncer.sync_agents()
-        logging.info(f'sync_all_agents done')
+        logging.info('sync_all_agents done')
 
     def check_apoc(self):
         apoc_check_query = 'RETURN apoc.version() AS output;'
@@ -251,5 +251,5 @@ class Syncer:
             if "Unknown function 'apoc.version'" in exc.message:
                 tx_context.rollback()
                 logging.error('The apoc plugin is not enabled in this Neo4J database. Please install it first.')
-                raise RuntimeError('The apoc plugin is not enabled in this Neo4J database. Please install it first.')
-
+                raise RuntimeError('The apoc plugin is not enabled in this Neo4J database. Please install it first.'
+                                   ) from exc

@@ -1,4 +1,5 @@
 import datetime
+import time
 from collections import namedtuple
 from typing import Optional
 
@@ -16,10 +17,19 @@ class FeedEventsCollector:
         event_dict = self.create_empty_event_dict()
         searching_where_stopped = True
         event_timestamp: Optional[datetime.datetime] = None
+        fail_safe = 0
         while True:
             page = self.emInfraImporter.get_events_from_page(page_num=completed_page_number, page_size=page_size)
             stop_after_this_page = False
+            fail_safe += 1
             last_event_id = ''
+
+            if searching_where_stopped and fail_safe > 20:
+                time.sleep(30)
+                print(f'Could not find event {completed_event_id} on page {completed_page_number} '
+                      'or the next 20 pages')
+                raise RuntimeError(f'Could not find event {completed_event_id} on page {completed_page_number} '
+                                   'or the next 20 pages')
 
             if 'entries' not in page:
                 return EventParams(event_dict=event_dict, page_num=completed_page_number, event_id=completed_event_id,
