@@ -13,6 +13,7 @@ class EventProcessorFactory:
         'NIEUWE_INSTALLATIE': 'NieuweInstallatieProcessor',
         'NIEUW_ONDERDEEL': 'NieuwOnderdeelProcessor',
         'NIEUWE_CONTROLEFICHE': 'NieuwOnderdeelProcessor',
+        'NIEUWE_BEHEERACTIE': 'NieuwOnderdeelProcessor',
         'ACTIEF_GEWIJZIGD': 'ActiefGewijzigdProcessor',
         'BESTEK_GEWIJZIGD': 'BestekGewijzigdProcessor',
         'BETROKKENE_RELATIES_GEWIJZIGD': 'BetrokkeneRelatiesGewijzigdProcessor',

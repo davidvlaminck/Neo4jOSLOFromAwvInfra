@@ -52,6 +52,14 @@ class FeedEventsProcessor:
             avg = round((end - start) / len(event_params.event_dict["NIEUWE_CONTROLEFICHE"]), 2)
             logging.info(
                 f'finished processing events of type NIEUWE_CONTROLEFICHE in {str(round(end - start, 2))} seconds. Average time per item = {str(avg)} seconds')
+        if "NIEUWE_BEHEERACTIE" in event_dict.keys() and len(event_dict["NIEUWE_BEHEERACTIE"]) > 0:
+            event_processor = self.create_processor("NIEUWE_BEHEERACTIE", tx_context)
+            start = time.time()
+            event_processor.process(event_dict["NIEUWE_BEHEERACTIE"])
+            end = time.time()
+            avg = round((end - start) / len(event_params.event_dict["NIEUWE_BEHEERACTIE"]), 2)
+            logging.info(
+                f'finished processing events of type NIEUWE_BEHEERACTIE in {str(round(end - start, 2))} seconds. Average time per item = {str(avg)} seconds')
         if "NIEUWE_INSTALLATIE" in event_dict.keys() and len(event_dict["NIEUWE_INSTALLATIE"]) > 0:
             event_processor = self.create_processor("NIEUWE_INSTALLATIE", tx_context)
             start = time.time()
@@ -61,7 +69,7 @@ class FeedEventsProcessor:
             logging.info(
                 f'finished processing events of type NIEUWE_INSTALLATIE in {str(round(end - start, 2))} seconds. Average time per item = {str(avg)} seconds')
         for event_type, uuids in event_dict.items():
-            if event_type in ["NIEUW_ONDERDEEL", "NIEUWE_INSTALLATIE", "NIEUWE_CONTROLEFICHE"] or len(uuids) == 0:
+            if event_type in ["NIEUW_ONDERDEEL", "NIEUWE_INSTALLATIE", "NIEUWE_CONTROLEFICHE", 'NIEUWE_BEHEERACTIE'] or len(uuids) == 0:
                 continue
             event_processor = self.create_processor(event_type, tx_context)
             if event_processor is None:
