@@ -5,6 +5,7 @@ from Neo4JConnector import Neo4JConnector
 from RequestHandler import RequestHandler
 from RequesterFactory import RequesterFactory
 from SettingsManager import SettingsManager
+from Enums import AuthType, Environment
 from Syncer import Syncer
 from decouple import Config, RepositoryEnv
 
@@ -21,9 +22,10 @@ if __name__ == '__main__':
 
     # Syncing settings
     settings_manager = SettingsManager(settings_path='.\\settings_neo4jmodelcreator.json')
-    requester = RequesterFactory.create_requester(settings=settings_manager.settings, auth_type='JWT', env='prd')
-    request_handler = RequestHandler(requester)
-
-    eminfra_importer = EMInfraImporter(request_handler)
-    syncer = Syncer(connector=connector, request_handler=request_handler, eminfra_importer=eminfra_importer, settings=settings_manager.settings)
+    requester = RequesterFactory.create_requester(settings=settings_manager.settings, auth_type=AuthType.JWT, env=Environment.PRD)
+    # request_handler = RequestHandler(requester)
+    #
+    # eminfra_importer = EMInfraImporter(request_handler)
+    eminfra_importer = EMInfraImporter(requester)
+    syncer = Syncer(connector=connector, requester=requester, eminfra_importer=eminfra_importer, settings=settings_manager.settings)
     syncer.start_syncing()
