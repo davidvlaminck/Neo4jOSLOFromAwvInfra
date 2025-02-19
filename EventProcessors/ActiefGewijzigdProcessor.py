@@ -27,5 +27,5 @@ class ActiefGewijzigdProcessor(SpecificEventProcessor):
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.isActief = $isActief",
                                 uuid=self.get_uuid_from_asset_dict(asset_dict),
-                                isActief=asset_dict.get('AIMDBStatus.isActief'), True)
+                                isActief=asset_dict.get('AIMDBStatus.isActief', True))
         logging.info('done')
