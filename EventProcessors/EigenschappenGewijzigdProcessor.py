@@ -56,7 +56,7 @@ class EigenschappenGewijzigdProcessor(SpecificEventProcessor):
         for asset_dict in asset_dicts:
             flattened_dict = asset_processor.flatten_dict(input_dict=asset_dict)
 
-            korte_uri = flattened_dict['typeURI'].split('/ns/')[1]
+            korte_uri = flattened_dict['@type'].split('/ns/')[1]
             ns = korte_uri.split('#')[0]
             assettype = korte_uri.split('#')[1]
             if '-' in assettype or '.' in assettype:
