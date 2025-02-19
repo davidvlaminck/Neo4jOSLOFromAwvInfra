@@ -27,5 +27,5 @@ class CommentaarGewijzigdProcessor(SpecificEventProcessor):
             self.tx_context.run(f"MATCH (a:Asset:{ns}:{assettype} "
                                 "{uuid: $uuid}) SET a.notitie = $notitie",
                                 uuid=self.get_uuid_from_asset_dict(asset_dict),
-                                notitie=asset_dict['AIMObject.notitie'])
+                                notitie=asset_dict.get('AIMObject.notitie', None))
         logging.info('done')
