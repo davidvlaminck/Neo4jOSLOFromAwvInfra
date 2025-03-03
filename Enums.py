@@ -6,9 +6,12 @@ class Environment(Enum):
     DEV = 'dev',
     TEI = 'tei',
     AIM = 'aim'
+    edison_acc = 'edison-acc'
+    edison = 'edison'
 
 
 class AuthType(Enum):
     JWT = 'JWT',
     CERT = 'cert',
     COOKIE = 'cookie'
+    local = 'local'

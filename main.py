@@ -1,32 +1,31 @@
-import json
 import logging
-from pathlib import Path
 
-from AbstractRequester import AbstractRequester
 from EMInfraImporter import EMInfraImporter
-from Enums import AuthType, Environment
 from Neo4JConnector import Neo4JConnector
 from RequestHandler import RequestHandler
 from RequesterFactory import RequesterFactory
 from SettingsManager import SettingsManager
+from Enums import AuthType, Environment
 from Syncer import Syncer
-
+from decouple import Config, RepositoryEnv
 
 if __name__ == '__main__':
-    logging.basicConfig(
-        format='%(asctime)s %(levelname)-8s %(message)s',
-        level=logging.INFO,
-        datefmt='%Y-%m-%d %H:%M:%S')
+    #Test
+    # Settings
+    logging.basicConfig(level=logging.INFO)
+    config = Config(RepositoryEnv(r"C:\Users\devosar\PycharmProjects\Intelligent Incident Detection (IID)\utils\.env"))
 
-    connector = Neo4JConnector(uri="bolt://localhost:7687", user="neo4j", password="neo4jadmin", database='neo4j')
-    settings_path = Path('/home/davidlinux/Documents/AWV/resources/settings_neo4jmodelcreator.json')
-    # settings_path = Path('C:\\resources\\settings_neo4jmodelcreator.json')
+    # Set up connection to Neo4j instance (DBMS)
+    username = config('username_neo4j', default='')  # not just username because this is predefined variable, see .env
+    password = config('password_neo4j', default='')
+    connector = Neo4JConnector(uri="bolt://localhost:7687", user=username, password=password)
 
-    with open(settings_path) as settings_file:
-        settings = json.load(settings_file)
-
-    requester = RequesterFactory.create_requester(settings=settings, auth_type=AuthType.JWT, env=Environment.PRD)
-
+    # Syncing settings
+    settings_manager = SettingsManager(settings_path='.\\settings_neo4jmodelcreator.json')
+    requester = RequesterFactory.create_requester(settings=settings_manager.settings, auth_type=AuthType.JWT, env=Environment.PRD)
+    # request_handler = RequestHandler(requester)
+    #
+    # eminfra_importer = EMInfraImporter(request_handler)
     eminfra_importer = EMInfraImporter(requester)
-    syncer = Syncer(connector=connector, requester=requester, eminfra_importer=eminfra_importer, settings=settings)
+    syncer = Syncer(connector=connector, requester=requester, eminfra_importer=eminfra_importer, settings=settings_manager.settings)
     syncer.start_syncing()
